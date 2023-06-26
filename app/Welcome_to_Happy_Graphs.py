@@ -38,7 +38,7 @@ st.markdown(intro_text, unsafe_allow_html=True)
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
-df = pd.read_csv(r"world_bank_data.csv")
+df = pd.read_csv(r'world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
