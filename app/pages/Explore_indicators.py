@@ -12,7 +12,7 @@ st.title('Happy Graphs')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-df = pd.read_csv('https://github.com/mlozanog96/HappyGraphs/tree/main/app/world_bank_data.csv')
+df= pd.read_csv('app/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
@@ -24,6 +24,7 @@ min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
 selected_start_year, selected_end_year = selected_year_range
+
 
 # Check if an indicator is selected
 if not selected_indicator:
