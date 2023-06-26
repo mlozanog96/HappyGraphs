@@ -22,60 +22,56 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries
-available_indicators = df.columns.tolist()[1:]
-available_countries = df.columns.tolist()[1:]
-
-# User selection
+df = pd.read_csv('world_bank_data_clean_v2.csv')
+available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
-selected_countries = st.multiselect("Select countries", available_countries) #ACTION: make worldwide as a default
-selected_year_range = st.slider("Select a year range", min_value=df['Year'].min(), max_value=df['Year'].max(),
-                                value=(df['Year'].min(), df['Year'].max()), step=10)
+
+df_indicator= df[df['indicator_name']==selected_indicator]
+available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+
+min_year = int(df_indicator['date'].min())
+max_year = int(df_indicator['date'].max())
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
 selected_start_year, selected_end_year = selected_year_range
 
-# Check if an indicator is selected
-if not selected_indicator:
-    st.text("Please choose an indicator to see its development.")
-else:
-    # Filter the data for selected countries and time period
-    filtered_data = df[['Year'] + selected_countries]
-    filtered_data = filtered_data[(filtered_data['Year'] >= selected_start_year) & (filtered_data['Year'] <= selected_end_year)]
 
     # Create a new figure and set the chart properties
-    fig, ax = plt.subplots()
-    ax.set_title(selected_indicator)
-    ax.set_xlabel('Year')
-    ax.set_ylabel(selected_indicator)
-    ax.set_ylim(df[selected_indicator].min() - 10, df[selected_indicator].max() + 10)
+fig, ax = plt.subplots()
+ax.set_title(selected_indicator)
+ax.set_xlabel('Year')
+ax.set_ylabel(selected_indicator)
+ax.set_ylim(df[selected_indicator].min() - 10, df[selected_indicator].max() + 10)
 
-    # Plot the data for selected countries
-    for country in selected_countries:
-        country_data = filtered_data[['Year', country]]
-        line_color = st.color_picker(f"Select color for {country}", key=country)
-        ax.plot(country_data['Year'], country_data[country], label=country, color=line_color)
+# Plot the data for selected countries
+for country in selected_countries:
+    country_data = filtered_data[['Year', country]]
+    line_color = st.color_picker(f"Select color for {country}", key=country)
+    ax.plot(country_data['Year'], country_data[country], label=country, color=line_color)
 
-        # Add a tooltip to show country and indicator value on hover
-        tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
+# Add a tooltip to show country and indicator value on hover
+tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
                               bbox=dict(boxstyle="round", fc="white", edgecolor="gray"),
                               arrowprops=dict(arrowstyle="->"))
-        tooltip.set_visible(False)
+tooltip.set_visible(False)
 
-        def update_tooltip(event):
-            if event.inaxes == ax:
-                x = int(event.xdata)
-                y = int(event.ydata)
-                tooltip.xy = (x, y)
-                tooltip.set_text(f"{country}: {y}")
-                tooltip.set_visible(True)
-                fig.canvas.draw_idle()
-            else:
-                tooltip.set_visible(False)
-                fig.canvas.draw_idle()
+def update_tooltip(event):
+        if event.inaxes == ax:
+            x = int(event.xdata)
+            y = int(event.ydata)
+            tooltip.xy = (x, y)
+            tooltip.set_text(f"{country}: {y}")
+            tooltip.set_visible(True)
+            fig.canvas.draw_idle()
+        else:
+            tooltip.set_visible(False)
+            fig.canvas.draw_idle()
 
-        fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
+fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
     # Adjust x-axis scale based on the selected time period
-    ax.set_xlim(selected_start_year, selected_end_year)
+ax.set_xlim(selected_start_year, selected_end_year)
     # Add a legend
-    ax.legend()
+ax.legend()
 
 
 #ACTION: Let automatically analyse whether it's getting better? Or do we only make good indicators available?
