@@ -12,13 +12,7 @@ st.title('Happy Graphs')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-
-#'''Selection of further indicators for line charts'''
-#ACTION: Search for an indicator by topic?
-
-# Get the list of available indicators and countries and user selection
-csv_file= 'world_bank_data.csv'
-df = pd.read_csv(csv_file)
+df = pd.read_csv('world_bank_data')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
