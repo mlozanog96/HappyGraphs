@@ -19,3 +19,4 @@ Below you see a line graph showcasing how life expectancy has been increasing fo
 
 Sidenote: Please don't get fooled by the decline of life expectancy since 2019. Research suggests that this is due to the Covid-19 pandemic, which has induced the first decline in global life expectancy since World War II. For further information, please read the [Nature Article](https://www.nature.com/articles/s41562-022-01450-3).
 """
+data = pd.read_csv('world_bank_data.csv')
