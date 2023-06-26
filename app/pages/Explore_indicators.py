@@ -19,7 +19,7 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
-df = pd.read_csv('../world_bank_data_clean_v2.csv')
+df = pd.read_csv('..\world_bank_data_clean_v2.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
