@@ -1,12 +1,10 @@
 import streamlit as st
-#hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 #import matplotlib.pyplot as plt
 #import plotly.express as px
 #import pickle
 import requests
 #import openai
-from utils import get_data, get_indicator_reason, filter_projects
 #import plotly.graph_objects as go
 
 
@@ -15,7 +13,7 @@ st.title('Happy Graphs')
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
 
-'''Selection of further indicators for line charts'''
+#'''Selection of further indicators for line charts'''
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
