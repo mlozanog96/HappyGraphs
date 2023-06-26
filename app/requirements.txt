@@ -1,9 +1,13 @@
 streamlit
 pandas
 requests
-plotly-express
 plotly
 matplotlib
+pickle
 utils
 openai
-scikit-learn
+json
+statsmodels.tsa.stattools
+sklearn.model_selection 
+sklearn.metrics
+sklearn.linear_model
