@@ -39,7 +39,7 @@ for country, data in grouped_data:
 # Customize the chart
 plt.xlabel('Year')
 plt.ylabel('KPI value')
-plt.title('Linear Chart per Country: ',selected_indicator)
+plt.title('Linear Chart per Country')
 plt.legend()
 
 # Show the chart
