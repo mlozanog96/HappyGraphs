@@ -49,7 +49,13 @@ chart = alt.Chart(filtered_data).mark_line().encode(
 ).properties(
     width=800,
     height=600
-    )
+    )+ alt.Chart(filtered_data).mark_circle().encode(
+        x=alt.X('date:Q', scale=x_scale),
+        y=alt.Y('value:Q', scale=y_scale),
+        size=alt.Size('value:Q', scale=alt.Scale(range=[50, 200])),
+        color='country',
+        tooltip=['country', 'value']
+        )
 
 # Show the chart using Streamlit
 st.altair_chart(chart)
