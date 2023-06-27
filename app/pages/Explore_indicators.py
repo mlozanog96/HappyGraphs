@@ -86,7 +86,7 @@ y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value']
 chart = alt.Chart(data=filtered_data, mark="circle").mark_line().encode(
     x=alt.X('Year:Q', scale=x_scale),
     y=alt.Y('Value:Q', scale=y_scale),
-    color='Country',
+    color='country',
     tooltip=['country', 'value']
 ).properties(
     width=1200,
