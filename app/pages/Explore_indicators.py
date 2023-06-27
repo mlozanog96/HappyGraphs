@@ -56,7 +56,7 @@ for country, data in grouped_data:
             tooltip.set_visible(False)
             fig.canvas.draw_idle()
 
-    fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
+fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
     
 # Customize the chart
 ax.plot(data['date'], data['value'], label=country)
