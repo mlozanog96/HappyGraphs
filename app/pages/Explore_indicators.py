@@ -3,6 +3,7 @@ import altair as alt
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 st.title('Explore Indicators')
 
@@ -31,19 +32,26 @@ filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df
 x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
 y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
+# Set Color palette
+num_colors= 50
+color_palette = sns.color_palette("hls", num_colors)
+custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
+
 # Create an Altair line chart with tooltips
 chart = alt.Chart(filtered_data).mark_line().encode(
     x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
-    color='country',
+    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
     tooltip=['country', 'value']
 ).properties(
     width=800,
     height=600
     ) + alt.Chart(filtered_data).mark_circle().encode(
         x=alt.X('date:Q', scale=x_scale),
-        y=alt.Y('value:Q', scale=y_scale))
-
+        y=alt.Y('value:Q', scale=y_scale),
+        size=20,
+        color='country',
+        tooltip=['country', 'value'])
 
 # Show the chart using Streamlit
 st.altair_chart(chart)

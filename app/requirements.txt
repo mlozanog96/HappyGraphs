@@ -1,5 +1,6 @@
 streamlit
 altair
+seaborn
 pandas
 requests
 plotly-express
