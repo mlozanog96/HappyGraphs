@@ -95,6 +95,7 @@ chart = alt.Chart(filtered_data).mark_line().encode(
     x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
     color='country',
+    size=alt.Size('value:Q', scale=alt.Scale(range=[50, 200])),
     tooltip=['country', 'value']
 )
 
