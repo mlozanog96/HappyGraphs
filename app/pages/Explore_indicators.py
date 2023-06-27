@@ -14,11 +14,13 @@ filter_col1, filter_col2 = st.beta_columns(2)
 
 df= pd.read_csv('app/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
+with filter_col1:
+    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+with filter_col2:
+    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
