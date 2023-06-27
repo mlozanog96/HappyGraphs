@@ -89,7 +89,7 @@ chart = alt.Chart(data=filtered_data, mark="circle").mark_line().encode(
     color='country',
     tooltip=['country', 'value']
 ).properties(
-    width=1200,
+    width=800,
     height=600
     )
 
