@@ -29,7 +29,7 @@ else:
 
     st.dataframe(filtered_data)
 
-     fig, ax = plt.subplots()
+    fig, ax = plt.subplots()
     ax.set_title(selected_indicator)
     ax.set_xlabel('Year')
     ax.set_ylabel(selected_indicator)
