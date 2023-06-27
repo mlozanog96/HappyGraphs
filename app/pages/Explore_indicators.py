@@ -1,4 +1,5 @@
 import streamlit as st
+from streamlit_bokeh_events import streamlit_bokeh_events
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -43,6 +44,26 @@ plt.legend()
 
 # Show the chart
 st.pyplot(fig)
+
+# Capture mouse events and display tooltips
+tooltip_data = {}
+for line in lines:
+    tooltip_data[line] = {
+        'country': line.get_label(),
+        'x': list(line.get_xdata()),
+        'y': list(line.get_ydata())
+    }
+
+result = streamlit_bokeh_events(fig, events="MouseMove")
+if result:
+    if 'x' in result:
+        x = result['x']
+        for line, data in tooltip_data.items():
+            idx = min(range(len(data['x'])), key=lambda i: abs(data['x'][i] - x))
+            tooltip = f"Country: {data['country']}\nDate: {data['x'][idx]}\nValue: {data['y'][idx]}"
+            line.set_label(f"{data['country']} ({data['y'][idx]})")
+            st.pyplot(fig)
+            st.markdown(tooltip)
 
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
