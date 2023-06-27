@@ -33,39 +33,40 @@ grouped_data = filtered_data.groupby('country')
 
 # Create a line chart for each country
 fig, ax = plt.subplots()
-lines = []
 for country, data in grouped_data:
-    line, = ax.plot(data['date'], data['value'], label=country)
-    lines.append(line)
+    country_data = filtered_data[['Year', country]]
+    line_color = st.color_picker(f"Select color for {country}", key=country)
+    ax.plot(country_data['Year'], country_data[country], label=country, color=line_color)
 
+     # Add a tooltip to show country and indicator value on hover
+    tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
+                              bbox=dict(boxstyle="round", fc="white", edgecolor="gray"),
+                              arrowprops=dict(arrowstyle="->"))
+    tooltip.set_visible(False)
+
+    def update_tooltip(event):
+        if event.inaxes == ax:
+            x = int(event.xdata)
+            y = int(event.ydata)
+            tooltip.xy = (x, y)
+            tooltip.set_text(f"{country}: {y}")
+            tooltip.set_visible(True)
+            fig.canvas.draw_idle()
+        else:
+            tooltip.set_visible(False)
+            fig.canvas.draw_idle()
+
+    fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
+    
 # Customize the chart
-plt.xlabel('Year')
-plt.ylabel('KPI value')
-plt.title('Linear Chart per Country')
-plt.legend()
+ax.plot(data['date'], data['value'], label=country)
+ax.set_title(selected_indicator)
+ax.set_xlabel('Year')
+ax.set_ylabel(selected_indicator)
+ax.set_ylim(df[selected_indicator].min() - 10, df[selected_indicator].max() + 10)
 
 # Show the chart
 st.pyplot(fig)
-
-# Capture mouse events and display tooltips
-tooltip_data = {}
-for line in lines:
-    tooltip_data[line] = {
-        'country': line.get_label(),
-        'x': list(line.get_xdata()),
-        'y': list(line.get_ydata())
-    }
-
-result = streamlit_bokeh_events(fig, events="MouseMove")
-if result:
-    if 'x' in result:
-        x = result['x']
-        for line, data in tooltip_data.items():
-            idx = min(range(len(data['x'])), key=lambda i: abs(data['x'][i] - x))
-            tooltip = f"Country: {data['country']}\nDate: {data['x'][idx]}\nValue: {data['y'][idx]}"
-            line.set_label(f"{data['country']} ({data['y'][idx]})")
-            st.pyplot(fig)
-            st.markdown(tooltip)
 
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
