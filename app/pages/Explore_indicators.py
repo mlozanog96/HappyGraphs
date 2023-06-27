@@ -33,8 +33,10 @@ grouped_data = filtered_data.groupby('country')
 
 # Create a line chart for each country
 fig, ax = plt.subplots()
+lines = []
 for country, data in grouped_data:
-    plt.plot(data['date'], data['value'], label=country)
+    line, = ax.plot(data['date'], data['value'], label=country)
+    lines.append(line)
 
 # Customize the chart
 plt.xlabel('Year')
