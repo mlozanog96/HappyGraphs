@@ -40,7 +40,11 @@ chart = alt.Chart(filtered_data).mark_line().encode(
 ).properties(
     width=800,
     height=600
-    ) + alt.Chart(filtered_data).mark_circle().encode()
+    ) + alt.Chart(filtered_data).mark_circle().encode(
+        x=alt.value(20),  # Fixed x-axis position for circles
+        y=alt.value(20),  # Fixed y-axis position for circles
+        color='country',
+        tooltip=['country'])
 
 
 # Show the chart using Streamlit
