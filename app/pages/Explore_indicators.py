@@ -88,10 +88,10 @@ chart = alt.Chart(data=filtered_data, mark="circle").mark_line().encode(
     y=alt.Y('Value:Q', scale=y_scale),
     color='Country',
     tooltip=['country', 'value']
-    ).properties(
-        width=1200,
-        height=600
-        )
+).properties(
+    width=1200,
+    height=600
+    )
 
 
 # Show the chart using Streamlit
