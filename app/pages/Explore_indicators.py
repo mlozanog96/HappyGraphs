@@ -66,6 +66,8 @@ fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
 ax.set_title(selected_indicator)
 ax.set_xlabel('Year')
 ax.set_ylabel(selected_indicator)
+ax.set_xlim(selected_start_year, selected_end_year)
+ax.legend()
 
 # Show the chart
 st.pyplot(fig)
