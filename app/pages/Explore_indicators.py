@@ -33,7 +33,7 @@ x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
 y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
 # Set Color palette
-num_colors= 50
+num_colors= 10
 color_palette = sns.color_palette("hls", num_colors)
 custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
