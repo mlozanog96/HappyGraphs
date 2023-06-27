@@ -92,10 +92,9 @@ chart = alt.Chart(filtered_data).mark_line().encode(
     width=800,
     height=600
     ) + alt.Chart(filtered_data).mark_circle().encode(
-    x=alt.X('date:Q', scale=x_scale),
-    y=alt.Y('value:Q', scale=y_scale),
+    x=alt.X(0,)
+    y=alt.Y(0),
     color='country',
-    size=alt.Size('value:Q', scale=alt.Scale(range=[50, 50])),
     tooltip=['country', 'value']
 )
 
