@@ -84,8 +84,8 @@ y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value']
 
 # Create an Altair line chart with tooltips
 chart = alt.Chart(data=filtered_data, mark="circle").mark_line().encode(
-    x=alt.X('Year:Q', scale=x_scale),
-    y=alt.Y('Value:Q', scale=y_scale),
+    x=alt.X('date:Q', scale=x_scale),
+    y=alt.Y('value:Q', scale=y_scale),
     color='country',
     tooltip=['country', 'value']
 ).properties(
