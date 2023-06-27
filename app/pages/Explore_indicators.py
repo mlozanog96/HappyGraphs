@@ -10,7 +10,7 @@ st.title('Explore Indicators')
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
 # Create a row layout for filters
-filter_col1, filter_col2 = st.beta_columns(2)
+filter_col1, filter_col2 = st.columns(2)
 
 df= pd.read_csv('app/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
