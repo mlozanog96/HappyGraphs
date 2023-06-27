@@ -1,5 +1,5 @@
 import streamlit as st
-from streamlit_bokeh_events import streamlit_bokeh_events
+import altair as alt
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -77,3 +77,18 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 
 # Display the matrix using Streamlit
 st.write(matrix)
+
+
+# Create an Altair line chart with tooltips
+chart = alt.Chart(filtered_data).mark_line().encode(
+    x='date',
+    y='value',
+    color='country',
+    tooltip=['country', 'value']
+).properties(
+    width=600,
+    height=400
+)
+
+# Show the chart using Streamlit
+st.altair_chart(chart)
