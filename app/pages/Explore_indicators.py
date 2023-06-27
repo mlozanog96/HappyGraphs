@@ -50,7 +50,7 @@ chart = alt.Chart(filtered_data).mark_line().encode(
     tooltip=['country', 'value']
 ).properties(
     width=800,
-    height=600
+    height=400
     )+ alt.Chart(filtered_data).mark_circle().encode(
         x=alt.X('date:Q', scale=x_scale),
         y=alt.Y('value:Q', scale=y_scale),
