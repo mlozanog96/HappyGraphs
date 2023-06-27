@@ -80,14 +80,11 @@ st.write(matrix)
 
 
 # Create an Altair line chart with tooltips
-chart = alt.Chart(filtered_data).mark_line().encode(
-    x='date',
-    y='value',
+chart = alt.Chart(data=filtered_data, mark='circle').mark_line().encode(
+    x='Year',
+    y='KPI value',
     color='country',
     tooltip=['country', 'value']
-).properties(
-    width=600,
-    height=400
 )
 
 # Show the chart using Streamlit
