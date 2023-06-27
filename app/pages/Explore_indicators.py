@@ -27,20 +27,25 @@ if not selected_countries:
 filtered_data = df_indicator[['date','country','value']]
 filtered_data = filtered_data[(filtered_data['date'] >= selected_start_year) & (filtered_data['date'] <= selected_end_year) & (df['country'].isin(selected_countries))]
 
-st.dataframe(filtered_data)
-
 # Group the data by country
 grouped_data = filtered_data.groupby('country')
 
 # Create a line chart for each country
+fig, ax = plt.subplots()
 for country, data in grouped_data:
     plt.plot(data['date'], data['value'], label=country)
 
 # Customize the chart
-plt.xlabel('Date')
-plt.ylabel('Value')
-plt.title('Linear Chart per Country')
+plt.xlabel('Year')
+plt.ylabel('KPI value')
+plt.title('Linear Chart per Country: ',selected_indicator)
 plt.legend()
 
 # Show the chart
-st.pyplot()
+st.pyplot(fig)
+
+# Pivot the data to create a matrix
+matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+
+# Display the matrix using Streamlit
+st.write(matrix)
