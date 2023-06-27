@@ -27,57 +27,6 @@ if not selected_countries:
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
 
-# Group the data by country
-grouped_data = filtered_data.groupby('country')
-
-# Create a line chart for each country
-fig, ax = plt.subplots()
-tooltips = []
-
-for country, data in grouped_data:
-    line, = ax.plot(data['date'], data['value'], label=country)
-    tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
-                          bbox=dict(boxstyle="round", fc="white", edgecolor="gray"),
-                          arrowprops=dict(arrowstyle="->"))
-    tooltip.set_visible(False)
-    tooltips.append(tooltip)
-
-def update_tooltip(event):
-    for i, data in enumerate(grouped_data):
-        country = data[0]
-        line = ax.lines[i]
-        tooltip = tooltips[i]
-        if line.contains(event)[0]:
-            index = int(event.xdata)
-            value = data[1].iloc[index]['value']
-            x, y = line.get_data()
-            x_val = x[index]
-            y_val = y[index]
-            tooltip.xy = (x_val, y_val)
-            tooltip.set_text(f"{country}: {value}")
-            tooltip.set_visible(True)
-            fig.canvas.draw_idle()
-        else:
-            tooltip.set_visible(False)
-
-fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
-
-# Customize the chart
-ax.set_title(selected_indicator)
-ax.set_xlabel('Year')
-ax.set_ylabel(selected_indicator)
-ax.set_xlim(selected_start_year, selected_end_year)
-ax.legend()
-
-# Show the chart
-st.pyplot(fig)
-
-# Pivot the data to create a matrix
-matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
-
-# Display the matrix using Streamlit
-st.write(matrix)
-
 # Set the axis values
 x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
 y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
@@ -96,3 +45,9 @@ chart = alt.Chart(filtered_data).mark_line().encode(
 
 # Show the chart using Streamlit
 st.altair_chart(chart)
+
+# Pivot the data to create a matrix
+matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+
+# Display the matrix using Streamlit
+st.write(matrix)
