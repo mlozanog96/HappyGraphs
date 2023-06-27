@@ -90,8 +90,7 @@ chart = alt.Chart(data=filtered_data, mark="circle").mark_line().encode(
     tooltip=['country', 'value']).properties(
         width='container',
         height=400
-        ).configure_axisX(
-            maxExtent=500)
+        )
 
 # Show the chart using Streamlit
 st.altair_chart(chart)
