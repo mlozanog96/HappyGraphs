@@ -43,4 +43,4 @@ plt.title('Linear Chart per Country')
 plt.legend()
 
 # Show the chart
-plt.show()
+st.pyplot()
