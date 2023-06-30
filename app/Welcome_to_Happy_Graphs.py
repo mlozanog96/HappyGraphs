@@ -14,40 +14,15 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 
 st.markdown("# Playground")
 
-
-# User selection country
+# Load data
 df_countries_life_ex = pd.read_csv('https://raw.githubusercontent.com/mlozanog96/HappyGraphs/main/app/predicition%20model/data/default-data.csv?token=GHSAT0AAAAAACCPFVJG6RBT5L6NQ3D4J3KAZE652BQ')
-st.dataframe(df_countries_life_ex.head())
 
-countries = df_countries_life_ex['Country']
-selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
-# Get data for the selected country
-access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
-measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, \
-rural_population, trade_in_services = get_country_data(selected_country, df_countries_life_ex)
-# Display the extracted data
-st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
-if st.button("Get Data"):
-    st.write(f"You selected the country: {selected_country}")
-    st.write("The following data was used for the prediction:")
-    st.write(f"Access to electricity: {access_to_electricity}")
-    st.write(f"Armed forces: {armed_forces}")
-    st.write(f"Child immunization: {child_immunization}")
-    st.write(f"Foreign investment: {foreign_investm}")
-    st.write(f"GDP per capita: {gdp_per_cap}")
-    st.write(f"Measles immunization: {measels_immunitization}")
-    st.write(f"Net primary income: {net_primary_income}")
-    st.write(f"Percentage overweight: {perc_overweigth}")
-    st.write(f"Primary school completion: {primary_school_completion}")
-    st.write(f"Rural population: {rural_population}")
-    st.write(f"Trade in services: {trade_in_services}")
 
-st.markdown("# Back to serious")
 
 ### Life Expectancy
 
-#with open('../pred_lifeexp.pkl', 'rb') as file:
-#    loaded_model = pickle.load(file)
+with open('../pred_lifeexp.pkl', 'rb') as file:
+    loaded_model = pickle.load(file)
 
 intro_text = """
 Increasing life expectancy is often regarded as a measure of societal progress. It reflects advancements in public health, education, technology, and social development. It indicates that societies are investing in improving the well-being of their citizens and addressing societal challenges.
@@ -123,22 +98,13 @@ st.pyplot(fig)
 
 
 ### Prediction with given features
-#QUESTION: at the moment it's india, maybe rather have Germany? Or having sth like: Are you Mr Müller and then having presettings that should be near to him or also have the presettings for us three
-st.write("Choose the country you life in to see your life expectancy:") #ACITON: adapt
-#QUESTION: What kind of input do we need? Dropdowns or fields to write in?
-#ACTION: adapt to make input one input with default settings #QUESTION: Where is male and female? or how old you are yourself? 
-access_to_electricity = 100
-armed_forces = 3.338855e+06
-child_immunization = 100 
-foreign_investm = 1
-gdp_per_cap = 12000
-measels_immunitization = 97
-net_primary_income = 0 
-perc_overweigth = 10
-primary_school_completion = 100
-rural_population = 50
-trade_in_services = 15
-
+# User selection country
+countries = df_countries_life_ex['Country']
+selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
+# Get data for the selected country
+access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
+measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, \
+rural_population, trade_in_services = get_country_data(selected_country, df_countries_life_ex)
 
 data = {
     'access_to_electricity': access_to_electricity,
@@ -157,8 +123,30 @@ data = {
 life_expect_df_test = pd.DataFrame(data, index=range(1))
 # Predict using the loaded model
 life_expect_df_pred = loaded_model.predict(life_expect_df_test)
-# Set up the Streamlit app
+
+# Show predicted Life Expectancy
 st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
+
+# Display the extracted data used per country for the prediction
+st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
+if st.button("Get Data"):
+    st.write(f"You selected the country: {selected_country}")
+    st.write("The following data was used for the prediction:")
+    st.write(f"Access to electricity: {access_to_electricity}")
+    st.write(f"Armed forces: {armed_forces}")
+    st.write(f"Child immunization: {child_immunization}")
+    st.write(f"Foreign investment: {foreign_investm}")
+    st.write(f"GDP per capita: {gdp_per_cap}")
+    st.write(f"Measles immunization: {measels_immunitization}")
+    st.write(f"Net primary income: {net_primary_income}")
+    st.write(f"Percentage overweight: {perc_overweigth}")
+    st.write(f"Primary school completion: {primary_school_completion}")
+    st.write(f"Rural population: {rural_population}")
+    st.write(f"Trade in services: {trade_in_services}")
+
+st.markdown("# Back to serious")
+
+
 
 
 ### Prediction with own features
