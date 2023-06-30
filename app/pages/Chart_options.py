@@ -29,7 +29,7 @@ max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
 selected_start_year, selected_end_year = selected_year_range
 
-### Get additional information on indicator?
+### Get additional information on indicator
 # Load secret key
 keys = {}
 with open("C:/Users/joana/Documents/GitHub/2023SSBIPMHWR/BigData/HappyGraphs/API_Keys", "r") as file:
@@ -45,6 +45,9 @@ prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Wo
 response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
 answer = response_indicator.choices[0].text.strip()
 st.write(answer)
+
+### Line chart
+
 
 
 ### Get a response why this indicator is going up or down
