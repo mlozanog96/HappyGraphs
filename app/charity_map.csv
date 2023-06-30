@@ -1,0 +1,28 @@
+id,name,category
+animals,Animal Welfare,Environment
+children,Child Protection,Politics & Social
+climate,Climate Action,Environment
+democ,Peace and Reconciliation,Politics & Social
+disaster,Disaster Response,Politics & Social
+ecdev,Economic Growth,Economics & Digital
+edu,Education,Politics & Social
+env,Ecosystem Restoration,Environment
+health,Physical Health,Health & sanitation
+human,Ending Human Trafficking,Politics & Social
+rights,Justice and Human Rights,Politics & Social
+sport,Sport,Politics & Social
+tech,Digital Literacy,Economics & Digital
+hunger,Food Security,Health & sanitation
+art,Arts and Culture,Politics & Social
+lgbtq,LGBTQIA+ Equality,Politics & Social
+covid-19,COVID-19,Health & sanitation
+water,Clean Water,Infrastructure
+disability,Disability Rights,Politics & Social
+endabuse,Ending Abuse,Politics & Social
+mentalhealth,Mental Health,Health & sanitation
+justice,Racial Justice,Politics & Social
+refugee,Refugee Rights,Politics & Social
+reproductive,Reproductive Health,Health & sanitation
+housing,Safe Housing,Infrastructure
+agriculture,Sustainable Agriculture,Environment
+wildlife,Wildlife Conservation,Environment
