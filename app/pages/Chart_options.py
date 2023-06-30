@@ -2,12 +2,21 @@ import streamlit as st
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import numpy as np
+import openai
+import requests
+import json
 
-st.title('Other charts')
+st.title('Happy Grraphs')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
+
+st.markup('## Other charts')
+
 df= pd.read_csv('app/world_bank_data.csv')
+
+
+### User selection
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
@@ -19,6 +28,23 @@ min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
 selected_start_year, selected_end_year = selected_year_range
+
+### Get additional information on indicator?
+# Load secret key
+keys = {}
+with open("C:/Users/joana/Documents/GitHub/2023SSBIPMHWR/BigData/HappyGraphs/API_Keys", "r") as file:
+    for line in file:
+        line = line.strip()
+        if line:
+            key, value = line.split(" = ")
+            keys[key] = value.strip("'")
+openai_api_key = keys["openai_secret"]
+
+ # Create & Perform Prompt
+prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
+response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
+answer = response_indicator.choices[0].text.strip()
+st.write(answer)
 
 
 ### Get a response why this indicator is going up or down
@@ -34,11 +60,13 @@ trend = None
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
     df_merged['trend'] = df_merged.apply(lambda row: 'increase' if row['value_last'] > row['value_first'] else 'decrease' if row['value_last'] < row['value_first'] else 'steady', axis=1)
-    trend = df_merged['trend'].tolist()
+    trend = df_merged[['country', 'trend']]
 
-# Display the trend information
-st.write("Trend:", trend)
-
+# Display the trend information for each country
+if trend is not None:
+    st.write("Trend:")
+    for _, row in trend.iterrows():
+        st.write(f"{row['country']}: {row['trend']}")
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
