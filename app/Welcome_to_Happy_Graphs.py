@@ -8,11 +8,6 @@ import requests
 import openai
 from utils import get_data, get_indicator_reason, filter_projects, get_country_data
 
-
-
-#with open('../pred_lifeexp.pkl', 'rb') as file:
-#    loaded_model = pickle.load(file)
-
 st.title('Happy Graphs')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
@@ -22,6 +17,8 @@ st.markdown("# Playground")
 
 # User selection country
 df_countries_life_ex = pd.read_csv('predicition model/data/default-data.csv')
+st.dataframe(df_countries_life_ex.head())
+
 countries = df_countries_life_ex['Country']
 selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
 # Get data for the selected country
@@ -48,6 +45,10 @@ if st.button("Get Data"):
 st.markdown("# Back to serious")
 
 ### Life Expectancy
+
+#with open('../pred_lifeexp.pkl', 'rb') as file:
+#    loaded_model = pickle.load(file)
+
 intro_text = """
 Increasing life expectancy is often regarded as a measure of societal progress. It reflects advancements in public health, education, technology, and social development. It indicates that societies are investing in improving the well-being of their citizens and addressing societal challenges.
 
