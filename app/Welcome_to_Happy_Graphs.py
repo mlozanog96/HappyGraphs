@@ -18,10 +18,10 @@ st.title('Happy Graphs')
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
 st.markdown("# Playground")
-df_countries_life_ex = pd.read_csv('predicition model/data/default-data.csv')
 
 
 # User selection country
+df_countries_life_ex = pd.read_csv('predicition model/data/default-data.csv')
 countries = df_countries_life_ex['Country']
 selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
 # Get data for the selected country
