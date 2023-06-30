@@ -1,11 +1,11 @@
 import streamlit as st
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
-#import plotly.express as px
+import plotly.express as px
 import pandas as pd
-#import matplotlib.pyplot as plt
-#import pickle
+import matplotlib.pyplot as plt
+import pickle
 import requests
-#import openai
+import openai
 from utils import get_data, get_indicator_reason, filter_projects, get_country_data
 
 
@@ -18,6 +18,8 @@ st.title('Happy Graphs')
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
 st.markdown("# Playground")
+df_countries_life_ex = pd.read_csv('predicition model/data/default-data.csv')
+
 
 # User selection country
 countries = df_countries_life_ex['Country']
@@ -60,7 +62,6 @@ st.markdown(intro_text, unsafe_allow_html=True)
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
-df_countries_life_ex = pd.read_csv('predicition model/data/default-data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
