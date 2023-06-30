@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge
 
+
 def get_data(id_indicator, countries):
 
     url = 'https://api.worldbank.org/v2/'
