@@ -260,3 +260,100 @@ def filter_projects(charity_country=None, charity_title=None, charity_region=Non
         print('Request failed with status code:', response.status_code)
         return None
 
+def get_indicator_reason(reason_indicator, df_year_max, df_year_min, reason_countries='worldwide'):
+    keys ={}
+    
+    with open("../API_Keys", "r") as file:
+        for line in file:
+            line = line.strip()
+            if line:
+                key, value = line.split(" = ")
+                keys[key] = value.strip("'")
+
+    openai_api_key = keys["openai_secret"]
+    openai.api_key = openai_api_key
+
+    prompt_reason = 'summarize why has ' + reason_indicator + ' changed over the last ' + str(df_year_max - df_year_min) + ' in ' + reason_countries + ' so much, in under 400 tokens. Put the emphasis on the positive change in all countries.'
+    response_reason = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason, max_tokens=400)
+    answer = response_reason.choices[0].text.strip()
+    return answer
+
+
+def filter_projects(charity_country=None, charity_title=None, charity_region=None, charity_theme_name=None):
+    keys ={}
+    
+    with open("../API_Keys", "r") as file:
+        for line in file:
+            line = line.strip()
+            if line:
+                key, value = line.split(" = ")
+                keys[key] = value.strip("'")
+
+    charity_key = keys["charity_secret"]
+
+    url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
+    response = requests.get(url + charity_key, headers={"Accept": "application/json"})
+
+    filters = {
+        'country': charity_country,
+        'title': charity_title,
+        'region': charity_region,
+        'name': charity_theme_name
+    }
+
+    if response.status_code == 200:
+        data = response.json()
+        projects = data['projects']['project']
+
+        filtered_projects = []
+
+        for project in projects:
+            pass_filters = True
+
+            for filter_column, filter_value in filters.items():
+                if filter_column == 'country' and filter_value and project['country'] not in filter_value:
+                    pass_filters = False
+                    break
+                if filter_column == 'title' and filter_value and project['title'] != filter_value:
+                    pass_filters = False
+                    break
+                if filter_column == 'region' and filter_value and project['region'] != filter_value:
+                    pass_filters = False
+                    break
+                if filter_column == 'name' and filter_value:
+                    themes = project['themes']['theme']
+                    theme_names = [theme['name'] for theme in themes]
+                    if filter_value not in theme_names:
+                        pass_filters = False
+                        break
+
+            if pass_filters:
+                filtered_projects.append(project)
+
+        if filtered_projects:
+            return filtered_projects
+        else:
+            return None
+
+    else:
+        print('Request failed with status code:', response.status_code)
+        return None
+
+
+def get_country_data(country, data):
+    country_data = data[data['Country'] == country]
+    access_to_electricity = country_data['access_to_electricity'].values[0]
+    armed_forces = country_data['armed_forces'].values[0]
+    child_immunization = country_data['child_immunization'].values[0]
+    foreign_investm = country_data['foreign_investm'].values[0]
+    gdp_per_cap = country_data['gdp_per_cap'].values[0]
+    measels_immunitization = country_data['measels_immunitization'].values[0]
+    net_primary_income = country_data['net_primary_income'].values[0]
+    perc_overweigth = country_data['perc_overweigth'].values[0]
+    primary_school_completion = country_data['primary_school_completion'].values[0]
+    rural_population = country_data['rural_population'].values[0]
+    trade_in_services = country_data['trade_in_services'].values[0]
+    
+    return (access_to_electricity, armed_forces, child_immunization, foreign_investm,
+            gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth,
+            primary_school_completion, rural_population, trade_in_services)
