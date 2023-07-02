@@ -48,7 +48,9 @@ df= pd.read_csv('app/world_bank_data.csv')
 #with filter_col1:
 #    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
+
 df_indicator= df[df['indicator_name']=='Life expectancy']
+st.title('Life Expectancy')
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 
 selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
