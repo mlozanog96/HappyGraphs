@@ -46,13 +46,14 @@ selected_start_year, selected_end_year = selected_year_range
 owner = 'mlozanog96'
 repo = 'HappyGraphs'
 secret_name = 'OPENAI_SECRET'
+access_token = st.secrets["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"]
 
 # Construct the URL to access the secret variable
 url = f'https://api.github.com/repos/{owner}/{repo}/actions/secrets/{secret_name}'
 
 # Set the necessary headers for authentication
 headers = {
-    'Authorization': 'Bearer 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',
+    'Authorization': f'Bearer {access_token}',
     'Accept': 'application/vnd.github.v3+json'
 }
 
