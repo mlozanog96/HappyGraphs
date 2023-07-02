@@ -4,9 +4,11 @@ import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
+import altair as alt
 from pathlib import Path
 import requests
 import openai
+import seaborn as sns
 from utils import get_data, get_indicator_reason, filter_projects, get_country_data
 
 st.title('Happy Graphs')
@@ -41,10 +43,10 @@ st.markdown(intro_text, unsafe_allow_html=True)
 
 # Get the list of available indicators and countries and user selection
 df= pd.read_csv('app/world_bank_data.csv')
-available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator = st.selectbox("Select an indicator", available_indicators)
+#available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+#selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
-df_indicator= df[df['indicator_name']==selected_indicator]
+df_indicator= df[df['indicator_name']=='Life Expectancy']
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico'])
 
@@ -58,44 +60,62 @@ chart_title = "Life Expectancy"
 x_label = "Year"
 y_label = "Life Expectancy"
 
-# Create a new figure and set the chart properties
-fig, ax = plt.subplots()
-ax.set_title(chart_title)
-ax.set_xlabel(x_label)
-ax.set_ylabel(y_label)
-ax.set_ylim(0, 100)
+filter_col1, filter_col2 = st.columns(2)
+available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+with filter_col1:
+    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
-# Plot the data for selected countries
-#for country in selected_countries:
-#    country_data = df[['Year', country]]
-#    line_color = st.color_picker(f"Select color for {country}", key=country)
-#    ax.plot(country_data['Year'], country_data[country], label=country, color=line_color)
+df_indicator= df[df['indicator_name']==selected_indicator]
+available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+with filter_col2:
+    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
-    # Add a tooltip to show year, country, and life expectancy on hover
-#    tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
-#                          bbox=dict(boxstyle="round", fc="white", edgecolor="gray"),
-#                          arrowprops=dict(arrowstyle="->"))
-#    tooltip.set_visible(False)
+min_year = int(df_indicator['date'].min())
+max_year = int(df_indicator['date'].max())
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
+selected_start_year, selected_end_year = selected_year_range
 
-#    def update_tooltip(event):
-#        if event.inaxes == ax:
-#            x = int(event.xdata)
-#            y = int(event.ydata)
-#            country = country_data.loc[country_data['Year'] == x].index[0]
-#            tooltip.xy = (x, y)
-#            tooltip.set_text(f"Year: {x}\nCountry: {country}\nLife Expectancy: {y}")
-#            tooltip.set_visible(True)
-#            fig.canvas.draw_idle()
-#        else:
-#            tooltip.set_visible(False)
-#            fig.canvas.draw_idle()
+if not selected_countries:
+    selected_countries = ['World']
 
-#    fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
+# Filter the data for selected countries and time period
+filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
 
-# Add a legend
-#ax.legend()
-# Display the chart
-#st.pyplot(fig)
+# Set the axis values
+x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
+y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
+
+# Set Color palette
+num_colors= 15
+color_palette = sns.color_palette("husl", num_colors)
+custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
+
+# Create an Altair line chart with tooltips
+chart = alt.Chart(filtered_data).mark_line().encode(
+    x=alt.X('date:Q', scale=x_scale),
+    y=alt.Y('value:Q', scale=y_scale),
+    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
+    tooltip=['country', 'value']
+).properties(
+    width=800,
+    height=400
+    )+ alt.Chart(filtered_data).mark_circle().encode(
+        x=alt.X('date:Q', scale=x_scale),
+        y=alt.Y('value:Q', scale=y_scale),
+        size=alt.value(20),
+        color='country',
+        tooltip=['country', 'value']
+        )
+
+# Show the chart using Streamlit
+st.altair_chart(chart)
+
+# Pivot the data to create a matrix
+matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+
+# Display the matrix using Streamlit
+st.write(matrix)
+
 
 
 
