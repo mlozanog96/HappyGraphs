@@ -47,6 +47,7 @@ openai_api_key = st.secrets["openai_secret"]
 charity_api_key = st.secrets["charity_secret"]
 
  # Create & Perform Prompt
+openai.api_key=openai_api_key
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
 response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
 answer = response_indicator.choices[0].text.strip()
