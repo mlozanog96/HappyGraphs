@@ -52,7 +52,7 @@ url = f'https://api.github.com/repos/{owner}/{repo}/actions/secrets/{secret_name
 
 # Set the necessary headers for authentication
 headers = {
-    'Authorization': 'Bearer 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',
+    'Authorization': 'Bearer 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',
     'Accept': 'application/vnd.github.v3+json'
 }
 
