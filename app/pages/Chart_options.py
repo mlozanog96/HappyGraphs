@@ -43,35 +43,11 @@ selected_start_year, selected_end_year = selected_year_range
 #            keys[key] = value.strip("'")
 #openai_api_key = keys["openai_secret"]
 
-owner = 'mlozanog96'
-repo = 'HappyGraphs'
-secret_name = 'OPENAI_SECRET'
-access_token = st.secrets["TOKEN_GITHUB"]
+openai_key = st.secrets["openai_secret"]
+charity_key = st.secrets["charity_secret"]
 
-# Construct the URL to access the secret variable
-url = f'https://api.github.com/repos/{owner}/{repo}/actions/secrets/{secret_name}'
-
-# Set the necessary headers for authentication
-headers = {
-    'Authorization': f'Bearer {access_token}',
-    'Accept': 'application/vnd.github.v3+json'
-}
-
-# Send a GET request to retrieve the secret variable
-response = requests.get(url, headers=headers)
-data = response.json()
-st.write(data)
-
-# Extract the value of the secret variable
-#openai_api_key = data['value']
-
-access_token = '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'
-g = Github(access_token)
-repo = g.get_repo('mlozanog96/HappyGraphs')  # Replace 'owner/repository' with the actual repository path
-secret_name = 'OPENAI_SECRET'  # Replace with the actual secret key name
-secret_value = repo.get_secret(secret_name).value
-st.write(secret_value)
-
+st.write(openai_key)
+st.write(charity_key)
 
 
 
