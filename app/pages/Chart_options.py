@@ -64,7 +64,7 @@ st.write(data)
 # Extract the value of the secret variable
 #openai_api_key = data['value']
 
-access_token = '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'
+access_token = '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'
 g = Github(access_token)
 repo = g.get_repo('mlozanog96/HappyGraphs')  # Replace 'owner/repository' with the actual repository path
 secret_name = 'OPENAI_SECRET'  # Replace with the actual secret key name
