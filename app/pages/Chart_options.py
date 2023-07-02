@@ -31,14 +31,34 @@ selected_start_year, selected_end_year = selected_year_range
 
 ### Get additional information on indicator
 # Load secret key
-keys = {}
-with open("C:/Users/joana/Documents/GitHub/2023SSBIPMHWR/BigData/HappyGraphs/API_Keys", "r") as file:
-    for line in file:
-        line = line.strip()
-        if line:
-            key, value = line.split(" = ")
-            keys[key] = value.strip("'")
-openai_api_key = keys["openai_secret"]
+
+#keys = {}
+#with open("C:/Users/joana/Documents/GitHub/2023SSBIPMHWR/BigData/HappyGraphs/API_Keys", "r") as file:
+#    for line in file:
+#        line = line.strip()
+#        if line:
+#            key, value = line.split(" = ")
+#            keys[key] = value.strip("'")
+#openai_api_key = keys["openai_secret"]
+owner = 'mlozanog96'
+repo = 'HappyGraphs'
+secret_name = 'OPENAI_SECRET'
+
+# Construct the URL to access the secret variable
+url = f'https://api.github.com/repos/{owner}/{repo}/actions/secrets/{secret_name}'
+
+# Set the necessary headers for authentication
+headers = {
+    'Authorization': 'Bearer <your GitHub personal access token>',
+    'Accept': 'application/vnd.github.v3+json'
+}
+
+# Send a GET request to retrieve the secret variable
+response = requests.get(url, headers=headers)
+data = response.json()
+
+# Extract the value of the secret variable
+openai_api_key = data['value']
 
  # Create & Perform Prompt
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
