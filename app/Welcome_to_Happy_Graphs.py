@@ -17,15 +17,14 @@ st.markdown("# Playground")
 
 # Load data
 df_countries_life_ex = pd.read_csv(Path(__file__).parent/'predicition_model/data/default-data.csv')
-#df_countries_life_ex = pd.read_csv('app/prediction_model/data/default-data.csv')
-#df_countries_life_ex = pd.read_csv('https://raw.githubusercontent.com/mlozanog96/HappyGraphs/main/app/predicition%20model/data/default-data.csv?token=GHSAT0AAAAAACCPFVJG6RBT5L6NQ3D4J3KAZE652BQ')
-
-
 
 ### Life Expectancy
+def load_model():
+    with open(Path(__file__).parent/'pred_lifeexp.pkl', 'rb') as file:
+        loaded_model = pickle.load(file)
+    return loaded_model
 
-with open(Path(__file__).parent/'pred_lifeexp.pkl', 'rb') as file:
-    loaded_model = pickle.load(file)
+loaded_model =load_model()
 
 intro_text = """
 Increasing life expectancy is often regarded as a measure of societal progress. It reflects advancements in public health, education, technology, and social development. It indicates that societies are investing in improving the well-being of their citizens and addressing societal challenges.
