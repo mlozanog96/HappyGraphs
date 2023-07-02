@@ -16,7 +16,7 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 st.markdown("# Playground")
 
 # Load data
-df= pd.read_csv(Path(__file__).parent/'predicition_model/data/default-data.csv')
+df_countries_life_ex = pd.read_csv(Path(__file__).parent/'predicition_model/data/default-data.csv')
 #df_countries_life_ex = pd.read_csv('app/prediction_model/data/default-data.csv')
 #df_countries_life_ex = pd.read_csv('https://raw.githubusercontent.com/mlozanog96/HappyGraphs/main/app/predicition%20model/data/default-data.csv?token=GHSAT0AAAAAACCPFVJG6RBT5L6NQ3D4J3KAZE652BQ')
 
@@ -24,7 +24,7 @@ df= pd.read_csv(Path(__file__).parent/'predicition_model/data/default-data.csv')
 
 ### Life Expectancy
 
-with open('../pred_lifeexp.pkl', 'rb') as file:
+with open(Path(__file__).parent/'../pred_lifeexp.pkl', 'rb') as file:
     loaded_model = pickle.load(file)
 
 intro_text = """
