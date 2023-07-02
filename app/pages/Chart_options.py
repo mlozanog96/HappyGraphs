@@ -62,7 +62,7 @@ data = response.json()
 st.write(data)
 
 # Extract the value of the secret variable
-openai_api_key = data['value']
+#openai_api_key = data['value']
 
 access_token = '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'
 g = Github(access_token)
