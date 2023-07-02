@@ -4,6 +4,7 @@ import plotly.express as px
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
+from pathlib import Path
 import requests
 import openai
 from utils import get_data, get_indicator_reason, filter_projects, get_country_data
@@ -15,7 +16,7 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 st.markdown("# Playground")
 
 # Load data
-df= pd.read_csv('app/world_bank_data.csv')
+df= pd.read_csv(Path(__file__).parent/'../app/prediction_model/data/default-data.csv')
 df_countries_life_ex = pd.read_csv('app/prediction_model/data/default-data.csv')
 #df_countries_life_ex = pd.read_csv('https://raw.githubusercontent.com/mlozanog96/HappyGraphs/main/app/predicition%20model/data/default-data.csv?token=GHSAT0AAAAAACCPFVJG6RBT5L6NQ3D4J3KAZE652BQ')
 
