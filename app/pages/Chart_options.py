@@ -43,14 +43,8 @@ selected_start_year, selected_end_year = selected_year_range
 #            keys[key] = value.strip("'")
 #openai_api_key = keys["openai_secret"]
 
-openai_key = st.secrets["openai_secret"]
-charity_key = st.secrets["charity_secret"]
-
-st.write(openai_key)
-st.write(charity_key)
-
-
-
+openai_api_key = st.secrets["openai_secret"]
+charity_api_key = st.secrets["charity_secret"]
 
  # Create & Perform Prompt
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
