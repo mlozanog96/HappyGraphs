@@ -3,6 +3,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import openai
+import os
 import requests
 import json
 
@@ -40,6 +41,10 @@ selected_start_year, selected_end_year = selected_year_range
 #            key, value = line.split(" = ")
 #            keys[key] = value.strip("'")
 #openai_api_key = keys["openai_secret"]
+
+secret_value = os.environ['OPENAI_SECRET']
+print(secret_value)
+
 owner = 'mlozanog96'
 repo = 'HappyGraphs'
 secret_name = 'OPENAI_SECRET'
