@@ -15,7 +15,8 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 st.markdown("# Playground")
 
 # Load data
-df_countries_life_ex = pd.read_csv('https://raw.githubusercontent.com/mlozanog96/HappyGraphs/main/app/predicition%20model/data/default-data.csv?token=GHSAT0AAAAAACCPFVJG6RBT5L6NQ3D4J3KAZE652BQ')
+df_countries_life_ex = pd.read_csv('app/prediction model/data/default-data.csv')
+#df_countries_life_ex = pd.read_csv('https://raw.githubusercontent.com/mlozanog96/HappyGraphs/main/app/predicition%20model/data/default-data.csv?token=GHSAT0AAAAAACCPFVJG6RBT5L6NQ3D4J3KAZE652BQ')
 
 
 
@@ -38,149 +39,149 @@ st.markdown(intro_text, unsafe_allow_html=True)
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
-available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator = st.selectbox("Select an indicator", available_indicators)
+#available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+#selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
-df_indicator= df[df['indicator_name']==selected_indicator]
-available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico'])
+#df_indicator= df[df['indicator_name']==selected_indicator]
+#available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+#selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico'])
 
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
-selected_start_year, selected_end_year = selected_year_range
+#min_year = int(df_indicator['date'].min())
+#max_year = int(df_indicator['date'].max())
+#selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
+#selected_start_year, selected_end_year = selected_year_range
 
 # Set the chart title and axis labels
-chart_title = "Life Expectancy"
-x_label = "Year"
-y_label = "Life Expectancy"
+#chart_title = "Life Expectancy"
+#x_label = "Year"
+#y_label = "Life Expectancy"
 
 # Create a new figure and set the chart properties
-fig, ax = plt.subplots()
-ax.set_title(chart_title)
-ax.set_xlabel(x_label)
-ax.set_ylabel(y_label)
-ax.set_ylim(0, 100)
+#fig, ax = plt.subplots()
+#ax.set_title(chart_title)
+#ax.set_xlabel(x_label)
+#ax.set_ylabel(y_label)
+#ax.set_ylim(0, 100)
 
 # Plot the data for selected countries
-for country in selected_countries:
-    country_data = df[['Year', country]]
-    line_color = st.color_picker(f"Select color for {country}", key=country)
-    ax.plot(country_data['Year'], country_data[country], label=country, color=line_color)
+#for country in selected_countries:
+#    country_data = df[['Year', country]]
+#    line_color = st.color_picker(f"Select color for {country}", key=country)
+#    ax.plot(country_data['Year'], country_data[country], label=country, color=line_color)
 
     # Add a tooltip to show year, country, and life expectancy on hover
-    tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
-                          bbox=dict(boxstyle="round", fc="white", edgecolor="gray"),
-                          arrowprops=dict(arrowstyle="->"))
-    tooltip.set_visible(False)
+#    tooltip = ax.annotate("", xy=(0, 0), xytext=(-20, 20), textcoords="offset points",
+#                          bbox=dict(boxstyle="round", fc="white", edgecolor="gray"),
+#                          arrowprops=dict(arrowstyle="->"))
+#    tooltip.set_visible(False)
 
-    def update_tooltip(event):
-        if event.inaxes == ax:
-            x = int(event.xdata)
-            y = int(event.ydata)
-            country = country_data.loc[country_data['Year'] == x].index[0]
-            tooltip.xy = (x, y)
-            tooltip.set_text(f"Year: {x}\nCountry: {country}\nLife Expectancy: {y}")
-            tooltip.set_visible(True)
-            fig.canvas.draw_idle()
-        else:
-            tooltip.set_visible(False)
-            fig.canvas.draw_idle()
+#    def update_tooltip(event):
+#        if event.inaxes == ax:
+#            x = int(event.xdata)
+#            y = int(event.ydata)
+#            country = country_data.loc[country_data['Year'] == x].index[0]
+#            tooltip.xy = (x, y)
+#            tooltip.set_text(f"Year: {x}\nCountry: {country}\nLife Expectancy: {y}")
+#            tooltip.set_visible(True)
+#            fig.canvas.draw_idle()
+#        else:
+#            tooltip.set_visible(False)
+#            fig.canvas.draw_idle()
 
-    fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
+#    fig.canvas.mpl_connect("motion_notify_event", update_tooltip)
 
 # Add a legend
-ax.legend()
+#ax.legend()
 # Display the chart
-st.pyplot(fig)
+#st.pyplot(fig)
 
 
 
 
 ### Prediction with given features
 # User selection country
-countries = df_countries_life_ex['Country']
-selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
+#countries = df_countries_life_ex['Country']
+#selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
 # Get data for the selected country
-access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
-measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, \
-rural_population, trade_in_services = get_country_data(selected_country, df_countries_life_ex)
+#access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
+#measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, \
+#rural_population, trade_in_services = get_country_data(selected_country, df_countries_life_ex)
 
-data = {
-    'access_to_electricity': access_to_electricity,
-    'armed_forces' : armed_forces, 
-    'child_immunization' : child_immunization, 
-    'foreign_investm' : foreign_investm, 
-    'gdp_per_cap' : gdp_per_cap,
-    'measels_immunitization' : measels_immunitization,
-    'net_primary_income' : net_primary_income, 
-    'perc_overweigth' : perc_overweigth,
-    'primary_school_completion' : primary_school_completion,
-    'rural_population' : rural_population, 
-    'trade_in_services'	: trade_in_services,
-}
+#data = {
+#    'access_to_electricity': access_to_electricity,
+#    'armed_forces' : armed_forces, 
+#    'child_immunization' : child_immunization, 
+#    'foreign_investm' : foreign_investm, 
+#    'gdp_per_cap' : gdp_per_cap,
+#    'measels_immunitization' : measels_immunitization,
+#    'net_primary_income' : net_primary_income, 
+#    'perc_overweigth' : perc_overweigth,
+#    'primary_school_completion' : primary_school_completion,
+#    'rural_population' : rural_population, 
+#    'trade_in_services'	: trade_in_services,
+#}
 # transform them into a Dataframe
-life_expect_df_test = pd.DataFrame(data, index=range(1))
+#life_expect_df_test = pd.DataFrame(data, index=range(1))
 # Predict using the loaded model
-life_expect_df_pred = loaded_model.predict(life_expect_df_test)
+#life_expect_df_pred = loaded_model.predict(life_expect_df_test)
 
 # Show predicted Life Expectancy
-st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
+#st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
 
 # Display the extracted data used per country for the prediction
-st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
-if st.button("Get Data"):
-    st.write(f"You selected the country: {selected_country}")
-    st.write("The following data was used for the prediction:")
-    st.write(f"Access to electricity: {access_to_electricity}")
-    st.write(f"Armed forces: {armed_forces}")
-    st.write(f"Child immunization: {child_immunization}")
-    st.write(f"Foreign investment: {foreign_investm}")
-    st.write(f"GDP per capita: {gdp_per_cap}")
-    st.write(f"Measles immunization: {measels_immunitization}")
-    st.write(f"Net primary income: {net_primary_income}")
-    st.write(f"Percentage overweight: {perc_overweigth}")
-    st.write(f"Primary school completion: {primary_school_completion}")
-    st.write(f"Rural population: {rural_population}")
-    st.write(f"Trade in services: {trade_in_services}")
+#st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
+#if st.button("Get Data"):
+#    st.write(f"You selected the country: {selected_country}")
+#    st.write("The following data was used for the prediction:")
+#    st.write(f"Access to electricity: {access_to_electricity}")
+#    st.write(f"Armed forces: {armed_forces}")
+#    st.write(f"Child immunization: {child_immunization}")
+#    st.write(f"Foreign investment: {foreign_investm}")
+#    st.write(f"GDP per capita: {gdp_per_cap}")
+#    st.write(f"Measles immunization: {measels_immunitization}")
+#    st.write(f"Net primary income: {net_primary_income}")
+#    st.write(f"Percentage overweight: {perc_overweigth}")
+#    st.write(f"Primary school completion: {primary_school_completion}")
+#    st.write(f"Rural population: {rural_population}")
+#    st.write(f"Trade in services: {trade_in_services}")
 
-st.markdown("# Back to serious")
+#st.markdown("# Back to serious")
 
 
 
 
 ### Prediction with own features
-st.write("Now it's your turn!  Below you can predict the life expectancy for a fictive country that has the features you select. Feel free to play around and find out what has which impact on life expectancy:") 
+#st.write("Now it's your turn!  Below you can predict the life expectancy for a fictive country that has the features you select. Feel free to play around and find out what has which impact on life expectancy:") 
 #ACTION: make to input
-access_to_electricity = 100
-armed_forces = 3.338855e+06
-child_immunization = 100 
-foreign_investm = 1
-gdp_per_cap = 12000
-measels_immunitization = 97
-net_primary_income = 0 
-perc_overweigth = 10
-primary_school_completion = 100
-rural_population = 50
-trade_in_services = 15
+#access_to_electricity = 100
+#armed_forces = 3.338855e+06
+#child_immunization = 100 
+#foreign_investm = 1
+#gdp_per_cap = 12000
+#measels_immunitization = 97
+#net_primary_income = 0 
+#perc_overweigth = 10
+#primary_school_completion = 100
+#rural_population = 50
+#trade_in_services = 15
 
-data = {
-    'access_to_electricity': access_to_electricity,
-    'armed_forces' : armed_forces, 
-    'child_immunization' : child_immunization, 
-    'foreign_investm' : foreign_investm, 
-    'gdp_per_cap' : gdp_per_cap,
-    'measels_immunitization' : measels_immunitization,
-    'net_primary_income' : net_primary_income, 
-    'perc_overweigth' : perc_overweigth,
-    'primary_school_completion' : primary_school_completion,
-    'rural_population' : rural_population, 
-    'trade_in_services'	: trade_in_services,
-}
+#data = {
+#    'access_to_electricity': access_to_electricity,
+#    'armed_forces' : armed_forces, 
+#    'child_immunization' : child_immunization, 
+#    'foreign_investm' : foreign_investm, 
+#    'gdp_per_cap' : gdp_per_cap,
+#    'measels_immunitization' : measels_immunitization,
+#    'net_primary_income' : net_primary_income, 
+#    'perc_overweigth' : perc_overweigth,
+#    'primary_school_completion' : primary_school_completion,
+#    'rural_population' : rural_population, 
+#    'trade_in_services'	: trade_in_services,
+#}
 
 # transform them into a Dataframe
-life_expect_df_test = pd.DataFrame(data, index=range(1))
+#life_expect_df_test = pd.DataFrame(data, index=range(1))
 # Predict using the loaded model
-life_expect_df_pred = loaded_model.predict(life_expect_df_test)
+#life_expect_df_pred = loaded_model.predict(life_expect_df_test)
 # Set up the Streamlit app
-st.write("In your fictive country a person has a predicted life expectancy of ", life_expect_df_pred[0], "years.")
+#st.write("In your fictive country a person has a predicted life expectancy of ", life_expect_df_pred[0], "years.")
