@@ -40,29 +40,30 @@ st.markdown(intro_text, unsafe_allow_html=True)
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
-#available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-#selected_indicator = st.selectbox("Select an indicator", available_indicators)
+df= pd.read_csv('app/world_bank_data.csv')
+available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+selected_indicator = st.selectbox("Select an indicator", available_indicators)
 
-#df_indicator= df[df['indicator_name']==selected_indicator]
-#available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-#selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico'])
+df_indicator= df[df['indicator_name']==selected_indicator]
+available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico'])
 
-#min_year = int(df_indicator['date'].min())
-#max_year = int(df_indicator['date'].max())
-#selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
-#selected_start_year, selected_end_year = selected_year_range
+min_year = int(df_indicator['date'].min())
+max_year = int(df_indicator['date'].max())
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
+selected_start_year, selected_end_year = selected_year_range
 
 # Set the chart title and axis labels
-#chart_title = "Life Expectancy"
-#x_label = "Year"
-#y_label = "Life Expectancy"
+chart_title = "Life Expectancy"
+x_label = "Year"
+y_label = "Life Expectancy"
 
 # Create a new figure and set the chart properties
-#fig, ax = plt.subplots()
-#ax.set_title(chart_title)
-#ax.set_xlabel(x_label)
-#ax.set_ylabel(y_label)
-#ax.set_ylim(0, 100)
+fig, ax = plt.subplots()
+ax.set_title(chart_title)
+ax.set_xlabel(x_label)
+ax.set_ylabel(y_label)
+ax.set_ylim(0, 100)
 
 # Plot the data for selected countries
 #for country in selected_countries:
