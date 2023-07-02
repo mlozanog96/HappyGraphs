@@ -67,6 +67,7 @@ with filter_col1:
 
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+st.write(available_countries)
 with filter_col2:
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
