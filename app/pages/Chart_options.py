@@ -56,6 +56,7 @@ headers = {
 # Send a GET request to retrieve the secret variable
 response = requests.get(url, headers=headers)
 data = response.json()
+st.write(data)
 
 # Extract the value of the secret variable
 openai_api_key = data['value']
