@@ -43,19 +43,15 @@ st.markdown(intro_text, unsafe_allow_html=True)
 
 # Get the list of available indicators and countries and user selection
 df= pd.read_csv('app/world_bank_data.csv')
+
 #available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-#selected_indicator = st.selectbox("Select an indicator", available_indicators)
+#with filter_col1:
+#    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
-filter_col1, filter_col2 = st.columns(2)
-available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-with filter_col1:
-    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
-
-df_indicator= df[df['indicator_name']==selected_indicator]
+df_indicator= df[df['indicator_name']=='Life expectancy']
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-st.write(available_countries)
-with filter_col2:
-    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+
+selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -102,10 +98,6 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 
 # Display the matrix using Streamlit
 st.write(matrix)
-
-
-
-
 
 ### Prediction with given features
 # User selection country
