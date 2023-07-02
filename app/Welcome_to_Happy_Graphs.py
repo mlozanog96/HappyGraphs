@@ -24,7 +24,7 @@ df_countries_life_ex = pd.read_csv(Path(__file__).parent/'predicition_model/data
 
 ### Life Expectancy
 
-with open(Path(__file__).parent/'../pred_lifeexp.pkl', 'rb') as file:
+with open(Path(__file__).parent/'pred_lifeexp.pkl', 'rb') as file:
     loaded_model = pickle.load(file)
 
 intro_text = """
