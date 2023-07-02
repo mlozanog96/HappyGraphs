@@ -10,4 +10,4 @@ utils
 openai
 scikit-learn
 numpy
-github
+PyGithub
