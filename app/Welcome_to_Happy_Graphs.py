@@ -99,7 +99,7 @@ st.write(matrix)
 st.markdown("## Prediction")
 # User selection country
 countries = df_life_ex ['Country']
-selected_country = st.selectbox("Select country for default values", countries)
+selected_country = st.selectbox("Select country for default values", countries, default='World')
 df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
 # Select default year
