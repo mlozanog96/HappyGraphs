@@ -98,13 +98,13 @@ st.write(matrix)
 ### Prediction with given features
 st.markdown("## Prediction")
 # User selection country
-selected_country = st.selectbox("Select countries", available_countries, default=['World']) 
+selected_country = st.selectbox("Select countries", sorted(available_countries), index=0) 
 #selected_country = st.selectbox("Select country for default values", countries, default='World')
 df_default= df[df['Country']==selected_country]
 
 # Select default year
 available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
-selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), default='2021')
+selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), index=0)
 
 df_default= df_default[df_default['Date']==selected_year]
 
