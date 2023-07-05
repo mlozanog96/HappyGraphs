@@ -101,7 +101,7 @@ filter_d1, filter_d2 = st.columns(2)
 
 # User selection country
 with filter_d1:
-    selected_country = st.selectbox("Select countries", sorted(available_countries), index=254) 
+    selected_country = st.selectbox("Select defualt country", sorted(available_countries), index=254) 
 #selected_country = st.selectbox("Select country for default values", countries, default='World')
 df_default= df[df['country']==selected_country]
 
@@ -110,10 +110,20 @@ available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
 with filter_d2:
     selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), index=0)
 
-df_default= df_default[df_default['Date']==selected_year]
+df_default= df_default[df_default['date']==selected_year]
 
 # Get data for the selected country
-access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, rural_population, trade_in_services = get_country_data(selected_country, df_life_ex)
+access_to_electricity = df_default.loc[df_default['indicator_name'] == 'Access to electricity', 'value']
+#armed_forces
+#child_immunization
+#foreign_investm
+#gdp_per_cap
+#measels_immunitization
+#net_primary_income
+#perc_overweigth
+#primary_school_completion
+#rural_population
+#trade_in_services 
 
 # Show default values / inputs
 access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
