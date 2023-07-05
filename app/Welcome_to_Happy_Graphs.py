@@ -111,8 +111,8 @@ st.write('Default country:', selected_country)
 df_default= df[df['country']==selected_country]
 
 # Default year
-available_years = int(df_default['date'].drop_duplicates().reset_index(drop=True))
-selected_year = st.selectbox("Select year for default values", available_years)
+available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
+selected_year = st.selectbox("Select year for default values", sorted(available_years))
 st.write('Default year:', selected_year)
 
 
