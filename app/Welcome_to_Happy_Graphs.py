@@ -114,7 +114,7 @@ df_default= df_default[df_default['date']==selected_year]
 
 # Get data for the selected country/year
 access_to_electricity = df_default.loc[df_default['indicator_name'] == 'Access to electricity', 'value']
-access_to_electricity=access_to_electricity[0]
+access_to_electricity_value=access_to_electricity[0]
 #armed_forces
 #child_immunization
 #foreign_investm
@@ -127,7 +127,7 @@ access_to_electricity=access_to_electricity[0]
 #trade_in_services 
 
 # Show default values / inputs
-access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
+access_to_electricity = st.text_input('Access to electricity:', access_to_electricity_value)
 st.write('Input:', access_to_electricity)
 
 
