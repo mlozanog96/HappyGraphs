@@ -95,12 +95,15 @@ if len(df_first) > 0:
 
 # Display the trend information for each country in a matrix
 if trend is not None:
-    st.write("Trend:")
+    st.write("Trend")
     trend_matrix = trend.set_index('country').T
     st.dataframe(trend_matrix)
     
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
+
+
 # Display the matrix using Streamlit
-st.write(matrix)
+st.write("Data matrix")
+st.dataframe(matrix)
