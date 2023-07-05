@@ -104,7 +104,7 @@ df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
 # Select default year
 available_years = df_default['Date'].drop_duplicates().reset_index(drop=True)
-selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), default='2021')
+selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), default=2021)
 
 df_default= df_default[df_default['Date']==selected_year]
 
