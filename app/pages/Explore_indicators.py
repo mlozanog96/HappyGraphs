@@ -82,6 +82,10 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 # Display the matrix using Streamlit
 st.write(matrix)
 
+# Get the first and last data points for each country
+df_first = filtered_data.groupby('country')['value'].first().reset_index()
+df_last = filtered_data.groupby('country')['value'].last().reset_index()
+
 # Determine the trend for each country
 trend = None
 if len(df_first) > 0:
