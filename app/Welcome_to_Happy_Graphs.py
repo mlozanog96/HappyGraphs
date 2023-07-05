@@ -113,7 +113,7 @@ with filter_d2:
 df_default= df_default[df_default['date']==selected_year]
 
 # Get data for the selected country
-access_to_electricity = df_default[df_default['indicator_name'] == 'Access to electricity']['value']
+access_to_electricity = df_default.loc[df_default['indicator_name'] == 'Access to electricity', 'value'].values
 st.write(access_to_electricity)
 #armed_forces
 #child_immunization
