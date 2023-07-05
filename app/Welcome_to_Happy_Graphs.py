@@ -126,7 +126,7 @@ access_to_electricity = df_default.loc[df_default['indicator_name'] == 'Access t
 #trade_in_services 
 
 # Show default values / inputs
-access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
+access_to_electricity = st.text_input('Access to electricity:', access_to_electricity.item())
 st.write('Input:', access_to_electricity)
 
 
