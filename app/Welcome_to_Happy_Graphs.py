@@ -100,15 +100,13 @@ st.markdown("## Prediction")
 # User selection country
 countries = df_life_ex ['Country']
 selected_country = st.selectbox("Select country for default values", countries)
-st.write('Default country:', selected_country,default='World')
-
-df_default= df_life_ex[df_life_ex['country']==selected_country]
+df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
 # Select default year
-available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
+available_years = df_default['Date'].drop_duplicates().reset_index(drop=True)
 selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), default='2021')
-st.write('Default year:', selected_year)
-df_default= df_default[df_default['date']==selected_year]
+
+df_default= df_default[df_default['Date']==selected_year]
 
 # Get data for the selected country
 access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, rural_population, trade_in_services = get_country_data(selected_country, df_life_ex)
