@@ -47,6 +47,7 @@ if not selected_countries:
 
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
+filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
 x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
@@ -95,8 +96,8 @@ decrease_icon = "▼"
 trend = None
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['trend'] = df_merged.apply(lambda row: increase_icon if row['value_last'] > row['value_first'] else decrease_icon if row['value_last'] < row['value_first'] else '', axis=1)
-    trend = df_merged[['country', 'trend']]
+    df_merged['Trend'] = df_merged.apply(lambda row: increase_icon if row['value_last'] > row['value_first'] else decrease_icon if row['value_last'] < row['value_first'] else '', axis=1)
+    trend = df_merged[['country', 'Trend']]
 
 # Display the trend information for each country in a matrix
 if trend is not None:
