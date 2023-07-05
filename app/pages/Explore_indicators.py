@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from github import Github
 import openai
+from streamlit import components
 
 st.title('Explore Indicators')
 
@@ -90,11 +91,11 @@ df_last = filtered_data.groupby('country')['value'].last().reset_index()
 trend = None
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['trend'] = df_merged.apply(lambda row: 'increase' if row['value_last'] > row['value_first'] else 'decrease' if row['value_last'] < row['value_first'] else 'steady', axis=1)
+    df_merged['trend'] = df_merged.apply(lambda row: increase_icon if row['value_last'] > row['value_first'] else decrease_icon if row['value_last'] < row['value_first'] else '', axis=1)
     trend = df_merged[['country', 'trend']]
 
-# Display the trend information for each country
+# Display the trend information for each country in a matrix
 if trend is not None:
     st.write("Trend:")
-    for _, row in trend.iterrows():
-        st.write(f"{row['country']}: {row['trend']}")
+    trend_matrix = trend.set_index('country').T
+    st.dataframe(trend_matrix)
