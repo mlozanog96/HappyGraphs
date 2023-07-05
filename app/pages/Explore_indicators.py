@@ -78,12 +78,6 @@ chart = alt.Chart(filtered_data).mark_line().encode(
 # Show the chart using Streamlit
 st.altair_chart(chart)
 
-# Pivot the data to create a matrix
-matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
-
-# Display the matrix using Streamlit
-st.write(matrix)
-
 # Get the first and last data points for each country
 df_first = filtered_data.groupby('country')['value'].first().reset_index()
 df_last = filtered_data.groupby('country')['value'].last().reset_index()
@@ -104,3 +98,9 @@ if trend is not None:
     st.write("Trend:")
     trend_matrix = trend.set_index('country').T
     st.dataframe(trend_matrix)
+    
+# Pivot the data to create a matrix
+matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+
+# Display the matrix using Streamlit
+st.write(matrix)
