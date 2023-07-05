@@ -24,17 +24,17 @@ with filter_col1:
     selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
 
+df_indicator= df[df['indicator_name']==selected_indicator]
+available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+with filter_col2:
+    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+
 # Create & Perform Prompt
 openai.api_key=openai_api_key
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
 response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
 answer = response_indicator.choices[0].text.strip()
 st.write(answer)
-
-df_indicator= df[df['indicator_name']==selected_indicator]
-available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-with filter_col2:
-    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -81,3 +81,16 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 
 # Display the matrix using Streamlit
 st.write(matrix)
+
+# Determine the trend for each country
+trend = None
+if len(df_first) > 0:
+    df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
+    df_merged['trend'] = df_merged.apply(lambda row: 'increase' if row['value_last'] > row['value_first'] else 'decrease' if row['value_last'] < row['value_first'] else 'steady', axis=1)
+    trend = df_merged[['country', 'trend']]
+
+# Display the trend information for each country
+if trend is not None:
+    st.write("Trend:")
+    for _, row in trend.iterrows():
+        st.write(f"{row['country']}: {row['trend']}")
