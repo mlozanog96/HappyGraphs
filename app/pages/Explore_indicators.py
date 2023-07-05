@@ -4,10 +4,16 @@ import altair as alt
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from github import Github
+import openai
 
 st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
+
+openai_api_key = st.secrets["openai_secret"]
+charity_api_key = st.secrets["charity_secret"]
+
 
 # Create a row layout for filters
 filter_col1, filter_col2 = st.columns(2)
@@ -16,6 +22,14 @@ df= pd.read_csv('app/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 with filter_col1:
     selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
+
+
+# Create & Perform Prompt
+openai.api_key=openai_api_key
+prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
+response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
+answer = response_indicator.choices[0].text.strip()
+st.write(answer)
 
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
