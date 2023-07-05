@@ -113,39 +113,40 @@ with filter_d2:
 df_default= df_default[df_default['date']==selected_year]
 
 # Get data for the selected country/year
-#access to electricity
-access_to_electricity = df_default.loc[df_default['indicator_name'] == 'Access to electricity', 'value']
-access_to_electricity_value =  access_to_electricity.item() if len(access_to_electricity) > 0 else ""
-#armed_forces
-#child_immunization
-#foreign_investm
-#gdp_per_cap
-#measels_immunitization
-#net_primary_income
-#perc_overweigth
-#primary_school_completion
-#rural_population
-#trade_in_services 
+def get_value(indicator_name):
+    df_default_value=df_default.loc[df_default['indicator_name'] == indicator_name, 'value']
+    value= df_default_value.item() if len(df_default_value) > 0 else ""
+    return value
+
+#Get default values
+access_to_electricity = get_value('Access to electricity')
+#armed_forces = get_value('')
+#child_immunization = get_value('')
+#foreign_investm= get_value('')
+#gdp_per_cap= get_value('GDP growth % mostly above 0 (but decreasing)')
+#measels_immunitization= get_value('')
+#net_primary_income= get_value('')
+#perc_overweigth= get_value('')
+#primary_school_completion= get_value('')
+#rural_population= get_value('')
+#trade_in_services = get_value('')
 
 # Show default values / inputs
-access_to_electricity = st.text_input('Access to electricity:', access_to_electricity_value)
-st.write('Input:', access_to_electricity)
+access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
 
-
-
-data = {
-    'access_to_electricity': access_to_electricity,
-    'armed_forces' : armed_forces, 
-    'child_immunization' : child_immunization, 
-    'foreign_investm' : foreign_investm, 
-    'gdp_per_cap' : gdp_per_cap,
-    'measels_immunitization' : measels_immunitization,
-    'net_primary_income' : net_primary_income, 
-    'perc_overweigth' : perc_overweigth,
-    'primary_school_completion' : primary_school_completion,
-    'rural_population' : rural_population, 
-    'trade_in_services'	: trade_in_services,
-}
+#data = {
+#    'access_to_electricity': access_to_electricity,
+#    'armed_forces' : armed_forces, 
+#    'child_immunization' : child_immunization, 
+#    'foreign_investm' : foreign_investm, 
+#    'gdp_per_cap' : gdp_per_cap,
+#    'measels_immunitization' : measels_immunitization,
+#    'net_primary_income' : net_primary_income, 
+#    'perc_overweigth' : perc_overweigth,
+#    'primary_school_completion' : primary_school_completion,
+#    'rural_population' : rural_population, 
+#    'trade_in_services'	: trade_in_services,
+#}
 # transform them into a Dataframe
 #life_expect_df_test = pd.DataFrame(data, index=range(1))
 # Predict using the loaded model
