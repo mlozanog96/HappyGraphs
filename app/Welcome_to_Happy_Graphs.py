@@ -18,7 +18,7 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 st.markdown("# Playground")
 
 # Load data
-#df_countries_life_ex = pd.read_csv(Path(__file__).parent/'predicition_model/data/default-data.csv')
+df_countries_life_ex = pd.read_csv(Path(__file__).parent/'predicition_model/data/default-data.csv')
 
 ### Life Expectancy
 def load_model():
@@ -106,17 +106,15 @@ st.markdown("## Prediction")
 # User selection country
 #countries = df_countries_life_ex['Country']
 selected_country = st.selectbox("Select country for default values", available_countries)
-st.write('Default country:', selected_country)
+st.write('Default country:', selected_country,default='World')
 
 df_default= df[df['country']==selected_country]
 
-# Default year
+# Select default year
 available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
-selected_year = st.selectbox("Select year for default values", sorted(available_years))
+selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), default='2021')
 st.write('Default year:', selected_year)
-
-
-#Select default year
+df_default= df_default[df_default['date']==selected_year]
 
 # Get data for the selected country
 #access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
