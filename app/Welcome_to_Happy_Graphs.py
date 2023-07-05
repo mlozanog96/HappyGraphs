@@ -98,7 +98,7 @@ st.write(matrix)
 ### Prediction with given features
 st.markdown("## Prediction")
 # User selection country
-selected_country = st.selectbox("Select countries", sorted(available_countries), index=261) 
+selected_country = st.selectbox("Select countries", sorted(available_countries), index=2) 
 #selected_country = st.selectbox("Select country for default values", countries, default='World')
 df_default= df[df['country']==selected_country]
 
