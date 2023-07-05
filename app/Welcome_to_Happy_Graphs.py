@@ -19,6 +19,7 @@ st.markdown("# Playground")
 
 # Load data
 df_life_ex = pd.read_csv(Path(__file__).parent/'prediction_model/data/default-data.csv')
+df= pd.read_csv('app/world_bank_data.csv')
 
 ### Life Expectancy
 def load_model():
@@ -42,13 +43,6 @@ st.markdown(intro_text, unsafe_allow_html=True)
 #ACTION: Search for an indicator by topic?
 
 # Get the list of available indicators and countries and user selection
-df= pd.read_csv('app/world_bank_data.csv')
-
-#available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-#with filter_col1:
-#    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
-
-
 df_indicator= df[df['indicator_name']=='Life expectancy']
 st.title('Life Expectancy')
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
@@ -104,11 +98,11 @@ st.write(matrix)
 ### Prediction with given features
 st.markdown("## Prediction")
 # User selection country
-#countries = df_countries_life_ex['Country']
-selected_country = st.selectbox("Select country for default values", available_countries)
+countries = df_life_ex ['Country']
+selected_country = st.selectbox("Select country for default values", countries)
 st.write('Default country:', selected_country,default='World')
 
-df_default= df[df['country']==selected_country]
+df_default= df_life_ex[df_life_ex['country']==selected_country]
 
 # Select default year
 available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
@@ -117,23 +111,27 @@ st.write('Default year:', selected_year)
 df_default= df_default[df_default['date']==selected_year]
 
 # Get data for the selected country
-#access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
-#measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, \
-#rural_population, trade_in_services = get_country_data(selected_country, df_countries_life_ex)
+access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, rural_population, trade_in_services = get_country_data(selected_country, df_life_ex)
 
-#data = {
-#    'access_to_electricity': access_to_electricity,
-#    'armed_forces' : armed_forces, 
-#    'child_immunization' : child_immunization, 
-#    'foreign_investm' : foreign_investm, 
-#    'gdp_per_cap' : gdp_per_cap,
-#    'measels_immunitization' : measels_immunitization,
-#    'net_primary_income' : net_primary_income, 
-#    'perc_overweigth' : perc_overweigth,
-#    'primary_school_completion' : primary_school_completion,
-#    'rural_population' : rural_population, 
-#    'trade_in_services'	: trade_in_services,
-#}
+# Show default values / inputs
+access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
+st.write('Input:', access_to_electricity)
+
+
+
+data = {
+    'access_to_electricity': access_to_electricity,
+    'armed_forces' : armed_forces, 
+    'child_immunization' : child_immunization, 
+    'foreign_investm' : foreign_investm, 
+    'gdp_per_cap' : gdp_per_cap,
+    'measels_immunitization' : measels_immunitization,
+    'net_primary_income' : net_primary_income, 
+    'perc_overweigth' : perc_overweigth,
+    'primary_school_completion' : primary_school_completion,
+    'rural_population' : rural_population, 
+    'trade_in_services'	: trade_in_services,
+}
 # transform them into a Dataframe
 #life_expect_df_test = pd.DataFrame(data, index=range(1))
 # Predict using the loaded model
