@@ -102,9 +102,22 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 st.write(matrix)
 
 ### Prediction with given features
+st.markdown("## Prediction")
 # User selection country
 #countries = df_countries_life_ex['Country']
-#selected_country = st.selectbox("Choose the country you live in to see your life expectancy", countries)
+selected_country = st.selectbox("Select country for default values", available_countries)
+st.write('Default country:', selected_country)
+
+df_default= df[df['country']==selected_country]
+
+# Default year
+available_years = int(df_default['date'].drop_duplicates().reset_index(drop=True))
+selected_year = st.selectbox("Select year for default values", available_years)
+st.write('Default year:', selected_year)
+
+
+#Select default year
+
 # Get data for the selected country
 #access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, \
 #measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, \
