@@ -87,6 +87,10 @@ st.write(matrix)
 df_first = filtered_data.groupby('country')['value'].first().reset_index()
 df_last = filtered_data.groupby('country')['value'].last().reset_index()
 
+# Define icons for increase and decrease trends
+increase_icon = "▲"
+decrease_icon = "▼"
+
 # Determine the trend for each country
 trend = None
 if len(df_first) > 0:
