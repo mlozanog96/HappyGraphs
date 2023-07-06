@@ -7,6 +7,7 @@ import openai
 import os
 import requests
 import json
+import numpy
 from github import Github
 
 st.markdown('# Other happy graphs :)')
@@ -42,7 +43,6 @@ def convert_table_to_matrix(table):
     return matrix
 
 matrix_data= convert_table_to_matrix(filtered_data)
-st.write(matrix_data)
 
 # Create a correlation scatter plot using Altair
 chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
@@ -54,9 +54,16 @@ chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
     width=600,
     height=400
 )
+correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
+
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
+
+# Calculate correlation
+correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
+st.write(f"Correlation: {correlation:.2f}")
+
 
 ### Get additional information on indicator
 #Load secret key
