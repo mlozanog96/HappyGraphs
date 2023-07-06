@@ -99,7 +99,7 @@ st.write(matrix)
 st.markdown("## Prediction")
 
 # User selection country
-countries=get_country_data(df_life_ex)
+countries=df_life_ex['Country'].drop_duplicates().reset_index(drop=True)
 selected_country = st.selectbox("Select defualt country", sorted(countries), index=254) 
 df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
@@ -110,7 +110,7 @@ def get_value(indicator_name):
     return value
 
 #Get default values
-access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, rural_population, trade_in_services = get_country_data(selected_country,df_life_ex)
+access_to_electricity_dv, armed_forces_dv, child_immunization_dv, foreign_investm_dv, gdp_per_cap_dv, measels_immunitization_dv, net_primary_income_dv, perc_overweigth_dv, primary_school_completion_dv, rural_population_dv, trade_in_services_dv = get_country_data(selected_country,df_life_ex)
 #access_to_electricity = get_value('Access to electricity')
 #armed_forces = get_value('')
 #child_immunization = get_value('')
@@ -124,32 +124,41 @@ access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_pe
 #trade_in_services = get_value('')
 
 # Show default values / inputs
-access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
-armed_forces= st.text_input('Access to electricity:', armed_forces)
+access_to_electricity = st.text_input('Access to electricity:', access_to_electricity_dv)
+armed_forces= st.text_input('Armed Forces:', armed_forces_dv)
+child_immunization = st.text_input('Child immunizatioon', child_immunization_dv)
+foreign_investm= st.text_input('Foreign Investment:', foreign_investm_dv)
+gdp_per_cap= st.text_input('GDP per capita:', gdp_per_cap_dv)
+measels_immunitization= st.text_input('Measels immunitization:', measels_immunitization_dv)
+net_primary_income= st.text_input('Net primary income:', net_primary_income_dv)
+perc_overweigth= st.text_input('Overweigth Percentage:', perc_overweigth_dv)
+primary_school_completion= st.text_input('Primary school completion:', primary_school_completion_dv)
+rural_population= st.text_input('Rural population:', rural_population_dv)
+trade_in_services = st.text_input('Trade in services:', trade_in_services_dv)
 
-#data = {
-#    'access_to_electricity': access_to_electricity,
-#    'armed_forces' : armed_forces, 
-#    'child_immunization' : child_immunization, 
-#    'foreign_investm' : foreign_investm, 
-#    'gdp_per_cap' : gdp_per_cap,
-#    'measels_immunitization' : measels_immunitization,
-#    'net_primary_income' : net_primary_income, 
-#    'perc_overweigth' : perc_overweigth,
-#    'primary_school_completion' : primary_school_completion,
-#    'rural_population' : rural_population, 
-#    'trade_in_services'	: trade_in_services,
-#}
+data = {
+    'access_to_electricity': access_to_electricity,
+    'armed_forces' : armed_forces, 
+    'child_immunization' : child_immunization, 
+    'foreign_investm' : foreign_investm, 
+    'gdp_per_cap' : gdp_per_cap,
+    'measels_immunitization' : measels_immunitization,
+    'net_primary_income' : net_primary_income, 
+    'perc_overweigth' : perc_overweigth,
+    'primary_school_completion' : primary_school_completion,
+    'rural_population' : rural_population, 
+    'trade_in_services'	: trade_in_services,
+}
 # transform them into a Dataframe
-#life_expect_df_test = pd.DataFrame(data, index=range(1))
+life_expect_df_test = pd.DataFrame(data, index=range(1))
 # Predict using the loaded model
-#life_expect_df_pred = loaded_model.predict(life_expect_df_test)
+life_expect_df_pred = loaded_model.predict(life_expect_df_test)
 
 # Show predicted Life Expectancy
-#st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
+st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
 
 # Display the extracted data used per country for the prediction
-#st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
+st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
 #if st.button("Get Data"):
 #    st.write(f"You selected the country: {selected_country}")
 #    st.write("The following data was used for the prediction:")
