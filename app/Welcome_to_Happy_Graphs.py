@@ -97,7 +97,9 @@ st.write(matrix)
 
 ### Prediction with given features
 st.markdown("## Prediction")
-
+intro_text_2 = """
+To predict a value, you can select a country in order to get default values, then feel free to modify any value you want """
+st.markdown(intro_text_2, unsafe_allow_html=True)
 # User selection country
 countries=df_life_ex['Country'].drop_duplicates().reset_index(drop=True)
 selected_country = st.selectbox("Select defualt country", sorted(countries), index=261) 
@@ -178,7 +180,7 @@ st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
 #    st.write(f"Rural population: {rural_population}")
 #    st.write(f"Trade in services: {trade_in_services}")
 
-st.markdown("# Back to serious")
+#st.markdown("# Back to serious")
 ### Prediction with own features
 #st.write("Now it's your turn!  Below you can predict the life expectancy for a fictive country that has the features you select. Feel free to play around and find out what has which impact on life expectancy:") 
 #ACTION: make to input
