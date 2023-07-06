@@ -49,7 +49,7 @@ chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
     x=alt.X(f"{selected_indicator_1}:Q"),
     y=alt.Y(f"{selected_indicator_2}:Q"),
     color='country',
-    tooltip=['country', f"`{selected_indicator_1}`", f"`{selected_indicator_2}`"]
+    tooltip=['country', f"{selected_indicator_1}", f"{selected_indicator_2}"]
 ).properties(
     width=600,
     height=400
