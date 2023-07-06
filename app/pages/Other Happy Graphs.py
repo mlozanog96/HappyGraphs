@@ -84,10 +84,11 @@ year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), i
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
 matrix_radar= convert_table_to_matrix(df_radar)
+st.write(matrix_radar)
 
 # Reshape data using pivot
 df_pivot = matrix_radar.melt('KPI', var_name='indicator', value_name='value')
-
+st.write(df_pivot)
 # Create radar chart using Altair
 chart = alt.Chart(df_pivot).mark_line().encode(
     alt.X('Category:N'),
