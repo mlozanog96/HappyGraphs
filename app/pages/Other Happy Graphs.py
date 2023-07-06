@@ -77,12 +77,30 @@ df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
 radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
-df_indicator_radar= df[df['country'].isin(radar_countries)]
+df_indicator_radar= df_indicator_radar[df_indicator_radar['country'].isin(radar_countries)]
 
 available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(drop=True)
-year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=0)
+year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
+df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
+matrix_radar= convert_table_to_matrix(df_radar)
 
+# Reshape data using pivot
+df_pivot = matrix_radar.melt('KPI', var_name='indicator', value_name='value')
+
+# Create radar chart using Altair
+chart = alt.Chart(df_pivot).mark_line().encode(
+    alt.X('Category:N'),
+    alt.Y('Value:Q', scale=alt.Scale(domain=(0, 1))),
+    alt.Color('KPI:N'),
+    order=alt.Order('KPI:N')
+).properties(
+    width=600,
+    height=400
+)
+
+# Display radar chart in Streamlit
+st.altair_chart(chart)
 st.markdown('## Other charts')
 
 ### Get reason why indicator changes 
