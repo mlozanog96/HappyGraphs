@@ -102,7 +102,7 @@ To predict a value, you can select a country in order to get default values, the
 st.markdown(intro_text_2, unsafe_allow_html=True)
 # User selection country
 countries=df_life_ex['Country'].drop_duplicates().reset_index(drop=True)
-selected_country = st.selectbox("Select defualt country", sorted(countries), index=261) 
+selected_country = st.selectbox("Select default country", sorted(countries), index=261) 
 df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
 # Get data for the selected country/year
