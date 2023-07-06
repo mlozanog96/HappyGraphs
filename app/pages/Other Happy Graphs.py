@@ -9,6 +9,7 @@ import requests
 import json
 import numpy
 from github import Github
+import seaborn as sns
 
 st.markdown('# Other happy graphs! :)')
 
