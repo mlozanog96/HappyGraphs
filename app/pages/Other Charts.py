@@ -19,7 +19,8 @@ filter_col1, filter_col2, filter_col3 = st.columns(3)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", available_indicators)
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", available_indicators)
-df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
+df_indicator_1= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
+
 
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 selected_countries = filter_col3.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
@@ -37,34 +38,8 @@ filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df
 filtered_data = filtered_data.sort_values('date')
 
 def convert_table_to_matrix(table):
-    # Get unique countries, dates, and indicators
-    countries = sorted(set(table['country']))
-    dates = sorted(set(table['date']))
-    indicators = sorted(set(table['indicator_name']))
-    
-    # Create an empty matrix
-    matrix = []
-    
-    # Iterate over each country and date
-    for country in countries:
-        for date in dates:
-            # Find the corresponding rows in the table
-            rows = table[(table['country'] == country) & (table['date'] == date)]
-            
-            # Initialize the indicator values dictionary
-            indicator_values = {}
-            
-            # Extract the indicator values
-            for _, row in rows.iterrows():
-                indicator_name = row['indicator_name']
-                indicator_value = row['value']
-                indicator_values[indicator_name] = indicator_value
-            
-            # Append the row to the matrix
-            row = [country, date]
-            for indicator in indicators:
-                row.append(indicator_values.get(indicator))
-            matrix.append(row)
+    # Pivot the table to create separate columns for each indicator
+    matrix = table.pivot(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
     
     return matrix
 
