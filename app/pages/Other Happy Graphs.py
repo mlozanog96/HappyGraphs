@@ -18,7 +18,7 @@ df= pd.read_csv('app/world_bank_data.csv')
 st.markdown('## Correlation between two variables')
 filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=0)
+selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(available_indicators),index=3)
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
@@ -71,11 +71,19 @@ correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selecte
 st.write(f"Correlation: {correlation:.2f}")
 
 st.markdown('## Radar Graph')
+col1, col2, col3 = st.columns(3)
+radar_indicators= col1.multiselect("Select indicators", sorted(available_indicators), default=['Life Expectancy','Forest Area','Access to electricity','Energy use','Refugee population'])
+df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
+
+available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
+radar_countries = col2.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
+df_indicator_radar= df[df['country'].isin(radar_countries)]
+
+available_years_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
+year=col3.selectbox("Select year",sorted(available_countries_radar, reverse=True), index=0)
 
 
-
-
-st.markdown('# Other charts')
+st.markdown('## Other charts')
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
