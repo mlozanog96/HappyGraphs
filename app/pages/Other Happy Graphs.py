@@ -72,7 +72,7 @@ st.write(f"Correlation: {correlation:.2f}")
 
 st.markdown('## Radar Graph')
 col1, col2, col3 = st.columns(3)
-radar_indicators= col1.multiselect("Select indicators", sorted(available_indicators), default=['Life Expectancy','Forest Area','Access to electricity','Energy use','Refugee population'])
+radar_indicators= col1.multiselect("Select indicators", sorted(available_indicators), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
 df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
