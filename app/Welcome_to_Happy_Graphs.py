@@ -100,7 +100,7 @@ st.markdown("## Prediction")
 
 # User selection country
 countries=df_life_ex['Country'].drop_duplicates().reset_index(drop=True)
-selected_country = st.selectbox("Select defualt country", sorted(countries), index=254) 
+selected_country = st.selectbox("Select defualt country", sorted(countries), index=261) 
 df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
 # Get data for the selected country/year
@@ -124,17 +124,18 @@ access_to_electricity_dv, armed_forces_dv, child_immunization_dv, foreign_invest
 #trade_in_services = get_value('')
 
 # Show default values / inputs
-access_to_electricity = st.text_input('Access to electricity:', access_to_electricity_dv)
-armed_forces= st.text_input('Armed Forces:', armed_forces_dv)
-child_immunization = st.text_input('Child immunizatioon', child_immunization_dv)
-foreign_investm= st.text_input('Foreign Investment:', foreign_investm_dv)
-gdp_per_cap= st.text_input('GDP per capita:', gdp_per_cap_dv)
-measels_immunitization= st.text_input('Measels immunitization:', measels_immunitization_dv)
-net_primary_income= st.text_input('Net primary income:', net_primary_income_dv)
-perc_overweigth= st.text_input('Overweigth Percentage:', perc_overweigth_dv)
-primary_school_completion= st.text_input('Primary school completion:', primary_school_completion_dv)
-rural_population= st.text_input('Rural population:', rural_population_dv)
-trade_in_services = st.text_input('Trade in services:', trade_in_services_dv)
+col1, col2, col3, col4 = st.columns(4)
+access_to_electricity = col1.text_input('Access to electricity:', access_to_electricity_dv)
+armed_forces= col2.text_input('Armed Forces:', armed_forces_dv)
+child_immunization = col3.text_input('Child immunization', child_immunization_dv)
+foreign_investm= col4.text_input('Foreign Investment:', foreign_investm_dv)
+gdp_per_cap= col1.text_input('GDP per capita:', gdp_per_cap_dv)
+measels_immunitization= col2.text_input('Measels immunitization:', measels_immunitization_dv)
+net_primary_income= col3.text_input('Net primary income:', net_primary_income_dv)
+perc_overweigth= col4.text_input('Overweigth Percentage:', perc_overweigth_dv)
+primary_school_completion= col1.text_input('Primary school completion:', primary_school_completion_dv)
+rural_population= col2.text_input('Rural population:', rural_population_dv)
+trade_in_services =col3.text_input('Trade in services:', trade_in_services_dv)
 
 data = {
     'access_to_electricity': access_to_electricity,
