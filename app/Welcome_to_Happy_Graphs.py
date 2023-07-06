@@ -97,20 +97,11 @@ st.write(matrix)
 
 ### Prediction with given features
 st.markdown("## Prediction")
-filter_d1, filter_d2 = st.columns(2)
 
 # User selection country
-with filter_d1:
-    selected_country = st.selectbox("Select defualt country", sorted(available_countries), index=254) 
-#selected_country = st.selectbox("Select country for default values", countries, default='World')
-df_default= df[df['country']==selected_country]
-
-# Select default year
-available_years = df_default['date'].drop_duplicates().reset_index(drop=True)
-with filter_d2:
-    selected_year = st.selectbox("Select year for default values", sorted(available_years, reverse=True), index=0)
-
-df_default= df_default[df_default['date']==selected_year]
+countries=get_country_data(df_life_ex)
+selected_country = st.selectbox("Select defualt country", sorted(countries), index=254) 
+df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
 # Get data for the selected country/year
 def get_value(indicator_name):
@@ -119,7 +110,8 @@ def get_value(indicator_name):
     return value
 
 #Get default values
-access_to_electricity = get_value('Access to electricity')
+access_to_electricity, armed_forces, child_immunization, foreign_investm, gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth, primary_school_completion, rural_population, trade_in_services = get_country_data(selected_country,df_life_ex)
+#access_to_electricity = get_value('Access to electricity')
 #armed_forces = get_value('')
 #child_immunization = get_value('')
 #foreign_investm= get_value('')
@@ -133,6 +125,7 @@ access_to_electricity = get_value('Access to electricity')
 
 # Show default values / inputs
 access_to_electricity = st.text_input('Access to electricity:', access_to_electricity)
+armed_forces= st.text_input('Access to electricity:', armed_forces)
 
 #data = {
 #    'access_to_electricity': access_to_electricity,
