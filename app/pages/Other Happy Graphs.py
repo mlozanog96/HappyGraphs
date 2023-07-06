@@ -87,19 +87,19 @@ matrix_radar= convert_table_to_matrix(df_radar)
 st.write(matrix_radar)
 
 # Reshape data using melt
-df_melt = df.melt(id_vars=['Country', 'Year'], var_name='Indicator', value_name='Value')
+df_melt = df_radar.melt(id_vars=['country', 'date'], var_name='indicator_name', value_name='value')
 
 # Create radar chart using Altair
 chart = alt.Chart(df_melt).mark_line().encode(
-    alt.X('Indicator:N', title='Indicator'),
-    alt.Y('Value:Q', scale=alt.Scale(domain=(0, 100)), title='Value'),
-    alt.Color('Country:N', title='Country'),
-    alt.Column('Year:N', title='Year')
+    alt.X('indicator_name:N', title='Indicator'),
+    alt.Y('value:Q', scale=alt.Scale(domain=(0, 100)), title='Value'),
+    alt.Color('country:N', title='Country'),
+    alt.Column('date:N', title='Year')
 ).properties(
     width=300,
     height=300
 ).facet(
-    row=alt.Row('Country:N')
+    row=alt.Row('country:N')
 )
 
 # Display radar chart in Streamlit
