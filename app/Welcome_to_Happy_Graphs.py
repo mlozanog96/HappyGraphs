@@ -124,6 +124,9 @@ access_to_electricity_dv, armed_forces_dv, child_immunization_dv, foreign_invest
 #trade_in_services = get_value('')
 
 # Show default values / inputs
+
+# Maybe we should add some recomended ranges in the description???
+
 col1, col2, col3, col4 = st.columns(4)
 access_to_electricity = col1.text_input('Access to electricity:', access_to_electricity_dv)
 armed_forces= col2.text_input('Armed Forces:', armed_forces_dv)
@@ -159,7 +162,7 @@ life_expect_df_pred = loaded_model.predict(life_expect_df_test)
 st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
 
 # Display the extracted data used per country for the prediction
-st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
+#st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
 #if st.button("Get Data"):
 #    st.write(f"You selected the country: {selected_country}")
 #    st.write("The following data was used for the prediction:")
@@ -175,11 +178,7 @@ st.write("Click on the 'Get Data' Button to inspect which data is used for the p
 #    st.write(f"Rural population: {rural_population}")
 #    st.write(f"Trade in services: {trade_in_services}")
 
-#st.markdown("# Back to serious")
-
-
-
-
+st.markdown("# Back to serious")
 ### Prediction with own features
 #st.write("Now it's your turn!  Below you can predict the life expectancy for a fictive country that has the features you select. Feel free to play around and find out what has which impact on life expectancy:") 
 #ACTION: make to input
