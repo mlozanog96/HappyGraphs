@@ -10,6 +10,7 @@ import json
 import numpy
 from github import Github
 import seaborn as sns
+import pygal
 
 st.markdown('# Other happy graphs! :)')
 
@@ -83,21 +84,19 @@ available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(d
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
-# Create radar chart using Altair
-chart = alt.Chart(df).mark_line().encode(
-    alt.X('indicator_name:N', title='Indicator'),
-    alt.Y('value:Q', scale=alt.Scale(domain=(0, 100)), title='Value'),
-    alt.Color('country:N', title='Country'),
-    alt.Column('date:N', title='Year')
-).properties(
-    width=300,
-    height=300
-).facet(
-    row=alt.Row('country:N')
-)
+# Create radar chart
+radar_chart = pygal.Radar()
+radar_chart.title = 'Comparison of Indicators'
+radar_chart.x_labels = radar_indicators
 
-# Display radar chart in Streamlit
-st.altair_chart(chart)
+# Iterate over the countries
+for country in df_radar['country'].unique():
+    country_data = df_radar[df_radar['Country'] == country]
+    values = country_data['Value'].tolist()
+    radar_chart.add(country, values)
+
+# Render radar chart using Streamlit
+st.pygal_chart(radar_chart)
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 

@@ -1,5 +1,5 @@
 streamlit
-altair==4.1.0
+altair
 seaborn
 pandas
 requests
@@ -11,3 +11,4 @@ openai
 scikit-learn==1.2.2
 numpy
 PyGithub
+pygal
