@@ -45,8 +45,8 @@ matrix_data= convert_table_to_matrix(filtered_data)
 st.write(matrix_data)
 # Create a correlation scatter plot using Altair
 chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
-    x='selected_indicator_1:Q',
-    y='selected_indicator_2:Q',
+    x='`selected_indicator_1`',
+    y='`selected_indicator_2`',
     color='country:N',
     tooltip=['country', 'x','y']
 ).properties(
