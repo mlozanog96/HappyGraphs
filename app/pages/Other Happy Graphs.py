@@ -79,7 +79,7 @@ available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_
 radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
 df_indicator_radar= df[df['country'].isin(radar_countries)]
 
-available_years_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
+available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(drop=True)
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=0)
 
 
