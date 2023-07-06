@@ -83,9 +83,6 @@ available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(d
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
-matrix_radar= convert_table_to_matrix(df_radar)
-st.write(df_radar)
-
 # Create radar chart using Altair
 chart = alt.Chart(df).mark_line().encode(
     alt.X('indicator_name:N', title='Indicator'),
