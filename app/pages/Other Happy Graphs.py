@@ -96,7 +96,7 @@ for country in df_radar['country'].unique():
     radar_chart.add(country, values)
 
 # Render radar chart using Streamlit
-st.pygal_chart(radar_chart)
+st.write(radar_chart.render())
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
