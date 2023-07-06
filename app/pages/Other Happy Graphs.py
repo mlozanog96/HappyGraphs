@@ -44,11 +44,16 @@ def convert_table_to_matrix(table):
 
 matrix_data= convert_table_to_matrix(filtered_data)
 
+# Set Color palette
+num_colors= 15
+color_palette = sns.color_palette("husl", num_colors)
+custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
+
 # Create a correlation scatter plot using Altair
 chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
     x=alt.X(f"{selected_indicator_1}:Q"),
     y=alt.Y(f"{selected_indicator_2}:Q"),
-    color='country',
+    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
     tooltip=['date','country', f"{selected_indicator_1}", f"{selected_indicator_2}"]
 ).properties(
     width=600,
@@ -64,43 +69,10 @@ st.altair_chart(chart, use_container_width=True)
 correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
 st.write(f"Correlation: {correlation:.2f}")
 
-
-### Get additional information on indicator
-#Load secret key
-
-#keys = {}
-#with open("C:/Users/joana/Documents/GitHub/2023SSBIPMHWR/BigData/HappyGraphs/API_Keys", "r") as file:
-#    for line in file:
-#        line = line.strip()
-#        if line:
-#            key, value = line.split(" = ")
-#            keys[key] = value.strip("'")
-#openai_api_key = keys["openai_secret"]
-
-
-
-### Get a response why this indicator is going up or down
-# Filter the DataFrame based on the selected year range and countries
-df_selected = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
-
-# Get the first and last data points for each country
-df_first = df_selected.groupby('country')['value'].first().reset_index()
-df_last = df_selected.groupby('country')['value'].last().reset_index()
-
-# Determine the trend for each country
-trend = None
-if len(df_first) > 0:
-    df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['trend'] = df_merged.apply(lambda row: 'increase' if row['value_last'] > row['value_first'] else 'decrease' if row['value_last'] < row['value_first'] else 'steady', axis=1)
-    trend = df_merged[['country', 'trend']]
-
-# Display the trend information for each country
-if trend is not None:
-    st.write("Trend:")
-    for _, row in trend.iterrows():
-        st.write(f"{row['country']}: {row['trend']}")
-
 st.markdown('# Radar Graph')
+
+
+
 
 st.markdown('# Other charts')
 
