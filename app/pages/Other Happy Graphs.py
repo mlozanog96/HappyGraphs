@@ -92,7 +92,7 @@ radar_chart.x_labels = radar_indicators
 # Iterate over the countries
 for country in df_radar['country'].unique():
     country_data = df_radar[df_radar['country'] == country]
-    values = country_data['Value'].tolist()
+    values = country_data['value'].tolist()
     radar_chart.add(country, values)
 
 # Render radar chart using Streamlit
