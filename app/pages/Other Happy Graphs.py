@@ -86,20 +86,24 @@ df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 matrix_radar= convert_table_to_matrix(df_radar)
 st.write(matrix_radar)
 
+# Reshape data using melt
+df_melt = df.melt(id_vars=['Country', 'Year'], var_name='Indicator', value_name='Value')
+
 # Create radar chart using Altair
-chart = alt.Chart(matrix_radar).mark_line().encode(
-    alt.X('Category:N'),
-    alt.Y('Value:Q', scale=alt.Scale(domain=(0, 1))),
-    alt.Color('KPI:N'),
-    order=alt.Order('KPI:N')
+chart = alt.Chart(df_melt).mark_line().encode(
+    alt.X('Indicator:N', title='Indicator'),
+    alt.Y('Value:Q', scale=alt.Scale(domain=(0, 100)), title='Value'),
+    alt.Color('Country:N', title='Country'),
+    alt.Column('Year:N', title='Year')
 ).properties(
-    width=600,
-    height=400
+    width=300,
+    height=300
+).facet(
+    row=alt.Row('Country:N')
 )
 
 # Display radar chart in Streamlit
 st.altair_chart(chart)
-st.markdown('## Other charts')
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
