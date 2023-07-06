@@ -69,7 +69,7 @@ def convert_table_to_matrix(table):
     return matrix
 
 matrix_data= convert_table_to_matrix(filtered_data)
-print(matrix_data)
+st.write(matrix_data)
 # Create a correlation scatter plot using Altair
 chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
     x='value:Q',
