@@ -86,11 +86,8 @@ df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 matrix_radar= convert_table_to_matrix(df_radar)
 st.write(df_radar)
 
-# Reshape data using melt
-df_melt = df_radar.melt(id_vars=['country', 'date'], var_name='indicator_name', value_name='value')
-
 # Create radar chart using Altair
-chart = alt.Chart(df_melt).mark_line().encode(
+chart = alt.Chart(df).mark_line().encode(
     alt.X('indicator_name:N', title='Indicator'),
     alt.Y('value:Q', scale=alt.Scale(domain=(0, 100)), title='Value'),
     alt.Color('country:N', title='Country'),
