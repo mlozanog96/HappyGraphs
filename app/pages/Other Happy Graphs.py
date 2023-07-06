@@ -84,7 +84,7 @@ year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), i
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
 matrix_radar= convert_table_to_matrix(df_radar)
-st.write(matrix_radar)
+st.write(df_radar)
 
 # Reshape data using melt
 df_melt = df_radar.melt(id_vars=['country', 'date'], var_name='indicator_name', value_name='value')
