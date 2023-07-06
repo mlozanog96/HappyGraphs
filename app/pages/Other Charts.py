@@ -36,12 +36,46 @@ if not selected_countries:
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
+def convert_table_to_matrix(table):
+    # Get unique countries, dates, and indicators
+    countries = sorted(set(table['country']))
+    dates = sorted(set(table['date']))
+    indicators = sorted(set(table['indicator_name']))
+    
+    # Create an empty matrix
+    matrix = []
+    
+    # Iterate over each country and date
+    for country in countries:
+        for date in dates:
+            # Find the corresponding rows in the table
+            rows = table[(table['country'] == country) & (table['date'] == date)]
+            
+            # Initialize the indicator values dictionary
+            indicator_values = {}
+            
+            # Extract the indicator values
+            for _, row in rows.iterrows():
+                indicator_name = row['indicator_name']
+                indicator_value = row['value']
+                indicator_values[indicator_name] = indicator_value
+            
+            # Append the row to the matrix
+            row = [country, date]
+            for indicator in indicators:
+                row.append(indicator_values.get(indicator))
+            matrix.append(row)
+    
+    return matrix
+
+matrix_data= convert_table_to_matrix(filtered_data)
+
 # Create a correlation scatter plot using Altair
-chart = alt.Chart(filtered_data).mark_circle().encode(
+chart = alt.Chart(matrix_data).mark_circle(size=).encode(
     x='value:Q',
     y='value:Q',
-    color='indicator_name:N',
-    tooltip=['country', 'value', 'indicator_name']
+    color='country:N',
+    tooltip=['country', 'x','y']
 ).properties(
     width=600,
     height=400
@@ -61,18 +95,6 @@ st.altair_chart(chart, use_container_width=True)
 #            key, value = line.split(" = ")
 #            keys[key] = value.strip("'")
 #openai_api_key = keys["openai_secret"]
-
-openai_api_key = st.secrets["openai_secret"]
-charity_api_key = st.secrets["charity_secret"]
-
- # Create & Perform Prompt
-openai.api_key=openai_api_key
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
-response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
-answer = response_indicator.choices[0].text.strip()
-st.write(answer)
-
-### Line chart
 
 
 
