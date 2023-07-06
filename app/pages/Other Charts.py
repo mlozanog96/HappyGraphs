@@ -9,8 +9,7 @@ import json
 from github import Github
 
 st.title('Happy Grraphs')
-st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
-st.markdown('## Other charts')
+st.markdown('# Other charts')
 
 df= pd.read_csv('app/world_bank_data.csv')
 
