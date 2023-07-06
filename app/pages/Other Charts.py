@@ -19,7 +19,7 @@ filter_col1, filter_col2, filter_col3 = st.columns(3)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", available_indicators)
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", available_indicators)
-df_indicator= df[df['indicator_name']==selected_indicator_1 | df['indicator_name']==selected_indicator_2 ]
+df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 selected_countries = filter_col3.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
