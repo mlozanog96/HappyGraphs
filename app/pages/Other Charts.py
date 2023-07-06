@@ -1,4 +1,5 @@
 import streamlit as st
+import altair as alt
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import numpy as np
@@ -13,18 +14,41 @@ st.markdown('# Other charts')
 
 df= pd.read_csv('app/world_bank_data.csv')
 
-### User selection
+st.markdown('# Correlation between two variables')
+filter_col1, filter_col2, filter_col3 = st.columns(3)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator = st.selectbox("Select an indicator", available_indicators)
+selected_indicator_1 = filter_col1.selectbox("Select an indicator", available_indicators)
+selected_indicator_2 = filter_col2.selectbox("Select an indicator", available_indicators)
+df_indicator= df[df['indicator_name']==selected_indicator_1 | df['indicator_name']==selected_indicator_2 ]
 
-df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+selected_countries = filter_col3.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(1990,max_year))
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
 selected_start_year, selected_end_year = selected_year_range
+
+if not selected_countries:
+    selected_countries = ['World']
+
+# Filter the data for selected countries and time period
+filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
+filtered_data = filtered_data.sort_values('date')
+
+# Create a correlation scatter plot using Altair
+chart = alt.Chart(filtered_data).mark_circle().encode(
+    x='value:Q',
+    y='value:Q',
+    color='indicator_name:N',
+    tooltip=['country', 'value', 'indicator_name']
+).properties(
+    width=600,
+    height=400
+)
+
+# Display the scatter plot in Streamlit
+st.altair_chart(chart, use_container_width=True)
 
 ### Get additional information on indicator
 #Load secret key
@@ -72,6 +96,10 @@ if trend is not None:
     st.write("Trend:")
     for _, row in trend.iterrows():
         st.write(f"{row['country']}: {row['trend']}")
+
+st.markdown('# Radar Graph')
+
+st.markdown('# Other charts')
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
