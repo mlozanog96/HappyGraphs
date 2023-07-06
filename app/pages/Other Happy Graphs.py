@@ -71,16 +71,16 @@ correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selecte
 st.write(f"Correlation: {correlation:.2f}")
 
 st.markdown('## Radar Graph')
-col1, col2, col3 = st.columns(3)
-radar_indicators= col1.multiselect("Select indicators", sorted(available_indicators), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
+col1, col2 = st.columns(2)
+radar_indicators= st.multiselect("Select indicators", sorted(available_indicators), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
 df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
-radar_countries = col2.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
+radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
 df_indicator_radar= df[df['country'].isin(radar_countries)]
 
 available_years_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
-year=col3.selectbox("Select year",sorted(available_countries_radar, reverse=True), index=0)
+year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=0)
 
 
 st.markdown('## Other charts')
