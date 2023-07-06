@@ -9,12 +9,11 @@ import requests
 import json
 from github import Github
 
-st.title('Happy Grraphs')
-st.markdown('# Other charts')
+st.markdown('# Other happy graphs :)')
 
 df= pd.read_csv('app/world_bank_data.csv')
 
-st.markdown('# Correlation between two variables')
+st.markdown('## Correlation between two variables')
 filter_col1, filter_col2, filter_col3 = st.columns(3)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", available_indicators)
@@ -46,8 +45,8 @@ matrix_data= convert_table_to_matrix(filtered_data)
 st.write(matrix_data)
 # Create a correlation scatter plot using Altair
 chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
-    x='value:Q',
-    y='value:Q',
+    x='selected_indicator_1:Q',
+    y='selected_indicator_2:Q',
     color='country:N',
     tooltip=['country', 'x','y']
 ).properties(
