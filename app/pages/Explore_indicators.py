@@ -116,7 +116,7 @@ st.dataframe(matrix)
 
 # Show the reason why it has that trend
 for country, trend_per_country in trends.items():
-    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + selected_start_year + ' to ' + selected_end_year + ' in ' + country + ' so much, in under 400 tokens.'
+    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
     answer = response_reason_trend.choices[0].text.strip()
     # Perform further actions with the 'answer' variable
