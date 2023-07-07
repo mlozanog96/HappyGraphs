@@ -118,21 +118,6 @@ def get_value(indicator_name):
 
 #Get default values
 access_to_electricity_dv, armed_forces_dv, child_immunization_dv, foreign_investm_dv, gdp_per_cap_dv, measels_immunitization_dv, net_primary_income_dv, perc_overweigth_dv, primary_school_completion_dv, rural_population_dv, trade_in_services_dv = get_country_data(selected_country,df_life_ex)
-#access_to_electricity = get_value('Access to electricity')
-#armed_forces = get_value('')
-#child_immunization = get_value('')
-#foreign_investm= get_value('')
-#gdp_per_cap= get_value('GDP growth % mostly above 0 (but decreasing)')
-#measels_immunitization= get_value('')
-#net_primary_income= get_value('')
-#perc_overweigth= get_value('')
-#primary_school_completion= get_value('')
-#rural_population= get_value('')
-#trade_in_services = get_value('')
-
-# Show default values / inputs
-
-# Maybe we should add some recomended ranges in the description???
 
 col1, col2, col3, col4 = st.columns(4)
 access_to_electricity = col1.text_input('Access to electricity:', access_to_electricity_dv)
@@ -167,57 +152,3 @@ life_expect_df_pred = loaded_model.predict(life_expect_df_test)
 
 # Show predicted Life Expectancy
 st.write("Your predicted life expectancy is ", life_expect_df_pred[0], "years.")
-
-# Display the extracted data used per country for the prediction
-#st.write("Click on the 'Get Data' Button to inspect which data is used for the prediction")
-#if st.button("Get Data"):
-#    st.write(f"You selected the country: {selected_country}")
-#    st.write("The following data was used for the prediction:")
-#    st.write(f"Access to electricity: {access_to_electricity}")
-#    st.write(f"Armed forces: {armed_forces}")
-#    st.write(f"Child immunization: {child_immunization}")
-#    st.write(f"Foreign investment: {foreign_investm}")
-#    st.write(f"GDP per capita: {gdp_per_cap}")
-#    st.write(f"Measles immunization: {measels_immunitization}")
-#    st.write(f"Net primary income: {net_primary_income}")
-#    st.write(f"Percentage overweight: {perc_overweigth}")
-#    st.write(f"Primary school completion: {primary_school_completion}")
-#    st.write(f"Rural population: {rural_population}")
-#    st.write(f"Trade in services: {trade_in_services}")
-
-#st.markdown("# Back to serious")
-### Prediction with own features
-#st.write("Now it's your turn!  Below you can predict the life expectancy for a fictive country that has the features you select. Feel free to play around and find out what has which impact on life expectancy:") 
-#ACTION: make to input
-#access_to_electricity = 100
-#armed_forces = 3.338855e+06
-#child_immunization = 100 
-#foreign_investm = 1
-#gdp_per_cap = 12000
-#measels_immunitization = 97
-#net_primary_income = 0 
-#perc_overweigth = 10
-#primary_school_completion = 100
-#rural_population = 50
-#trade_in_services = 15
-
-#data = {
-#    'access_to_electricity': access_to_electricity,
-#    'armed_forces' : armed_forces, 
-#    'child_immunization' : child_immunization, 
-#    'foreign_investm' : foreign_investm, 
-#    'gdp_per_cap' : gdp_per_cap,
-#    'measels_immunitization' : measels_immunitization,
-#    'net_primary_income' : net_primary_income, 
-#    'perc_overweigth' : perc_overweigth,
-#    'primary_school_completion' : primary_school_completion,
-#    'rural_population' : rural_population, 
-#    'trade_in_services'	: trade_in_services,
-#}
-
-# transform them into a Dataframe
-#life_expect_df_test = pd.DataFrame(data, index=range(1))
-# Predict using the loaded model
-#life_expect_df_pred = loaded_model.predict(life_expect_df_test)
-# Set up the Streamlit app
-#st.write("In your fictive country a person has a predicted life expectancy of ", life_expect_df_pred[0], "years.")
