@@ -84,19 +84,17 @@ available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(d
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
-# Create radar chart
-radar_chart = pygal.Radar()
-radar_chart.title = 'Comparison of Indicators'
-radar_chart.x_labels = radar_indicators
+r_chart = alt.Chart(df_radar).mark_line().encode(
+    alt.X('indicator_name:N', axis=alt.Axis(title='Indicator Name')),
+    alt.Y('value:Q', axis=alt.Axis(title='Value')),
+    alt.Color('country:N', legend=alt.Legend(title='Country'))
+).properties(
+    width=400,
+    height=400
+)
 
-# Iterate over the countries
-for country in df_radar['country'].unique():
-    country_data = df_radar[df_radar['country'] == country]
-    values = country_data['value'].tolist()
-    radar_chart.add(country, values)
-
-# Render radar chart using Streamlit
-st.write(radar_chart.render())
+r_chart = r_chart.configure_title(fontSize=20).configure_axis(labelFontSize=12)
+r_chart.show()
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
