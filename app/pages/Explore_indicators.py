@@ -114,12 +114,17 @@ st.write("Data matrix")
 st.dataframe(matrix)
 
 
-
+trend_per_country = trends['country'] 
+st.write(trend_per_country)
 # Show the reason why it has that trend
-# prompt_reason_trend = 'summarize_ why has '+ indicator + trend_per_Country + str(df_year_max - df_year_min) + ' in ' + countries + ' so much, in under 400 tokens. If the trend is ▲, put the emphasis on the positive change in all the mentioned countries.'
-# response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
-# answer = response_reason_trend.choices[0].text.strip()
-st.write(selected_start_year, selected_end_year, selected_year_range)
+'''for country, trend in trends.items():
+    trend_per_country = trend
+    prompt_reason_trend = 'summarize why has ' + indicator + ' ' + trend_per_country + ' from ' + selected_start_year + ' to ' + selected_end_year + ' in ' + country + ' so much, in under 400 tokens. If the trend is ▲, put the emphasis on the positive change in the country.'
+    response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+    answer = response_reason_trend.choices[0].text.strip()
+    # Perform further actions with the 'answer' variable
+    print(answer)'''
+
 
 
 # Show matching charities
