@@ -11,3 +11,4 @@ openai
 scikit-learn==1.2.2
 numpy
 PyGithub
+pygal

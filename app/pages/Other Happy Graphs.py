@@ -10,6 +10,7 @@ import json
 import numpy
 from github import Github
 import seaborn as sns
+import pygal
 
 st.markdown('# Other happy graphs! :)')
 
@@ -18,8 +19,8 @@ df= pd.read_csv('app/world_bank_data.csv')
 st.markdown('## Correlation between two variables')
 filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", available_indicators,default=['CO2 emissions'])
-selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", available_indicators,default=['Agricultural methane emissions'])
+selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
+selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(available_indicators),index=3)
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
@@ -71,11 +72,31 @@ correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selecte
 st.write(f"Correlation: {correlation:.2f}")
 
 st.markdown('## Radar Graph')
+col1, col2 = st.columns(2)
+radar_indicators= st.multiselect("Select indicators", sorted(available_indicators), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
+df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
 
+available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
+radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
+df_indicator_radar= df_indicator_radar[df_indicator_radar['country'].isin(radar_countries)]
 
+available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(drop=True)
+year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
+df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
+# Create radar chart
+radar_chart = pygal.Radar()
+radar_chart.title = 'Comparison of Indicators'
+radar_chart.x_labels = radar_indicators
 
-st.markdown('# Other charts')
+# Iterate over the countries
+for country in df_radar['country'].unique():
+    country_data = df_radar[df_radar['country'] == country]
+    values = country_data['value'].tolist()
+    radar_chart.add(country, values)
+
+# Render radar chart using Streamlit
+st.write(radar_chart.render())
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
