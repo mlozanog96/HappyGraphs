@@ -94,8 +94,13 @@ angles = np.linspace(0, 2 * np.pi, num_indicators, endpoint=False).tolist()
 # Create the chart with Matplotlib
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
 for country, data in df_radar.groupby('country'):
-    # Create an array of values ordered by the unique indicators
-    values = [data[data['indicator_name'] == ind]['value'].iloc[0] for ind in unique_indicators]
+    values = []
+    for ind in unique_indicators:
+        value = data[data['indicator_name'] == ind]['value']
+        if len(value) > 0:
+            values.append(value.iloc[0])
+        else:
+            values.append(0)
     values += values[:1]  # Close the shape of the plot
     ax.plot(angles, values, label=country)
     ax.fill(angles, values, alpha=0.25)  # Fill the area under the plot
