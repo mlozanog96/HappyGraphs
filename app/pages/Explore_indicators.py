@@ -14,6 +14,7 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 
 openai_api_key = st.secrets["openai_secret"]
 charity_api_key = st.secrets["charity_secret"]
+openai.api_key=openai_api_key
 
 
 # Create a row layout for filters
@@ -30,9 +31,8 @@ available_countries = df_indicator['country'].drop_duplicates().reset_index(drop
 with filter_col2:
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
 
-# Create & Perform Prompt
-openai.api_key=openai_api_key
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the measure unit.'
+# Create & Perform Prompt Explanation Indicator
+prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
 response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
 answer = response_indicator.choices[0].text.strip()
 st.write(answer)
@@ -107,3 +107,14 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 # Display the matrix using Streamlit
 st.write("Data matrix")
 st.dataframe(matrix)
+
+
+
+# Show the reason why it has that trend
+# prompt_reason_trend = 'summarize_ why has '+ indicator + ' changed over the last ' + str(df_year_max - df_year_min) + ' in ' + countries + ' so much, in under 400 tokens. Put the emphasis on the positive change in all the mentioned countries.'
+# response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+# answer = response_reason_trend.choices[0].text.strip()
+st.write(trend)
+
+
+# Show matching charities
