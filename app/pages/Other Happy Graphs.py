@@ -94,10 +94,10 @@ r_chart = alt.Chart(df_radar).mark_line().encode(
 )
 
 # Configure the chart layout
-chart = chart.configure_title(fontSize=20).configure_axis(labelFontSize=12)
+chart = r_chart.configure_title(fontSize=20).configure_axis(labelFontSize=12)
 
 # Display the chart using Streamlit
-st.altair_chart(chart, use_container_width=True)
+st.altair_chart(r_chart, use_container_width=True)
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
