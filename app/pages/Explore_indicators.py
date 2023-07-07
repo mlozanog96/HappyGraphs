@@ -114,8 +114,8 @@ st.write("Data matrix")
 st.dataframe(matrix)
 
 
-#trend_per_country = trends['country'] 
-#st.write(trend_per_country)
+trend_per_country = trends['country'] 
+st.write(trend_per_country)
 # Show the reason why it has that trend
 '''for country, trend in trends.items():
     trend_per_country = trend
