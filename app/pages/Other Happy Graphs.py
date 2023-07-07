@@ -84,6 +84,7 @@ available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(d
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
+st.write(df_radar)
 # Get unique indicators
 unique_indicators = df_radar['indicator_name'].unique()
 
