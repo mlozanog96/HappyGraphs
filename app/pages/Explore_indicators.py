@@ -87,11 +87,15 @@ increase_icon = "▲"
 decrease_icon = "▼"
 
 # Determine the trend for each country
-trend_country = {}
+trend = None
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
     df_merged['Trend'] = df_merged.apply(lambda row: increase_icon if row['value_last'] > row['value_first'] else decrease_icon if row['value_last'] < row['value_first'] else '', axis=1)
-    trend_country = df_merged[['country', 'Trend']].set_index('country').to_dict()['Trend']
+    trend = df_merged[['country', 'Trend']]
+
+trends = {}
+if trend is not None:
+    trends = {row['country']: row['Trend'] for _, row in trend.iterrows()}
 
 
 # Display the trend information for each country in a matrix
@@ -115,7 +119,7 @@ st.dataframe(matrix)
 # prompt_reason_trend = 'summarize_ why has '+ indicator + ' changed over the last ' + str(df_year_max - df_year_min) + ' in ' + countries + ' so much, in under 400 tokens. Put the emphasis on the positive change in all the mentioned countries.'
 # response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
 # answer = response_reason_trend.choices[0].text.strip()
-st.write(trend)
+st.write(trends)
 
 
 # Show matching charities
