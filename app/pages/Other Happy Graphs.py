@@ -84,22 +84,26 @@ available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(d
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
+# Get unique indicators
+unique_indicators = df_radar['indicator_name'].unique()
+
 # Create angles for each indicator
-num_indicators = len(df_radar['indicator_name'].unique())
+num_indicators = len(unique_indicators)
 angles = np.linspace(0, 2 * np.pi, num_indicators, endpoint=False).tolist()
 
 # Create the chart with Matplotlib
 fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
 for country, data in df_radar.groupby('country'):
-    values = data['value'].tolist()
+    # Create an array of values ordered by the unique indicators
+    values = [data[data['indicator_name'] == ind]['value'].iloc[0] for ind in unique_indicators]
     values += values[:1]  # Close the shape of the plot
     ax.plot(angles, values, label=country)
     ax.fill(angles, values, alpha=0.25)  # Fill the area under the plot
 
 ax.set_xticks(angles)
-ax.set_xticklabels(df['indicator_name'].unique())
+ax.set_xticklabels(unique_indicators)
 ax.set_yticks([])  # Hide radial axis labels
-ax.set_title('Radar Chart')
+ax.set_title('Radar Graph')
 ax.legend()
 
 # Display the chart in Streamlit
