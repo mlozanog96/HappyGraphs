@@ -10,7 +10,7 @@ import json
 import numpy
 from github import Github
 import seaborn as sns
-import pygal
+import matplotlib.pyplot as plt
 
 st.markdown('# Other happy graphs! :)')
 
@@ -84,20 +84,26 @@ available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(d
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 
-r_chart = alt.Chart(df_radar).mark_line().encode(
-    alt.X('indicator_name:N', axis=alt.Axis(title='Indicator Name')),
-    alt.Y('value:Q', axis=alt.Axis(title='Value')),
-    alt.Color('country:N', legend=alt.Legend(title='Country'))
-).properties(
-    width=400,
-    height=400
-)
+# Create angles for each indicator
+num_indicators = len(df_radar['indicator_name'].unique())
+angles = np.linspace(0, 2 * np.pi, num_indicators, endpoint=False).tolist()
 
-# Configure the chart layout
-chart = r_chart.configure_title(fontSize=20).configure_axis(labelFontSize=12)
+# Create the chart with Matplotlib
+fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
+for country, data in df_radar.groupby('country'):
+    values = data['value'].tolist()
+    values += values[:1]  # Close the shape of the plot
+    ax.plot(angles, values, label=country)
+    ax.fill(angles, values, alpha=0.25)  # Fill the area under the plot
 
-# Display the chart using Streamlit
-st.altair_chart(r_chart, use_container_width=True)
+ax.set_xticks(angles)
+ax.set_xticklabels(df['indicator_name'].unique())
+ax.set_yticks([])  # Hide radial axis labels
+ax.set_title('Radar Chart')
+ax.legend()
+
+# Display the chart in Streamlit
+st.pyplot(fig)
 
 ### Get reason why indicator changes 
 ## Put this answer in prompt to 
