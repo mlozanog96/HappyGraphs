@@ -115,16 +115,24 @@ st.dataframe(matrix)
 
 
 # Show the reason why it has that trend
-[perform_actions(country, trend_per_country, selected_start_year, selected_end_year) for country, trend_per_country in trends.items()]
-
-def perform_actions(country, trend_per_country, start_year, end_year):
-    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(start_year) + ' to ' + str(end_year) + ' in ' + country + ' so much, in under 400 tokens.'
+for country, trend_per_country in trends.items():
+    prompt_reason_trend = f"Explain the trend in {country} - {trend_per_country} - over the last twenty years. What factors contributed to this change?"
     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
     answer = response_reason_trend.choices[0].text.strip()
     # Perform further actions with the 'answer' variable
     st.write(answer)
 # If the trend is ▲, put the emphasis on the positive change
 
+
+'''
+# this worked, but only took year in first prompt:
+for country, trend_per_country in trends.items():
+    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
+    response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+    answer = response_reason_trend.choices[0].text.strip()
+    # Perform further actions with the 'answer' variable
+    st.write(answer)
+'''
 
 
 # Show matching charities
