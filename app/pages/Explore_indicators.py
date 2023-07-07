@@ -33,9 +33,10 @@ with filter_col2:
 
 # Create & Perform Prompt Explanation Indicator
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
-answer = response_indicator.choices[0].text.strip()
-st.write(answer)
+#ACTION: remove commenting befor submitting
+#response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
+#answer = response_indicator.choices[0].text.strip()
+#st.write(answer)
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -116,13 +117,23 @@ st.dataframe(matrix)
 
 # Show the reason why it has that trend
 for country, trend_per_country in trends.items():
-    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
+    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + {trend_per_country} + ' in ' + {country} + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' so much, in under 400 tokens.'
     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
     answer = response_reason_trend.choices[0].text.strip()
     # Perform further actions with the 'answer' variable
     st.write(answer)
 # If the trend is ▲, put the emphasis on the positive change
 
+
+'''
+# this worked, but only took year in first prompt:
+for country, trend_per_country in trends.items():
+    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
+    response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+    answer = response_reason_trend.choices[0].text.strip()
+    # Perform further actions with the 'answer' variable
+    st.write(answer)
+'''
 
 
 # Show matching charities
