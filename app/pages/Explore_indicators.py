@@ -117,8 +117,10 @@ st.dataframe(matrix)
 # Show the reason why it has that trend
 for country, trend_per_country in trends.items():
     prompt_reason_trend = f"Explain the trend in {country} - {trend_per_country} - over the last twenty years. What factors contributed to this change?"
-    # Perform further actions with the 'prompt_reason_trend' variable
-    print(prompt_reason_trend)
+    response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+    answer = response_reason_trend.choices[0].text.strip()
+    # Perform further actions with the 'answer' variable
+    st.write(answer)
 # If the trend is ▲, put the emphasis on the positive change
 
 
