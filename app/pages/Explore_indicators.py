@@ -116,10 +116,10 @@ st.dataframe(matrix)
 
 
 # Show the reason why it has that trend
-# prompt_reason_trend = 'summarize_ why has '+ indicator + ' changed over the last ' + str(df_year_max - df_year_min) + ' in ' + countries + ' so much, in under 400 tokens. Put the emphasis on the positive change in all the mentioned countries.'
+# prompt_reason_trend = 'summarize_ why has '+ indicator + trend_per_Country + str(df_year_max - df_year_min) + ' in ' + countries + ' so much, in under 400 tokens. If the trend is ▲, put the emphasis on the positive change in all the mentioned countries.'
 # response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
 # answer = response_reason_trend.choices[0].text.strip()
-st.write(trends)
+st.write(selected_year_range)
 
 
 # Show matching charities
