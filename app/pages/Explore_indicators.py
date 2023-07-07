@@ -87,11 +87,12 @@ increase_icon = "▲"
 decrease_icon = "▼"
 
 # Determine the trend for each country
-trend = None
+trend_country = {}
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
     df_merged['Trend'] = df_merged.apply(lambda row: increase_icon if row['value_last'] > row['value_first'] else decrease_icon if row['value_last'] < row['value_first'] else '', axis=1)
-    trend = df_merged[['country', 'Trend']]
+    trend_country = df_merged[['country', 'Trend']].set_index('country').to_dict()['Trend']
+
 
 # Display the trend information for each country in a matrix
 if trend is not None:
