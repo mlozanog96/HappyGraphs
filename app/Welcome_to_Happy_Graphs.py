@@ -98,7 +98,34 @@ st.write(matrix)
 ### Prediction with given features
 st.markdown("## Prediction")
 intro_text_2 = """
-To predict a value, you can select a country in order to get default values, then feel free to modify any value you want """
+To predict a value, you can select a country in order to get default values, then feel free to modify any value you want. \n 
+Certainly! Based on the given information, here's a retrace of the feature importances: \n 
+
+1. GDP per capita: This feature has the highest impact on the prediction of a country's life expectancy. It is the most influential factor in determining the economic output per person.  \n 
+
+2. Access to electricity: This feature follows GDP per capita in terms of importance. It signifies the availability of electrical power to the population, which is crucial for economic development and various aspects of daily life.  \n 
+
+3. Primary school completion: This feature ranks third in importance. It represents the percentage of individuals who have successfully completed primary education. Education is a key factor in human capital development and has long-term impacts on the life expectancy.  \n 
+
+4. Percentage of people with overweight: This feature has a medium impact on life expectancy predictions. It indicates the proportion of the population with overweight or obesity, which can have implications for health and healthcare costs.  \n 
+
+5. Measles immunization: This feature also has a medium impact. It reflects the immunization coverage for measles, a preventable disease. Higher immunization rates contribute to better population health and potentially lower healthcare burdens.  \n 
+
+6. Rural population: This feature is another medium impact factor. It denotes the percentage or number of people living in rural areas. Rural populations often have different economic characteristics and development patterns compared to urban areas.  \n 
+
+7. Foreign investments: This feature has a medium impact on life expectancy predictions. It represents the inflow of foreign capital into the country, which can have positive effects on development and life expectancy.  \n 
+
+8. Child immunization: This feature has a relatively low impact on the predictions. It signifies the coverage of immunization for children, which is important for child health and disease prevention.  \n 
+
+9. Armed forces: This feature also has a relatively low impact. It refers to the size or presence of the country's armed forces, which may have implications for defense spending and national security.  \n 
+
+10. Trade in services: This feature has a relatively low impact. It represents the exchange of services between countries and can contribute to economic growth through sectors such as tourism, transportation, and business services.  \n 
+
+11. Primary net income: This feature has a relatively low impact. It refers to the net income or earnings from primary sectors such as agriculture, mining, and forestry. While important for certain economies, it may have less influence on overall life expectancy predictions.  \n 
+
+Please note that the importance rankings provided are based on the given information and may not accurately reflect all real-world scenarios. The actual importance of each feature can vary depending on the specific context.
+"""
+
 st.markdown(intro_text_2, unsafe_allow_html=True)
 # User selection country
 countries=df_life_ex['Country'].drop_duplicates().reset_index(drop=True)
