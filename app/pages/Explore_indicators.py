@@ -131,25 +131,20 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 # st.markdown(answer)
 
 
+# Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on this indicator. See for yourself. Let youself be inspired to take action yourself and support your favorised charity. We make a diffrence!')
-# Show matching charities
+
 indicator_map = pd.read_csv('app/indicator_map.csv')
 charity_map = pd.read_csv('app/charity_map.csv')
 
-# Filter the data based on the selected indicator
+# Filter the data based on the selected indicator and find the corresponding category
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
-# Get the corresponding category for the selected indicator
 selected_category = indicator_category['category'].iloc[0]
+st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. Below you find all the charities that contribute to ', selected_category, '.')
 
-# Print the selected category
-st.write('Selected Category:', selected_category)
-
-# Filter the data based on the selected indicator
+# Filter the data based on the selected indicator & create list of charity themes
 charity_category = charity_map[charity_map['category'] == selected_category]
-# Get the corresponding category for the selected indicator
-charities = charity_category['name'].tolist()
-
-# Print the list of charities
-st.write("Charities:", charities)
+charity_theme = charity_category['name'].tolist()
+# st.write("Charities:", charity_theme)
 
