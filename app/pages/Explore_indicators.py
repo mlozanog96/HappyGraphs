@@ -41,17 +41,18 @@ prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Wo
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
-selected_start_year, selected_end_year = selected_year_range
+# selected_start_year, selected_end_year = selected_year_range
+SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
 if not selected_countries:
     selected_countries = ['World']
 
 # Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
+filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
-x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
+x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
 y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
 # Set Color palette
@@ -116,18 +117,23 @@ st.dataframe(matrix)
 
 
 # Show the reason why it has that trend
-for country, trend_per_country in trends.items():
-    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + {trend_per_country} + ' in ' + {country} + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' so much, in under 400 tokens.'
+for country, trend_per_country, selected_start_year, selected_end_year in trends.items():
+    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
     answer = response_reason_trend.choices[0].text.strip()
     # Perform further actions with the 'answer' variable
     st.write(answer)
 # If the trend is ▲, put the emphasis on the positive change
-
+# for country, trend_per_country in trends.items():
+#     prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + {trend_per_country} + ' in ' + {country} + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much, in under 400 tokens.'
+#     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+#     answer = response_reason_trend.choices[0].text.strip()
+#     # Perform further actions with the 'answer' variable
+#     st.write(answer)
 
 '''
 # this worked, but only took year in first prompt:
-for country, trend_per_country in trends.items():
+for country, trend_per_country, selected_start_year, selected_end_year in trends.items():
     prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
     answer = response_reason_trend.choices[0].text.strip()

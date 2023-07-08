@@ -15,8 +15,6 @@ st.title('Happy Graphs')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-st.markdown("# Playground")
-
 # Load data
 df_life_ex = pd.read_csv(Path(__file__).parent/'prediction_model/data/default-data.csv')
 df= pd.read_csv('app/world_bank_data.csv')
