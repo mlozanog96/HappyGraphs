@@ -92,23 +92,21 @@ decrease_icon = "▼"
 trend = None
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['Trend'] = df_merged.apply(lambda row: increase_icon if row['value_last'] > row['value_first'] else decrease_icon if row['value_last'] < row['value_first'] else '', axis=1)
-    trend = df_merged[['country', 'Trend']]
+    df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
+    trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
 
 trends = {}
 if trend is not None:
-    trends = {row['country']: row['Trend'] for _, row in trend.iterrows()}
+    trends = trend.to_dict()['Trend']
 
-
-# Display the trend information for each country in a matrix
+# Display the trend information for each country
 if trend is not None:
     st.write("Trend")
-    trend_matrix = trend.set_index('country').T
+    trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
     st.dataframe(trend_matrix)
-    
+
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
-
 
 
 # Display the matrix using Streamlit
@@ -117,29 +115,22 @@ st.dataframe(matrix)
 
 
 # Show the reason why it has that trend
+prompt_prep_trend = None
+for i, (country, trend_per_country) in enumerate(trends.items()):
+    if i == 0:
+        prompt_prep_trend = f"{trend_per_country} in {country}"
+    else:
+        prompt_prep_trend += f" and {trend_per_country} in {country}"
+    st.write(prompt_prep_trend)
+
+'''
 for country, trend_per_country in trends.items():
-    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' in ' + country + ' so much, in under 400 tokens.'
+    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' in ' + country + ' so much, in under 400 tokens. Dont use symbols. Structure it this way: Name of the country (or World): Text with bulletpoints.  '
     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
     answer = response_reason_trend.choices[0].text.strip()
     # Perform further actions with the 'answer' variable
     st.write(answer)
-# If the trend is ▲, put the emphasis on the positive change
-# for country, trend_per_country in trends.items():
-#     prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + {trend_per_country} + ' in ' + {country} + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much, in under 400 tokens.'
-#     response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
-#     answer = response_reason_trend.choices[0].text.strip()
-#     # Perform further actions with the 'answer' variable
-#     st.write(answer)
 
 '''
-# this worked, but only took year in first prompt:
-for country, trend_per_country, selected_start_year, selected_end_year in trends.items():
-    prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + trend_per_country + ' from ' + str(selected_start_year) + ' to ' + str(selected_end_year) + ' in ' + country + ' so much, in under 400 tokens.'
-    response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
-    answer = response_reason_trend.choices[0].text.strip()
-    # Perform further actions with the 'answer' variable
-    st.write(answer)
-'''
-
 
 # Show matching charities
