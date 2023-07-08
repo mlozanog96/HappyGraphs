@@ -123,11 +123,11 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
 
-prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much, in under 400 tokens. Dont use symbols. Structure your answer this way: Name of the country (or World): Text, reasons with bulletpoints.'
+prompt_reason_trend = 'summarize why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much, in under 400 tokens. Dont use symbols. Structure your answer this way: Name of the country (or World): Text, Reasons as keywords with bulletpoints. Format the answer in markdown.'
 response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
 answer = response_reason_trend.choices[0].text.strip()
 
-st.write(answer)
+st.markdown(answer)
 
 
 
