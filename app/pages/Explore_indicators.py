@@ -115,7 +115,7 @@ st.write("Data matrix")
 st.dataframe(matrix)
 
 
-st.markdown('## Why has this indicator changed in the countries?')
+st.markdown('### Why has this indicator changed in the countries?')
 
 # Show the reason why it has that trend
 prompt_prep_trend = None
@@ -124,13 +124,32 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
         prompt_prep_trend = f"{trend_per_country} in {country}"
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
-
-prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Dont use ▲ or ▼ but the words written out as increase and decrease. Use about 300 tokens per country.'
-response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
-answer = response_reason_trend.choices[0].text.strip()
-
-st.markdown(answer)
-
+#ACTION: remove commenting befor submitting
+# prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use about 400 tokens per country.'
+# response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
+# answer = response_reason_trend.choices[0].text.strip()
+# st.markdown(answer)
 
 
+st.markdown('### What can you do to fuel a positive change?')
+st.write('There are a lot of initiatives already out there working on this indicator. See for yourself. Let youself be inspired to take action yourself and support your favorised charity. We make a diffrence!')
 # Show matching charities
+indicator_map = pd.read_csv('app/indicator_map.csv')
+charity_map = pd.read_csv('app/charity_map.csv')
+
+# Filter the data based on the selected indicator
+indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
+# Get the corresponding category for the selected indicator
+selected_category = indicator_category['category'].iloc[0]
+
+# Print the selected category
+st.write('Selected Category:', selected_category)
+
+# Filter the data based on the selected indicator
+charity_category = charity_map[charity_map['category'] == selected_category]
+# Get the corresponding category for the selected indicator
+charities = charity_category['name'].tolist()
+
+# Print the list of charities
+st.write("Charities:", charities)
+
