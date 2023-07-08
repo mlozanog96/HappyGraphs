@@ -7,6 +7,7 @@ import seaborn as sns
 from github import Github
 import openai
 from streamlit import components
+import requests
 
 st.title('Explore Indicators')
 
@@ -133,12 +134,13 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
-st.write('There are a lot of initiatives already out there working on this indicator. See for yourself. Let youself be inspired to take action yourself and support your favorised charity. We make a diffrence!')
+st.write('There are a lot of initiatives already out there working on your chosen indicator. See for yourself. Let youself be inspired to take action yourself and support your favorised charity. We make a diffrence!')
 
 indicator_map = pd.read_csv('app/indicator_map.csv')
 charity_map = pd.read_csv('app/charity_map.csv')
 
 # Filter the data based on the selected indicator and find the corresponding category
+st.write('Indicator Category')
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
 selected_category = indicator_category['category'].iloc[0]
 st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. Below you find all the charities that contribute to ', selected_category, '.')
@@ -148,3 +150,70 @@ charity_category = charity_map[charity_map['category'] == selected_category]
 charity_theme = charity_category['name'].tolist()
 # st.write("Charities:", charity_theme)
 
+url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
+response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
+
+title = ''
+region = ''
+
+filters = {
+    'country': selected_countries,
+    'title': title,
+    'region': region,
+    'name': charity_theme
+}
+
+if response.status_code == 200:
+    data = response.json()
+    projects = data['projects']['project']
+
+    filtered_projects = []
+
+    for project in projects:
+        pass_filters = True
+
+        for filter_column, filter_value in filters.items():
+            if filter_column == 'country' and filter_value and project['country'] not in filter_value:
+                pass_filters = False
+                break
+            if filter_column == 'title' and filter_value and project['title'] != filter_value:
+                pass_filters = False
+                break
+            if filter_column == 'region' and filter_value and project['region'] != filter_value:
+                pass_filters = False
+                break
+            if filter_column == 'name' and filter_value:
+                themes = project['themes']['theme']
+                theme_names = [theme['name'] for theme in themes]
+                if filter_value not in theme_names:
+                    pass_filters = False
+                    break
+
+        if pass_filters:
+            filtered_projects.append(project)
+
+    if filtered_projects:
+        for project in filtered_projects:
+            st.write("Project Title:", project['title'])
+            st.write("Countries:", project['country'])
+            st.write("Region:", project['region'])
+            themes = project['themes']['theme']
+            st.write("Themes:")
+            for theme in themes:
+                st.write("\tTheme ID:", theme['id'])
+                st.write("\tTheme Name:", theme['name'])
+            st.write("Summary:", project['summary'])
+            st.write("Funding:", project['funding'])
+            st.write("Goal:", project['goal'])
+            donation_options = project['donationOptions']['donationOption']
+            st.write("Donation Options:")
+            for donation in donation_options:
+                st.write("\tAmount:", donation['amount'], "$")
+                st.write("\tDescription:", donation['description'])
+            st.write("Project Link:", project['projectLink'])
+            st.write()
+    else:
+        st.write('No data found for the specified filters: ', selected_countries, ', ', selected_indicator)
+
+else:
+    st.write('Request failed with status code:', response.status_code)
