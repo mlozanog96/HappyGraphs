@@ -160,7 +160,7 @@ region = ''
 country = selected_countries #ACTION: without world and regions need to go into region. Map regions and countries?
 
 filters = {
-    'country': ,
+    'country': country_charity,
     'title': title,
     'region': region,
     'name': charity_theme
