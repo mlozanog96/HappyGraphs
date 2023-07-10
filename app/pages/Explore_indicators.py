@@ -148,16 +148,19 @@ st.write('The indicator ', selected_indicator, ' is part of the category ', sele
 # Filter the data based on the selected indicator & create list of charity themes
 charity_category = charity_map[charity_map['category'] == selected_category]
 charity_theme = charity_category['name'].tolist()
-# st.write("Charities:", charity_theme)
+st.write('Charities:', charity_theme)
+st.write('country', country)
 
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
+country_charity = 'x'
 title = ''
 region = ''
+country = selected_countries #ACTION: without world and regions need to go into region. Map regions and countries?
 
 filters = {
-    'country': selected_countries,
+    'country': ,
     'title': title,
     'region': region,
     'name': charity_theme
@@ -213,7 +216,7 @@ if response.status_code == 200:
             st.write("Project Link:", project['projectLink'])
             st.write()
     else:
-        st.write('No data found for the specified filters: ', selected_countries, ', ', selected_indicator)
+        st.write('No data found for the specified filters: ', selected_countries, ',  ', selected_indicator, '. Please choose other countries or another indicator.')
 
 else:
     st.write('Request failed with status code:', response.status_code)

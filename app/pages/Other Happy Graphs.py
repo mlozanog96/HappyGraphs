@@ -110,6 +110,3 @@ ax.legend()
 # Display the chart in Streamlit
 st.pyplot(fig)
 
-### Get reason why indicator changes 
-## Put this answer in prompt to 
-# COMMENT: Joana: I can do that. I have it prepared already, but want the trend to be working / need some thoughts on that
