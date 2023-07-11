@@ -149,20 +149,26 @@ st.write('The indicator ', selected_indicator, ' is part of the category ', sele
 charity_category = charity_map[charity_map['category'] == selected_category]
 charity_theme = charity_category['name'].tolist()
 st.write('Charities:', charity_theme)
-st.write('country', country)
+st.write('country', selected_countries)
+
+def format_countries(country_data):
+    if len(country_data) == 1:
+        return f"'{country_data[0]}'"
+    else:
+        return [f"'{country}'" for country in country_data]
+    
+country_formatted = format_countries(selected_countries)
+st.write('country', country_formatted)
 
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
-country_charity = 'x'
-title = ''
-region = ''
+country_formatted= 'x'
 country = selected_countries #ACTION: without world and regions need to go into region. Map regions and countries?
+theme_formated = 
 
 filters = {
     'country': country_charity,
-    'title': title,
-    'region': region,
     'name': charity_theme
 }
 
@@ -179,12 +185,6 @@ if response.status_code == 200:
             if filter_column == 'country' and filter_value and project['country'] not in filter_value:
                 pass_filters = False
                 break
-            if filter_column == 'title' and filter_value and project['title'] != filter_value:
-                pass_filters = False
-                break
-            if filter_column == 'region' and filter_value and project['region'] != filter_value:
-                pass_filters = False
-                break
             if filter_column == 'name' and filter_value:
                 themes = project['themes']['theme']
                 theme_names = [theme['name'] for theme in themes]
@@ -199,7 +199,6 @@ if response.status_code == 200:
         for project in filtered_projects:
             st.write("Project Title:", project['title'])
             st.write("Countries:", project['country'])
-            st.write("Region:", project['region'])
             themes = project['themes']['theme']
             st.write("Themes:")
             for theme in themes:
