@@ -84,7 +84,7 @@ available_indicators_radar = df[df['indicator_name'].isin(['People using at leas
 
 col1, col2 = st.columns(2)
 default_indicators = ['People using at least basic drinking water services', 'Forest area', 'Access to electricity']
-radar_indicators = col1.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
+radar_indicators = col1.multiselect("Select indicators", sorted(available_indicators), default=default_indicators)
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
