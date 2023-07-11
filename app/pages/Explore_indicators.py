@@ -134,12 +134,9 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
-st.write('There are a lot of initiatives already out there working on your chosen indicator. See for yourself. Let youself be inspired to take action yourself and support your favorised charity. We make a diffrence!')
-
-indicator_map = pd.read_csv('app/indicator_map.csv')
+st.write('There are a lot of initiatives already out there working on positive change. See for yourself. Let youself be inspired to take action and support your favorite charity. We make a difference!')
 charity_map = pd.read_csv('app/charity_map.csv')
 
-st.markdown('## playground:')
 
 filter_col1, filter_col2 = st.columns(2)
 
@@ -211,29 +208,30 @@ else:
 
 
 
-st.markdown('## Not so funny playground:')
-# Filter the data based on the selected indicator and find the corresponding category
-st.write('Indicator Category')
-indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
-selected_category = indicator_category['category'].iloc[0]
+# st.markdown('## Not so funny playground:')
+# indicator_map = pd.read_csv('app/indicator_map.csv')
+# # Filter the data based on the selected indicator and find the corresponding category
+# st.write('Indicator Category')
+# indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
+# selected_category = indicator_category['category'].iloc[0]
 
-# Filter the data based on the selected indicator & create list of charity themes
-charity_category = charity_map[charity_map['category'] == selected_category]
-charity_theme = charity_category['name'].tolist()
+# # Filter the data based on the selected indicator & create list of charity themes
+# charity_category = charity_map[charity_map['category'] == selected_category]
+# charity_theme = charity_category['name'].tolist()
 
-st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. The charities in this category work in the following fields: ', charity_theme)
-st.write('Below you find all the charities that work within these fields for your selected countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
+# st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. The charities in this category work in the following fields: ', charity_theme)
+# st.write('Below you find all the charities that work within these fields for your selected countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
 
 
-#ACTION put into utils
-def formatting(data):
-    if len(data) == 1:
-        return f"'{data[0]}'"
-    else:
-        return [f"'{item}'" for item in data]
+# #ACTION put into utils
+# def formatting(data):
+#     if len(data) == 1:
+#         return f"'{data[0]}'"
+#     else:
+#         return [f"'{item}'" for item in data]
     
-country_formatted = formatting(selected_countries)
-theme_formatted = formatting(charity_theme) #perhaps not needed?
+# country_formatted = formatting(selected_countries)
+# theme_formatted = formatting(charity_theme) #perhaps not needed?
 
 
 #ACTION this only works for one country at the time
@@ -352,56 +350,56 @@ theme_formatted = formatting(charity_theme) #perhaps not needed?
 
 
 #ACTION: trying
-url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
+# url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
+# response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
 
-# filters = { #makes no diffrence whether in or out
-#     'country': country_formatted,
-#     'name': charity_theme
-# }
+# # filters = { #makes no diffrence whether in or out
+# #     'country': country_formatted,
+# #     'name': charity_theme
+# # }
 
-if response.status_code == 200:
-    data = response.json()
-    projects = data['projects']['project']
+# if response.status_code == 200:
+#     data = response.json()
+#     projects = data['projects']['project']
 
-    for country in country_formatted:
-        for theme in theme_formatted:
-            filtered_projects = []
+#     for country in country_formatted:
+#         for theme in theme_formatted:
+#             filtered_projects = []
 
-            for project in projects:
-                pass_filters = True
+#             for project in projects:
+#                 pass_filters = True
 
-                if project['country'] != country:
-                    continue
+#                 if project['country'] != country:
+#                     continue
 
-                themes = project['themes']['theme']
-                theme_names = [theme['name'] for theme in themes]
-                if theme not in theme_names:
-                    continue
+#                 themes = project['themes']['theme']
+#                 theme_names = [theme['name'] for theme in themes]
+#                 if theme not in theme_names:
+#                     continue
 
-                filtered_projects.append(project)
+#                 filtered_projects.append(project)
 
-            if filtered_projects:
-                for project in filtered_projects:
-                    st.write("Project Title:", project['title'])
-                    st.write("Countries:", project['country'])
-                    themes = project['themes']['theme']
-                    st.write("Themes:")
-                    for theme in themes:
-                        st.write("\tTheme ID:", theme['id'])
-                        st.write("\tTheme Name:", theme['name'])
-                    st.write("Summary:", project['summary'])
-                    st.write("Funding:", project['funding'])
-                    st.write("Goal:", project['goal'])
-                    donation_options = project['donationOptions']['donationOption']
-                    st.write("Donation Options:")
-                    for donation in donation_options:
-                        st.write("\tAmount:", donation['amount'], "$")
-                        st.write("\tDescription:", donation['description'])
-                    st.write("Project Link:", project['projectLink'])
-                    st.write()
-            else:
-                st.write("No data found for", country, "and", theme)
+#             if filtered_projects:
+#                 for project in filtered_projects:
+#                     st.write("Project Title:", project['title'])
+#                     st.write("Countries:", project['country'])
+#                     themes = project['themes']['theme']
+#                     st.write("Themes:")
+#                     for theme in themes:
+#                         st.write("\tTheme ID:", theme['id'])
+#                         st.write("\tTheme Name:", theme['name'])
+#                     st.write("Summary:", project['summary'])
+#                     st.write("Funding:", project['funding'])
+#                     st.write("Goal:", project['goal'])
+#                     donation_options = project['donationOptions']['donationOption']
+#                     st.write("Donation Options:")
+#                     for donation in donation_options:
+#                         st.write("\tAmount:", donation['amount'], "$")
+#                         st.write("\tDescription:", donation['description'])
+#                     st.write("Project Link:", project['projectLink'])
+#                     st.write()
+#             else:
+#                 st.write("No data found for", country, "and", theme)
 
-else:
-    st.write('Request failed with status code:', response.status_code)
+# else:
+#     st.write('Request failed with status code:', response.status_code)
