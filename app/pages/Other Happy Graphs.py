@@ -103,14 +103,14 @@ def create_radar(df_indicator_radar):
         for row in x:
             value_single.append(row)
             
-            value_single = np.concatenate((value_single, [value_single[0]]))
+        value_single = np.concatenate((value_single, [value_single[0]]))
 
-            min_val = np.min(value_single)
-            max_val = np.max(value_single)
+        min_val = np.min(value_single)
+        max_val = np.max(value_single)
 
-            scaled_values = 1 + ((value_single - min_val) / (max_val - min_val)) * 4
+        scaled_values = 1 + ((value_single - min_val) / (max_val - min_val)) * 4
 
-            values_allcountries.append(scaled_values)
+        values_allcountries.append(scaled_values)
 
         # Create the plot
     label_placement = np.linspace(start=0, stop = 2*np.pi, num=len(scaled_values))
