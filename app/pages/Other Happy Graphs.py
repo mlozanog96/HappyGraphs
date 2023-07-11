@@ -129,16 +129,11 @@ def create_radar(df_indicator_radar):
         # Append the first value at the end to close the radar plot
         value_single = np.concatenate((value_single, [value_single[0]]))
 
-        # Scale the values between 1 and 5
-        min_val = np.min(value_single)
-        max_val = np.max(value_single)
-        scaled_values = value_single
-
         # Append the scaled values to the list of values for all countries
-        values_allcountries.append(scaled_values)
+        values_allcountries.append(value_single)
 
     # Create the plot
-    label_placement = np.linspace(start=0, stop=2*np.pi, num=len(scaled_values))
+    label_placement = np.linspace(start=0, stop=2*np.pi, num=len(value_single))
     fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot(111, polar=True)
 
@@ -151,7 +146,7 @@ def create_radar(df_indicator_radar):
     ax.set_xticklabels(categories)
 
     # Add legend with country names
-    ax.legend(country_list)
+    ax.legend(country_list, loc='upper right')
 
     return fig
 
@@ -160,7 +155,7 @@ st.pyplot(create_radar(df_radar))
 
 
 
-
+''' 
 st.markdown('## Radar Graph before try')
 
 
@@ -204,3 +199,4 @@ ax.legend()
 st.pyplot(fig)
 
 
+'''
