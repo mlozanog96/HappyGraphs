@@ -117,6 +117,8 @@ def create_radar(df_indicator_radar):
     fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot(111, polar=True)
 
+    st.write(values_allcountries)
+
     for array in values_allcountries:
         ax.plot(label_placement, array)
 
@@ -125,8 +127,10 @@ def create_radar(df_indicator_radar):
 
     return(fig)
 
+st.write(df_radar)
 
 st.pyplot(create_radar(df_radar))
+
 
 
 st.markdown('## Radar Graph before try')
