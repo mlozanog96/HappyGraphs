@@ -132,7 +132,7 @@ def create_radar(df_indicator_radar):
         # Scale the values between 1 and 5
         min_val = np.min(value_single)
         max_val = np.max(value_single)
-        scaled_values = 1 + ((value_single - min_val) / (max_val - min_val)) * 4
+        scaled_values = value_single
 
         # Append the scaled values to the list of values for all countries
         values_allcountries.append(scaled_values)
