@@ -71,6 +71,8 @@ st.altair_chart(chart, use_container_width=True)
 correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
 st.write(f"Correlation: {correlation:.2f}")
 
+st.write(df)
+
 
 st.markdown('## Radar Graph second try')
 available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
