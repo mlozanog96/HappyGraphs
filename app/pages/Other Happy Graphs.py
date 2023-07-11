@@ -155,8 +155,8 @@ st.pyplot(create_radar(df_radar))
 
 
 
-''' 
-st.markdown('## Radar Graph before try')
+ 
+"""st.markdown('## Radar Graph before try')
 
 
 st.markdown('## Radar Graph')
@@ -198,5 +198,4 @@ ax.legend()
 # Display the chart in Streamlit
 st.pyplot(fig)
 
-
-'''
+"""
