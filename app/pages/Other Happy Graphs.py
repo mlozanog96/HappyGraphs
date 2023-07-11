@@ -86,13 +86,13 @@ year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), i
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 df_radar=df_radar.drop('date',axis=1)
 
-
 def create_radar(df_indicator_radar):
 
     categories = df_indicator_radar['indicator_name'].unique()
     # calculate the values for each country
     values_allcountries = []
     country_list = []
+
     for country in df_indicator_radar['country'].unique():
 
         country_list.append(country)
@@ -110,7 +110,7 @@ def create_radar(df_indicator_radar):
 
         scaled_values = 1 + ((value_single - min_val) / (max_val - min_val)) * 4
 
-    values_allcountries.append(scaled_values)
+        values_allcountries.append(scaled_values)
 
         # Create the plot
     label_placement = np.linspace(start=0, stop = 2*np.pi, num=len(scaled_values))
