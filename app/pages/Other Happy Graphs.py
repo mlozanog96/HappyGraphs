@@ -110,3 +110,5 @@ ax.legend()
 # Display the chart in Streamlit
 st.pyplot(fig)
 
+
+st.markdown('new plot')
