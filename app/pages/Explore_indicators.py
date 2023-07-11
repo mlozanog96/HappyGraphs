@@ -162,6 +162,7 @@ def formatting(data):
 country_formatted = formatting(selected_countries)
 theme_formatted = formatting(charity_theme)
 
+
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
@@ -213,7 +214,7 @@ if response.status_code == 200:
             st.write("Project Link:", project['projectLink'])
             st.write()
     else:
-        st.write('No data found for the specified filters: ', selected_countries, ',  ', selected_indicator, '. Please choose other countries or another indicator.')
+        st.write('No data found for the specified filters: ', country_formatted, ', ', theme_formatted, '. Please choose other countries or another theme.')
 
 else:
     st.write('Request failed with status code:', response.status_code)
