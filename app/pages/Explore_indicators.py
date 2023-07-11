@@ -143,14 +143,16 @@ charity_map = pd.read_csv('app/charity_map.csv')
 st.write('Indicator Category')
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
 selected_category = indicator_category['category'].iloc[0]
-st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. Below you find all the charities that contribute to ', selected_category, '.')
 
 # Filter the data based on the selected indicator & create list of charity themes
 charity_category = charity_map[charity_map['category'] == selected_category]
 charity_theme = charity_category['name'].tolist()
-st.write('Charities:', charity_theme)
-st.write('country', selected_countries)
 
+st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. The charities in this category work in the following fields: ', charity_theme)
+st.write('Below you find all the charities that work within these fields for your selected countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
+
+
+#ACTION put into utils
 def formatting(data):
     if len(data) == 1:
         return f"'{data[0]}'"
@@ -159,8 +161,6 @@ def formatting(data):
     
 country_formatted = formatting(selected_countries)
 theme_formatted = formatting(charity_theme)
-st.write('country', country_formatted)
-st.write('theme', theme_formatted)
 
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
@@ -186,7 +186,7 @@ if response.status_code == 200:
             if filter_column == 'name' and filter_value:
                 themes = project['themes']['theme']
                 theme_names = [theme['name'] for theme in themes]
-                if filter_value not in theme_names:
+                if not any(filter_theme in theme_names for filter_theme in filter_value):
                     pass_filters = False
                     break
 
