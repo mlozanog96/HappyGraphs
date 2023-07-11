@@ -71,6 +71,11 @@ st.altair_chart(chart, use_container_width=True)
 correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
 st.write(f"Correlation: {correlation:.2f}")
 
+
+st.markdown('new plot')
+
+
+
 st.markdown('## Radar Graph')
 col1, col2 = st.columns(2)
 radar_indicators= st.multiselect("Select indicators", sorted(available_indicators), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
@@ -111,4 +116,3 @@ ax.legend()
 st.pyplot(fig)
 
 
-st.markdown('new plot')
