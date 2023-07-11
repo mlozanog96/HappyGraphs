@@ -31,7 +31,7 @@ with filter_col1:
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 with filter_col2:
-    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
 # Create & Perform Prompt Explanation Indicator
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
@@ -139,6 +139,79 @@ st.write('There are a lot of initiatives already out there working on your chose
 indicator_map = pd.read_csv('app/indicator_map.csv')
 charity_map = pd.read_csv('app/charity_map.csv')
 
+st.markup('## playground:')
+
+filter_col1, filter_col2 = st.columns(2)
+
+all_charity_themes = charity_map['name']
+with filter_col1:
+    selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
+
+with filter_col2:
+    selected_countries_charity = filter_col2.multiselect("Select countries", available_countries) 
+
+st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities, if you have selected regions or the world in general.')
+
+url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
+response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
+
+filters = {
+    'country': selected_countries_charity,
+    'name': selected_charity_theme
+}
+
+if response.status_code == 200:
+    data = response.json()
+    projects = data['projects']['project']
+
+    filtered_projects = []
+
+    for project in projects:
+        pass_filters = True
+
+        for filter_column, filter_value in filters.items():
+            if filter_column == 'country' and filter_value and project['country'] not in filter_value:
+                pass_filters = False
+                break
+            if filter_column == 'name' and filter_value:
+                themes = project['themes']['theme']
+                theme_names = [theme['name'] for theme in themes]
+                if filter_value not in theme_names:
+                    pass_filters = False
+                    break
+
+        if pass_filters:
+            filtered_projects.append(project)
+
+    if filtered_projects:
+        for project in filtered_projects:
+            st.write("Project Title:", project['title'])
+            st.write("Countries:", project['country'])
+            themes = project['themes']['theme']
+            st.write("Themes:")
+            for theme in themes:
+                st.write("\tTheme ID:", theme['id'])
+                st.write("\tTheme Name:", theme['name'])
+            st.write("Summary:", project['summary'])
+            st.write("Funding:", project['funding'])
+            st.write("Goal:", project['goal'])
+            donation_options = project['donationOptions']['donationOption']
+            st.write("Donation Options:")
+            for donation in donation_options:
+                st.write("\tAmount:", donation['amount'], "$")
+                st.write("\tDescription:", donation['description'])
+            st.write("Project Link:", project['projectLink'])
+            st.write()
+    else:
+        st.write('No data found for the specified filters: ', selected_countries, ',  ', selected_indicator, '. Please choose other countries or another indicator.')
+
+else:
+    st.write('Request failed with status code:', response.status_code)
+
+
+
+
+st.markup('## Not so funny playground:')
 # Filter the data based on the selected indicator and find the corresponding category
 st.write('Indicator Category')
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
@@ -282,7 +355,7 @@ theme_formatted = formatting(charity_theme) #perhaps not needed?
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
 
-# filters = {
+# filters = { #makes no diffrence whether in or out
 #     'country': country_formatted,
 #     'name': charity_theme
 # }
