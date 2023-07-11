@@ -165,7 +165,7 @@ response = requests.get(url+charity_api_key, headers={"Accept": "application/jso
 
 country_formatted= 'x'
 country = selected_countries #ACTION: without world and regions need to go into region. Map regions and countries?
-theme_formated = 
+theme_formated = 'x'
 
 filters = {
     'country': country_charity,
