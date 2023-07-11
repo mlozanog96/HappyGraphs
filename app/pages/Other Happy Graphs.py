@@ -86,51 +86,61 @@ year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), i
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 df_radar=df_radar.drop('date',axis=1)
 
+'''
+Creation of radar graph function
+'''
 def create_radar(df_indicator_radar):
-
+    # Get unique categories
     categories = df_indicator_radar['indicator_name'].unique()
-    # calculate the values for each country
+
+    # Calculate the values for each country
     values_allcountries = []
     country_list = []
 
+    # Iterate over unique countries
     for country in df_indicator_radar['country'].unique():
-
         country_list.append(country)
 
+        # Filter data for the current country
         x = df_indicator_radar[df_indicator_radar['country'] == country]['value']
         value_single = []
 
+        # Iterate over the filtered values and append them to the value_single list
         for row in x:
             value_single.append(row)
-            
+
+        # Append the first value at the end to close the radar plot
         value_single = np.concatenate((value_single, [value_single[0]]))
 
+        # Scale the values between 1 and 5
         min_val = np.min(value_single)
         max_val = np.max(value_single)
-
         scaled_values = 1 + ((value_single - min_val) / (max_val - min_val)) * 4
 
+        # Append the scaled values to the list of values for all countries
         values_allcountries.append(scaled_values)
 
-        # Create the plot
-    label_placement = np.linspace(start=0, stop = 2*np.pi, num=len(scaled_values))
+    # Create the plot
+    label_placement = np.linspace(start=0, stop=2*np.pi, num=len(scaled_values))
     fig = plt.figure(figsize=(6, 6))
     ax = fig.add_subplot(111, polar=True)
 
-    st.write(values_allcountries)
-
+    # Plot the radar lines for each country
     for array in values_allcountries:
         ax.plot(label_placement, array)
 
+    # Set the category labels on the x-axis
     ax.set_xticks(np.linspace(0, 2*np.pi, len(categories), endpoint=False))
     ax.set_xticklabels(categories)
+
+    # Add legend with country names
     ax.legend(country_list)
 
-    return(fig)
+    return fig
 
-st.write(df_radar)
-
+# Display the radar plot
 st.pyplot(create_radar(df_radar))
+
 
 
 
