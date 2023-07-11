@@ -124,6 +124,7 @@ def create_radar(df_indicator_radar):
 
     ax.set_xticks(np.linspace(0, 2*np.pi, len(categories), endpoint=False))
     ax.set_xticklabels(categories)
+    ax.legend(country_list)
 
     return(fig)
 
