@@ -74,7 +74,9 @@ st.write(f"Correlation: {correlation:.2f}")
 st.write(df)
 
 
-st.markdown('## Radar Graph second try')
+st.markdown('## Radar Graph')
+st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
+
 
 available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
                                                              'Open defecation',
@@ -103,9 +105,9 @@ year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), i
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 df_radar=df_radar.drop('date',axis=1)
 
-'''
-Creation of radar graph function
-'''
+
+#Creation of radar graph function
+
 def create_radar(df_indicator_radar):
     # Get unique categories
     categories = df_indicator_radar['indicator_name'].unique()
