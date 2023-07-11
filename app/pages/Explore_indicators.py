@@ -179,17 +179,14 @@ if response.status_code == 200:
                 pass_filters = True
 
                 if project['country'] != country:
-                    pass_filters = False
                     continue
 
                 themes = project['themes']['theme']
                 theme_names = [theme['name'] for theme in themes]
                 if theme not in theme_names:
-                    pass_filters = False
                     continue
 
-                if pass_filters:
-                    filtered_projects.append(project)
+                filtered_projects.append(project)
 
             if filtered_projects:
                 for project in filtered_projects:
