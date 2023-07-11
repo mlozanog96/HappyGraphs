@@ -139,7 +139,7 @@ st.write('There are a lot of initiatives already out there working on your chose
 indicator_map = pd.read_csv('app/indicator_map.csv')
 charity_map = pd.read_csv('app/charity_map.csv')
 
-st.markup('## playground:')
+st.markdown('## playground:')
 
 filter_col1, filter_col2 = st.columns(2)
 
@@ -211,7 +211,7 @@ else:
 
 
 
-st.markup('## Not so funny playground:')
+st.markdown('## Not so funny playground:')
 # Filter the data based on the selected indicator and find the corresponding category
 st.write('Indicator Category')
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
