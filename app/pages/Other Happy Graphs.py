@@ -75,7 +75,6 @@ st.write(f"Correlation: {correlation:.2f}")
 st.markdown('## Radar Graph second try')
 available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
                                                              'Open defecation',
-                                                             'Sanitation service',
                                                              'Vulnerable employment female',
                                                              'Vulnerable employment male',
                                                              'Vulnerable employment, total',
