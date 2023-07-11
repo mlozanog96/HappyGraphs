@@ -72,7 +72,60 @@ correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selecte
 st.write(f"Correlation: {correlation:.2f}")
 
 
-st.markdown('new plot')
+st.markdown('## Radar Graph second try')
+col1, col2 = st.columns(2)
+radar_indicators= st.multiselect("Select indicators", sorted(available_indicators), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
+df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
+
+available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
+radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
+df_indicator_radar= df_indicator_radar[df_indicator_radar['country'].isin(radar_countries)]
+
+available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(drop=True)
+year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
+df_radar= df_indicator_radar[df_indicator_radar['date']==year]
+df_radar=df_radar.drop('date',axis=1)
+
+
+def create_radar(df_indicator_radar):
+
+    categories = df_indicator_radar['indicator_name'].unique()
+    # calculate the values for each country
+    values_allcountries = []
+    country_list = []
+    for country in df_indicator_radar['country'].unique():
+
+        country_list.append(country)
+
+        x = df_indicator_radar[df_indicator_radar['country'] == country]['value']
+        value_single = []
+
+        for row in x:
+            value_single.append(row)
+            
+            value_single = np.concatenate((value_single, [value_single[0]]))
+
+            min_val = np.min(value_single)
+            max_val = np.max(value_single)
+
+            scaled_values = 1 + ((value_single - min_val) / (max_val - min_val)) * 4
+
+            values_allcountries.append(scaled_values)
+
+        # Create the plot
+    label_placement = np.linspace(start=0, stop = 2*np.pi, num=len(scaled_values))
+    fig = plt.figure(figsize=(6, 6))
+    ax = fig.add_subplot(111, polar=True)
+    for array in values_allcountries:
+        ax.plot(label_placement, array)
+
+    ax.set_xticks(np.linspace(0, 2*np.pi, len(categories), endpoint=False))
+    ax.set_xticklabels(categories)
+
+    return(fig)
+
+
+st.pyplot(create_radar(df_radar))
 
 
 
