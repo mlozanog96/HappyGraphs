@@ -185,9 +185,7 @@ if response.status_code == 200:
             st.write("Project Title:", project['title'])
             st.write("Countries:", project['country'])
             themes = project['themes']['theme']
-            st.write("Themes:")
             for theme in themes:
-                st.write("\tTheme ID:", theme['id'])
                 st.write("\tTheme Name:", theme['name'])
             st.write("Summary:", project['summary'])
             st.write("Funding:", project['funding'])
