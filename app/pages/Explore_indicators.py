@@ -160,7 +160,7 @@ def formatting(data):
         return [f"'{item}'" for item in data]
     
 country_formatted = formatting(selected_countries)
-theme_formatted = formatting(charity_theme)
+theme_formatted = formatting(charity_theme) #perhaps not needed?
 
 
 #ACTION this only works for one country at the time
@@ -282,10 +282,10 @@ theme_formatted = formatting(charity_theme)
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
 
-filters = {
-    'country': country_formatted,
-    'name': charity_theme
-}
+# filters = {
+#     'country': country_formatted,
+#     'name': charity_theme
+# }
 
 if response.status_code == 200:
     data = response.json()
