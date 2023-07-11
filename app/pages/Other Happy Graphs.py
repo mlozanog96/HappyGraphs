@@ -75,12 +75,15 @@ st.write(df)
 
 
 st.markdown('## Radar Graph second try')
+'''
+
 available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services', 'Open defecation', 'Vulnerable employment female', 'Vulnerable employment male', 'Vulnerable employment, total',
                                                              'Proportion of seats held by women in national parliaments',
                                                              'Access to electricity',
                                                              'Forest area',
                                                              'Renewable energy consumption % stagnates',
                                                              'Population density'])]['indicator_name'].drop_duplicates().tolist()
+'''
 
 col1, col2 = st.columns(2)
 default_indicators = ['People using at least basic drinking water services', 'Forest area', 'Access to electricity']
