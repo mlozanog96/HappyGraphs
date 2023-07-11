@@ -128,6 +128,8 @@ def create_radar(df_indicator_radar):
 st.pyplot(create_radar(df_radar))
 
 
+st.markdown('## Radar Graph before try')
+
 
 st.markdown('## Radar Graph')
 col1, col2 = st.columns(2)
