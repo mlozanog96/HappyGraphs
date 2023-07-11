@@ -164,7 +164,7 @@ theme_formatted = formatting(charity_theme)
 
 
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
+response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
 
 filters = {
     'country': country_formatted,
@@ -175,46 +175,47 @@ if response.status_code == 200:
     data = response.json()
     projects = data['projects']['project']
 
-    filtered_projects = []
+    for country in country_formatted:
+        filtered_projects = []
 
-    for project in projects:
-        pass_filters = True
+        for project in projects:
+            pass_filters = True
 
-        for filter_column, filter_value in filters.items():
-            if filter_column == 'country' and filter_value and project['country'] not in filter_value:
-                pass_filters = False
-                break
-            if filter_column == 'name' and filter_value:
-                themes = project['themes']['theme']
-                theme_names = [theme['name'] for theme in themes]
-                if not any(filter_theme in theme_names for filter_theme in filter_value):
+            for filter_column, filter_value in filters.items():
+                if filter_column == 'country' and filter_value and project['country'] != country:
                     pass_filters = False
                     break
+                if filter_column == 'name' and filter_value:
+                    themes = project['themes']['theme']
+                    theme_names = [theme['name'] for theme in themes]
+                    if not any(filter_theme in theme_names for filter_theme in filter_value):
+                        pass_filters = False
+                        break
 
-        if pass_filters:
-            filtered_projects.append(project)
+            if pass_filters:
+                filtered_projects.append(project)
 
-    if filtered_projects:
-        for project in filtered_projects:
-            st.write("Project Title:", project['title'])
-            st.write("Countries:", project['country'])
-            themes = project['themes']['theme']
-            st.write("Themes:")
-            for theme in themes:
-                st.write("\tTheme ID:", theme['id'])
-                st.write("\tTheme Name:", theme['name'])
-            st.write("Summary:", project['summary'])
-            st.write("Funding:", project['funding'])
-            st.write("Goal:", project['goal'])
-            donation_options = project['donationOptions']['donationOption']
-            st.write("Donation Options:")
-            for donation in donation_options:
-                st.write("\tAmount:", donation['amount'], "$")
-                st.write("\tDescription:", donation['description'])
-            st.write("Project Link:", project['projectLink'])
-            st.write()
-    else:
-        st.write('No data found for the specified filters: ', country_formatted, ', ', theme_formatted, '. Please choose other countries or another theme.')
+        if filtered_projects:
+            for project in filtered_projects:
+                st.write("Project Title:", project['title'])
+                st.write("Countries:", project['country'])
+                themes = project['themes']['theme']
+                st.write("Themes:")
+                for theme in themes:
+                    st.write("\tTheme ID:", theme['id'])
+                    st.write("\tTheme Name:", theme['name'])
+                st.write("Summary:", project['summary'])
+                st.write("Funding:", project['funding'])
+                st.write("Goal:", project['goal'])
+                donation_options = project['donationOptions']['donationOption']
+                st.write("Donation Options:")
+                for donation in donation_options:
+                    st.write("\tAmount:", donation['amount'], "$")
+                    st.write("\tDescription:", donation['description'])
+                st.write("Project Link:", project['projectLink'])
+                st.write()
+        else:
+            st.write("No data found for", country)
 
 else:
     st.write('Request failed with status code:', response.status_code)
