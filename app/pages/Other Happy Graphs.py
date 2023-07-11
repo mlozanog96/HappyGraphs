@@ -73,7 +73,7 @@ st.write(f"Correlation: {correlation:.2f}")
 
 
 st.markdown('## Radar Graph second try')
-available_indicators_radar = ['People using at least basic drinking water services', 'Open defecation', 'Sanitation service', 'Vulnerable employment female', 'Vulnerable employment male',  'Vulnerable employment, total', 'Proportion of seats held by women in national parliaments', 'Access to electricity', 'Forest area', 'Renewable energy consumption % stagnates', 'Population density']
+available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services', 'Open defecation', 'Sanitation service', 'Vulnerable employment female', 'Vulnerable employment male',  'Vulnerable employment, total', 'Proportion of seats held by women in national parliaments', 'Access to electricity', 'Forest area', 'Renewable energy consumption % stagnates', 'Population density'])]['indicator_name'].drop_duplicates().reset_index(drop=True)
 col1, col2 = st.columns(2)
 radar_indicators= st.multiselect("Select indicators", sorted(available_indicators_radar), default=['Life expectancy','Forest area','Access to electricity','Energy use','Refugee population'])
 df_indicator_radar= df[df['indicator_name'].isin(radar_indicators)]
