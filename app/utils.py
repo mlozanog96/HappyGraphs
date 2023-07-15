@@ -1,6 +1,6 @@
 import pandas as pd
 import requests
-#import openai
+import openai
 import json
 #from statsmodels.tsa.stattools import adfuller
 from sklearn.model_selection import train_test_split
@@ -359,3 +359,19 @@ def get_country_data(country, data):
     return (access_to_electricity, armed_forces, child_immunization, foreign_investm,
             gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth,
             primary_school_completion, rural_population, trade_in_services)
+
+
+def ai_assistant(prompt, 
+                 model = 'gpt-3.5-turbo',
+                 temperature = 0.5,
+                 max_tokens = 500):
+    response = openai.ChatCompletion.create(
+        model = model,
+        messages = [{'role':'user','content': prompt}],
+        temperature = temperature,
+        max_tokens = max_tokens,
+    )
+
+    content = response['choices'][0]['message']['content']
+
+    return content

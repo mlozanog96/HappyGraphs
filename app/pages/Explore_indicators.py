@@ -8,15 +8,16 @@ from github import Github
 import openai
 from streamlit import components
 import requests
+from utils import ai_assistant
 
 st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-#ACTION: remove commenting befor submitting
 openai_api_key = st.secrets["openai_secret"]
 charity_api_key = st.secrets["charity_secret"]
 openai.api_key=openai_api_key
+
 
 
 # Create a row layout for filters
@@ -36,9 +37,8 @@ with filter_col2:
 # Create & Perform Prompt Explanation Indicator
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
 #ACTION: remove commenting befor submitting
-#response_indicator = openai.Completion.create(engine="text-davinci-001", prompt=prompt_indicator, max_tokens=400)
-#answer = response_indicator.choices[0].text.strip()
-#st.write(answer)
+answer = ai_assistant(prompt_indicator)
+st.write(answer)
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -117,6 +117,7 @@ st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
+st.write('Disclaimer: The following text is generated using the openai API. Please be aware that the  undelying engine text-davinci-003 was trained on a large dataset, but could halluzinate. For more information click here: ')
 
 # Show the reason why it has that trend
 prompt_prep_trend = None
@@ -126,10 +127,9 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
 #ACTION: remove commenting befor submitting
-# prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use about 400 tokens per country.'
-# response_reason_trend = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason_trend, max_tokens=400)
-# answer = response_reason_trend.choices[0].text.strip()
-# st.markdown(answer)
+prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use about 400 tokens per country.'
+answer = ai_assistant(prompt_reason_trend)
+st.write(answer)
 
 
 # Show matching charities
@@ -157,6 +157,7 @@ filters = {
     'name': selected_charity_theme
 }
 
+#ACTION: put for loops in this format: [doc.split() for doc in data]
 if response.status_code == 200:
     data = response.json()
     projects = data['projects']['project']
