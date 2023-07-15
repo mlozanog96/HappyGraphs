@@ -141,7 +141,7 @@ charity_map = pd.read_csv('app/charity_map.csv')
 
 filter_col1, filter_col2 = st.columns(2)
 
-all_charity_themes = ['']+list(charity_map['name'])
+all_charity_themes = ['']+ ['Gender Equality'] +list(charity_map['name']) #ACTION: Gender Equality should normaly be within the csv, why not?
 with filter_col1:
     selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
 
