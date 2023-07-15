@@ -153,6 +153,8 @@ st.write('Below you find all the charities that work within your chosen theme an
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
+# ... previous code ...
+
 if response.status_code == 200:
     data = response.json()
     projects = data['projects']['project']
@@ -162,14 +164,11 @@ if response.status_code == 200:
     for project in projects:
         pass_filters = True
 
-        if selected_countries_charity:
-            if project['country'] not in selected_countries_charity:
-                pass_filters = False
+        if selected_countries_charity and project['country'] not in selected_countries_charity:
+            pass_filters = False
 
-        if selected_charity_theme:
-            theme_names = [theme['name'] for theme in project['themes']['theme']]
-            if selected_charity_theme not in theme_names:
-                pass_filters = False
+        if selected_charity_theme and selected_charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
+            pass_filters = False
 
         if pass_filters:
             filtered_projects.append(project)
@@ -198,6 +197,8 @@ else:
     st.write('Request failed with status code:', response.status_code)
 
 
+
+st.markdown('<p> These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . </p> <p> Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries. </p>')
 
 
 # st.markdown('## Not so funny playground:')
