@@ -143,7 +143,7 @@ filter_col1, filter_col2 = st.columns(2)
 
 all_charity_themes = charity_map['name']
 with filter_col1:
-    selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
+    selected_charity_theme = filter_col1.multiselect("Select a charity theme", all_charity_themes)
 
 with filter_col2:
     selected_countries_charity = filter_col2.multiselect("Select countries", available_countries) 
