@@ -55,7 +55,12 @@ filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df
 filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
-x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
+x_scale = alt.Scale(
+    domain=(SELECTED_START_YEAR, SELECTED_END_YEAR),
+    nice=False,
+    # Format x-axis labels as numbers without commas
+    labels=alt.Labels(format=".0f")
+)
 y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
 # Set Color palette
@@ -65,7 +70,7 @@ custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in rang
 
 # Create an Altair line chart with tooltips
 chart = alt.Chart(filtered_data).mark_line().encode(
-    x=alt.X('date:Q', scale=x_scale, axis=alt.Axis(format='d', tickCount=5, labelExpr="datum.label.split('.')[0]")),
+    x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
     color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
     tooltip=['country', 'value']
