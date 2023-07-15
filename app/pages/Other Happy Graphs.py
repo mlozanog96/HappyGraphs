@@ -25,7 +25,7 @@ selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(avai
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-selected_countries = st.multiselect("Select countries", available_countries, default=['Germany']) 
+selected_countries = st.multiselect("Select countries", available_countries, default=['Germany']) #ACTION: make worldwide as a default
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -97,6 +97,8 @@ df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
 radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
 df_indicator_radar= df_indicator_radar[df_indicator_radar['country'].isin(radar_countries)]
+if not selected_countries:
+    selected_countries = ['World']
 
 available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(drop=True)
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
@@ -120,11 +122,11 @@ def create_radar(df_indicator_radar):
 
         # Filter data for the current country
         x = df_indicator_radar[df_indicator_radar['country'] == country]['value']
-        value_single = []
+        value_single = np.zeros(len(categories))
 
         # Iterate over the filtered values and append them to the value_single list
-        for row in x:
-            value_single.append(row)
+        for i, row in enumerate(x):
+             value_single[i] = row
 
         # Append the first value at the end to close the radar plot
         value_single = np.concatenate((value_single, [value_single[0]]))
@@ -153,12 +155,14 @@ def create_radar(df_indicator_radar):
 # Display the radar plot
 st.pyplot(create_radar(df_radar))
 
+# Map indicator
+
 
 
 # Having fun
 st.markdown('# And lastly here is a funny poem why Happy Graphs is awesome!')
 st.write('Disclaimer: The following poems is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-prompt_poem = 'Write me a poem on why Graphs, that show bad world bank indicators which decrease and good world bank indicators which increase, in a positiv way make us happy, optimistic and inspire us to make a positive impact on the world ourselves in under 200 tokens.'
+prompt_poem = 'Write me a poem on why Graphs, that show bad world bank indicators which decrease and good world bank indicators which increase, in a positiv way make us happy and inspire us to make a positive impact on the world ourselves in under 200 tokens.'
 answer = ai_assistant(prompt_poem)
 st.write(answer)
 
