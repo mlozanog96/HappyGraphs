@@ -11,6 +11,7 @@ import numpy
 from github import Github
 import seaborn as sns
 import matplotlib.pyplot as plt
+from utils import ai_assistant
 
 st.markdown('# Other happy graphs! :)')
 
@@ -154,3 +155,14 @@ def create_radar(df_indicator_radar):
 
 # Display the radar plot
 st.pyplot(create_radar(df_radar))
+
+
+
+# Having fun
+st.markdown('# And lastly here is a funny poem why Happy Graphs is awesome!')
+st.write('Disclaimer: The following poems is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+prompt_poem = 'Write me a poem on why Graphs, that show bad world bank indicators which decrease and good world bank indicators which increase, in a positiv way make us happy and inspire us to make a positive impact on the world ourselves in under 200 tokens.'
+answer = ai_assistant(prompt_poem)
+st.write(answer)
+
+st.markdown('### We hope we made your worldview more positive and inspired you to take action. Best, the Group KMJ Do-Gooders')
