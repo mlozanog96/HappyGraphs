@@ -72,9 +72,6 @@ st.altair_chart(chart, use_container_width=True)
 correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
 st.write(f"Correlation: {correlation:.2f}")
 
-st.write(df)
-
-
 st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
@@ -94,7 +91,7 @@ available_indicators_radar = df[df['indicator_name'].isin(['People using at leas
 
 col1, col2 = st.columns(2)
 default_indicators = ['Sanitation service', 'Vulnerable employment female', 'People using at least basic drinking water services', 'Forest area', 'Access to electricity']
-radar_indicators = col1.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
+radar_indicators = st.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
