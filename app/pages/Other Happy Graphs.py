@@ -122,7 +122,7 @@ def create_radar(df_indicator_radar):
 
         # Filter data for the current country
         x = df_indicator_radar[df_indicator_radar['country'] == country]['value']
-        value_single = []
+        value_single = np.zeros(len(categories))
 
         # Iterate over the filtered values and append them to the value_single list
         for row in x:
