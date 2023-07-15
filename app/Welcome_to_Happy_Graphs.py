@@ -9,7 +9,7 @@ from pathlib import Path
 import requests
 import openai
 import seaborn as sns
-from utils import get_data, get_indicator_reason, filter_projects, get_country_data
+from utils import get_data, filter_projects, get_country_data #,get_indicator_reason
 
 st.title('Happy Graphs')
 
