@@ -165,6 +165,7 @@ if response.status_code == 200:
 
     filtered_projects = []
 
+
     for project in projects:
         pass_filters = True
 
@@ -172,12 +173,9 @@ if response.status_code == 200:
             if filter_column == 'country' and filter_value and project['country'] not in filter_value:
                 pass_filters = False
                 break
-            if filter_column == 'name' and filter_value:
-                themes = project['themes']['theme']
-                theme_names = [theme['name'] for theme in themes]
-                if filter_value not in theme_names:
-                    pass_filters = False
-                    break
+            if filter_column == 'name' and filter_value and filter_value not in project['title']:
+                pass_filters = False
+                break
 
         if pass_filters:
             filtered_projects.append(project)
