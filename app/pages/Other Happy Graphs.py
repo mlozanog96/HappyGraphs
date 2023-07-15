@@ -125,8 +125,8 @@ def create_radar(df_indicator_radar):
         value_single = np.zeros(len(categories))
 
         # Iterate over the filtered values and append them to the value_single list
-        for row in x:
-            value_single.append(row)
+        for i, row in enumerate(x):
+             value_single[i] = row
 
         # Append the first value at the end to close the radar plot
         value_single = np.concatenate((value_single, [value_single[0]]))
