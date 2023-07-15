@@ -65,7 +65,7 @@ custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in rang
 
 # Create an Altair line chart with tooltips
 chart = alt.Chart(filtered_data).mark_line().encode(
-    x=alt.X('date:Q', scale=x_scale),
+    x=alt.X('date:Q', scale=x_scale, axis=alt.Axis(format='d', tickCount=5, labelExpr="datum.label.split('.')[0]")),
     y=alt.Y('value:Q', scale=y_scale),
     color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
     tooltip=['country', 'value']
