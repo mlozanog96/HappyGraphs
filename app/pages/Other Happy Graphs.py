@@ -72,9 +72,6 @@ st.altair_chart(chart, use_container_width=True)
 correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
 st.write(f"Correlation: {correlation:.2f}")
 
-st.write(df)
-
-
 st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
