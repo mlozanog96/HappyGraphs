@@ -148,34 +148,28 @@ with filter_col1:
 with filter_col2:
     selected_countries_charity = filter_col2.multiselect("Select countries", available_countries) 
 
-st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities, if you have selected regions or the world in general.')
+st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
 
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
-filters = {
-    'country': selected_countries_charity,
-    'name': selected_charity_theme
-}
-
-#ACTION: put for loops in this format: [doc.split() for doc in data]
 if response.status_code == 200:
     data = response.json()
     projects = data['projects']['project']
 
     filtered_projects = []
 
-
     for project in projects:
         pass_filters = True
 
-        for filter_column, filter_value in filters.items():
-            if filter_column == 'country' and filter_value and project['country'] not in filter_value:
+        if selected_countries_charity:
+            if project['country'] not in selected_countries_charity:
                 pass_filters = False
-                break
-            if filter_column == 'name' and filter_value and filter_value not in project['title']:
+
+        if selected_charity_theme:
+            theme_names = [theme['name'] for theme in project['themes']['theme']]
+            if selected_charity_theme not in theme_names:
                 pass_filters = False
-                break
 
         if pass_filters:
             filtered_projects.append(project)
@@ -198,7 +192,7 @@ if response.status_code == 200:
             st.write("Project Link:", project['projectLink'])
             st.write()
     else:
-        st.write('No data found for the specified filters: ', selected_countries, ',  ', selected_indicator, '. Please choose other countries or another indicator.')
+        st.write('No data found for the specified filters. Please choose other countries or another theme.')
 
 else:
     st.write('Request failed with status code:', response.status_code)
