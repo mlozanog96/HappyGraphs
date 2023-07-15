@@ -153,7 +153,6 @@ def create_radar(df_indicator_radar):
     return fig
 
 # Display the radar plot
-st.write(df_radar)
 st.pyplot(create_radar(df_radar))
 
 # Map indicator
