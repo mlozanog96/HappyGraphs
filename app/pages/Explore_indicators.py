@@ -55,12 +55,7 @@ filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df
 filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
-x_scale = alt.Scale(
-    domain=(SELECTED_START_YEAR, SELECTED_END_YEAR),
-    nice=False,
-    # Format x-axis labels as numbers without commas
-    labels=alt.Labels(format=".0f")
-)
+x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
 y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
 # Set Color palette
