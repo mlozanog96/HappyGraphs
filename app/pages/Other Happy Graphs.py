@@ -25,7 +25,7 @@ selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(avai
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
-selected_countries = st.multiselect("Select countries", available_countries, default=['Germany']) #ACTION: make worldwide as a default
+selected_countries = st.multiselect("Select countries", available_countries, default=['Germany']) 
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -161,7 +161,7 @@ st.pyplot(create_radar(df_radar))
 # Having fun
 st.markdown('# And lastly here is a funny poem why Happy Graphs is awesome!')
 st.write('Disclaimer: The following poems is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-prompt_poem = 'Write me a poem on why Graphs, that show bad world bank indicators which decrease and good world bank indicators which increase, in a positiv way make us happy and inspire us to make a positive impact on the world ourselves in under 200 tokens.'
+prompt_poem = 'Write me a poem on why Graphs, that show bad world bank indicators which decrease and good world bank indicators which increase, in a positiv way make us happy, optimistic and inspire us to make a positive impact on the world ourselves in under 200 tokens.'
 answer = ai_assistant(prompt_poem)
 st.write(answer)
 

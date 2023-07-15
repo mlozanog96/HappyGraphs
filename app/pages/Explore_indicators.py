@@ -36,7 +36,7 @@ with filter_col2:
 
 # Create & Perform Prompt Explanation Indicator
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-#ACTION: remove commenting befor submitting
+st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
 answer = ai_assistant(prompt_indicator)
 st.write(answer)
 
@@ -117,7 +117,7 @@ st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
-st.write('Disclaimer: The following text is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+st.write('Disclaimer: The following explenation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
 # Show the reason why it has that trend
 prompt_prep_trend = None
 for i, (country, trend_per_country) in enumerate(trends.items()):
@@ -125,15 +125,14 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
         prompt_prep_trend = f"{trend_per_country} in {country}"
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
-#ACTION: remove commenting befor submitting
-prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use about 400 tokens per country.'
+prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
 answer = ai_assistant(prompt_reason_trend)
 st.write(answer)
 
 
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
-st.write('There are a lot of initiatives already out there working on positive change. See for yourself. Let youself be inspired to take action and support your favorite charity. We make a difference!')
+st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
 charity_map = pd.read_csv('app/charity_map.csv')
 
 
