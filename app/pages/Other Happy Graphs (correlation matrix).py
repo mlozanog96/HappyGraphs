@@ -17,7 +17,7 @@ st.markdown('# Other happy graphs! :)')
 
 df= pd.read_csv('app/world_bank_data.csv')
 
-st.markdown('## Correlation between two variables')
+st.markdown('## Heat Map: Correlation between variables')
 
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators))
@@ -55,28 +55,7 @@ ax.set_title('Correlation Heatmap of Indicators')
 # Display the heatmap in Streamlit
 st.pyplot(fig)
 
-# Reset index and convert to long format
-correlation_matrix = correlation_matrix.reset_index().melt(id_vars='date')
-
-# Create the heatmap using Altair
-heatmap = alt.Chart(correlation_matrix).mark_rect().encode(
-    x='Date:O',
-    y='variable:O',
-    color='value:Q'
-)
-
-# Adjust the chart properties
-heatmap = heatmap.properties(
-    width=400,
-    height=400,
-    title='Correlation Heatmap of Years'
-)
-
-# Display the heatmap in Streamlit
-st.altair_chart(heatmap)
-
-
-
+st.markdown('## Heat Map: Correlation between variables')
 filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
