@@ -49,6 +49,7 @@ selected_start_year, selected_end_year = selected_year_range
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
+matrix_filtered_data= convert_table_to_matrix(filtered_data)
 
 # Set Color palette
 num_colors= 15
@@ -56,7 +57,7 @@ color_palette = sns.color_palette("husl", num_colors)
 custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
 # Create a correlation scatter plot using Altair
-chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
+chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     x=alt.X(f"{selected_indicator_1}:Q"),
     y=alt.Y(f"{selected_indicator_2}:Q"),
     color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
@@ -65,14 +66,14 @@ chart = alt.Chart(matrix_data).mark_circle(size=60).encode(
     width=600,
     height=400
 )
-correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
+correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
 
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
 
 # Calculate correlation
-correlation = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])[0, 1]
+correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
 st.write(f"Correlation: {correlation:.2f}")
 
 st.markdown('## Radar Graph')
