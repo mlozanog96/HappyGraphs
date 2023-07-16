@@ -36,11 +36,12 @@ df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_coun
 
 st.write(df_years)
 
-# Pivot the data to have indicators as columns and rows representing pairs of indicators
-pivoted_data = df_years.pivot_table(index='indicator_name', columns='indicator_name', values='value', aggfunc='corr')
+# Define a custom aggregation function to calculate correlation
+def correlation(x):
+    return x.corr()
 
-# Calculate the correlation matrix
-correlation_matrix = pivoted_data.corr()
+# Calculate the correlation matrix within the pivot table
+correlation_matrix = df_years.pivot_table(index='indicator_name', columns='indicator_name', values='value', aggfunc=correlation)
 
 # Create the heatmap using seaborn
 fig, ax = plt.subplots(figsize=(8, 6))
