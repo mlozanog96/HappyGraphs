@@ -34,8 +34,6 @@ selected_start_year, selected_end_year = selected_year_range
 
 df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_countries['date'] <= selected_end_year)]
 
-st.write(df_years)
-
 # Pivot the data to create a correlation matrix
 correlation_matrix = df_years.pivot_table(index=['country', 'date'], columns='indicator_name', values='value')
 
@@ -58,7 +56,6 @@ available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=T
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(available_indicators),index=3)
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
-
 
 
 # Filter the data for selected countries and time period
