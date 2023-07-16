@@ -20,10 +20,10 @@ df= pd.read_csv('app/world_bank_data.csv')
 st.markdown('## Heat Map: Correlation between variables')
 
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators))
+selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides'])
 
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
-selected_countries = st.multiselect("Select countries", available_countries, default=['Germany']) #ACTION: make worldwide as a default
+selected_countries = st.multiselect("Select countries", available_countries, default=['World']) #ACTION: make worldwide as a default
 
 if not selected_countries:
     selected_countries = ['World']
@@ -44,7 +44,7 @@ correlation_matrix = df_years.pivot_table(index=['country', 'date'], columns='in
 correlation_matrix = correlation_matrix.corr()
 
 # Create the heatmap using seaborn
-fig, ax = plt.subplots(figsize=(16, 12))
+fig, ax = plt.subplots(figsize=(8, 6))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
 
 # Adjust the axis labels and the title of the plot
