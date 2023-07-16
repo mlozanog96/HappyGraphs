@@ -25,15 +25,25 @@ selected_countries = st.multiselect("Select countries", available_countries, def
 if not selected_countries:
     selected_countries = ['World']
 
-def convert_table_to_matrix(table):
-    # Pivot the table to create separate columns for each indicator
-    matrix = table.pivot(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
-    return matrix
+df_countries= df['country'].isin(selected_countries)
 
-matrix_data= convert_table_to_matrix(df)
+# Pivot the data to have indicators as columns and rows representing pairs of indicators
+pivoted_data = df_countries.pivot(index='indicator_name', columns='indicator_name', values='value')
 
-correlation_matrix = np.corrcoef(matrix_data[selected_indicator_1], matrix_data[selected_indicator_2])
-correlation = correlation_matrix[0, 1]
+# Calculate the correlation matrix
+correlation_matrix = pivoted_data.corr()
+
+# Create the heatmap using seaborn
+fig, ax = plt.subplots(figsize=(8, 6))
+sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
+
+# Adjust the axis labels and the title of the plot
+ax.set_xlabel('Indicators')
+ax.set_ylabel('Indicators')
+ax.set_title('Correlation Heatmap of Indicators')
+
+# Display the heatmap in Streamlit
+st.pyplot(fig)
 
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
@@ -48,6 +58,12 @@ selected_start_year, selected_end_year = selected_year_range
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
+
+
+def convert_table_to_matrix(table):
+    # Pivot the table to create separate columns for each indicator
+    matrix = table.pivot(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
+    return matrix
 
 matrix_filtered_data= convert_table_to_matrix(filtered_data)
 
