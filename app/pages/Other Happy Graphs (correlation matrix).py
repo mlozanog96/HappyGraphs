@@ -38,15 +38,12 @@ st.write(df_years)
 
 # Pivot the data to create a correlation matrix
 correlation_matrix = df_years.pivot_table(index=['country', 'date'], columns='indicator_name', values='value')
-st.write(correlation_matrix)
 
 # Calculate the correlation between indicators
 correlation_matrix = correlation_matrix.corr()
-st.write(correlation_matrix)
-
 
 # Create the heatmap using seaborn
-fig, ax = plt.subplots(figsize=(8, 6))
+fig, ax = plt.subplots(figsize=(16, 12))
 sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
 
 # Adjust the axis labels and the title of the plot
