@@ -56,11 +56,11 @@ ax.set_title('Correlation Heatmap of Indicators')
 st.pyplot(fig)
 
 st.markdown('## Correlation between two variables')
-st.write('Countries and year range determine for Heat map filters')
+st.write('Indicators, Countries and Year range is determine for Heatmap filters')
 filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(selected_indicators),index=2)
-selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(selected_indicators),index=3)
+selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(selected_indicators),index=0)
+selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(selected_indicators),index=1)
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
 
