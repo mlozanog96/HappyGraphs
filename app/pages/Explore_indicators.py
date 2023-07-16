@@ -118,7 +118,7 @@ st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
-st.write('Disclaimer: The following explenation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
 # Show the reason why it has that trend
 prompt_prep_trend = None
 for i, (country, trend_per_country) in enumerate(trends.items()):
