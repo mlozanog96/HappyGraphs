@@ -12,6 +12,7 @@ from github import Github
 import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import ai_assistant
+import geopandas as gpd
 
 st.markdown('# Other happy graphs! :)')
 
@@ -185,7 +186,25 @@ def create_radar(df_indicator_radar):
 st.pyplot(create_radar(df_radar))
 
 # Map indicator
+# Filter the DataFrame for a specific year and indicator
+selected_year = st.selectbox('Select a year', df['date'].unique())
+selected_indicator = st.selectbox('Select an indicator', df['indicator_name'].unique())
+filtered_df = df[(df['date'] == selected_year) & (df['indicator_name'] == selected_indicator)]
 
+# Create a GeoDataFrame with country geometries
+gdf = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+
+# Merge the filtered DataFrame with the GeoDataFrame based on the country names
+merged_df = gdf.merge(filtered_df, left_on='name', right_on='Country')
+
+# Plot the map
+fig, ax = plt.subplots(figsize=(12, 8))
+merged_df.plot(column='Value', cmap='Blues', linewidth=0.8, ax=ax, edgecolor='0.8', legend=True)
+ax.set_title(f'{selected_indicator} ({selected_year})', fontsize=16)
+ax.axis('off')
+
+# Display the map using Streamlit
+st.pyplot(fig)
 
 
 # Having fun
