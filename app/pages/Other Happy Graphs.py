@@ -12,7 +12,6 @@ from github import Github
 import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import ai_assistant
-import geopandas as gpd
 
 st.markdown('# Other happy graphs! :)')
 
