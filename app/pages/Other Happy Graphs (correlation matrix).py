@@ -56,11 +56,11 @@ ax.set_title('Correlation Heatmap of Indicators')
 st.pyplot(fig)
 
 # Reset index and convert to long format
-correlation_matrix = correlation_matrix.reset_index().melt(id_vars='Year')
+correlation_matrix = correlation_matrix.reset_index().melt(id_vars='date')
 
 # Create the heatmap using Altair
 heatmap = alt.Chart(correlation_matrix).mark_rect().encode(
-    x='Year:O',
+    x='Date:O',
     y='variable:O',
     color='value:Q'
 )
