@@ -20,7 +20,7 @@ df= pd.read_csv('app/world_bank_data.csv')
 st.markdown('## Heat Map: Correlation between variables')
 
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides'])
+selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides','CO2 emissions','Agricultural methane emissions'])
 
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 selected_countries = st.multiselect("Select countries", available_countries, default=['World']) #ACTION: make worldwide as a default
@@ -55,7 +55,8 @@ ax.set_title('Correlation Heatmap of Indicators')
 # Display the heatmap in Streamlit
 st.pyplot(fig)
 
-st.markdown('## Heat Map: Correlation between variables')
+st.markdown('## Correlation between two variables')
+st.write('Countries and year range determine for Heat map filters')
 filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
