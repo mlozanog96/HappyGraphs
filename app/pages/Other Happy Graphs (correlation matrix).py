@@ -18,14 +18,17 @@ st.markdown('# Other happy graphs! :)')
 df= pd.read_csv('app/world_bank_data.csv')
 
 st.markdown('## Correlation between two variables')
-filter_col1, filter_col2 = st.columns(2)
+
+available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators),index=2)
+
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 selected_countries = st.multiselect("Select countries", available_countries, default=['Germany']) #ACTION: make worldwide as a default
 
 if not selected_countries:
     selected_countries = ['World']
 
-df_countries=  df[df['country'].isin(selected_countries)]
+df_countries=  df[(df['country'].isin(selected_countries)) &((df['indicator_name'].isin(selected_indicators)))]
 
 min_year = int(df_countries['date'].min())
 max_year = int(df_countries['date'].max())
@@ -52,6 +55,8 @@ ax.set_title('Correlation Heatmap of Indicators')
 # Display the heatmap in Streamlit
 st.pyplot(fig)
 
+
+filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(available_indicators),index=2)
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(available_indicators),index=3)
