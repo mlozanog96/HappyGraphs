@@ -55,6 +55,27 @@ ax.set_title('Correlation Heatmap of Indicators')
 # Display the heatmap in Streamlit
 st.pyplot(fig)
 
+# Reset index and convert to long format
+correlation_matrix = correlation_matrix.reset_index().melt(id_vars='Year')
+
+# Create the heatmap using Altair
+heatmap = alt.Chart(correlation_matrix).mark_rect().encode(
+    x='Year:O',
+    y='variable:O',
+    color='value:Q'
+)
+
+# Adjust the chart properties
+heatmap = heatmap.properties(
+    width=400,
+    height=400,
+    title='Correlation Heatmap of Years'
+)
+
+# Display the heatmap in Streamlit
+st.altair_chart(heatmap)
+
+
 
 filter_col1, filter_col2 = st.columns(2)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
