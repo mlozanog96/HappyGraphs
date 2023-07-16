@@ -37,7 +37,7 @@ df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_coun
 st.write(df_years)
 
 # Pivot the data to create a correlation matrix
-correlation_matrix = df_years.pivot_table(index='indicator_name', columns='indicator_name', values='value')
+correlation_matrix = df_years.pivot_table(index='indicator_name', columns='date', values='value')
 st.write(correlation_matrix)
 
 # Calculate the correlation between indicators
