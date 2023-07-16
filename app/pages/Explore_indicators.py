@@ -36,15 +36,14 @@ with filter_col2:
 
 # Create & Perform Prompt Explanation Indicator
 #ACTION: remove comments
-# prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-# st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
+prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+answer = ai_assistant(prompt_indicator)
+st.write(answer)
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
-# selected_start_year, selected_end_year = selected_year_range
 SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
 if not selected_countries:
@@ -128,9 +127,9 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
         prompt_prep_trend += f" and {trend_per_country} in {country}"
 
 #ACTION: remove comments
-# prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
-# answer = ai_assistant(prompt_reason_trend)
-# st.write(answer)
+prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
+answer = ai_assistant(prompt_reason_trend)
+st.write(answer)
 
 
 # Show matching charities
@@ -152,8 +151,6 @@ st.write('Below you find all the charities that work within your chosen theme an
 
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
-
-# ... previous code ...
 
 if response.status_code == 200:
     data = response.json()

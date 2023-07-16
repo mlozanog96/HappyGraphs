@@ -37,10 +37,8 @@ Sidenote: Please don't get fooled by the decline of life expectancy since 2019. 
 st.markdown(intro_text, unsafe_allow_html=True)
 
 ### Show life expectancy world wide compared to German & Mexican
-# User selection
-#ACTION: Search for an indicator by topic?
 
-# Get the list of available indicators and countries and user selection
+# Get the list of available countries for the user selection
 df_indicator= df[df['indicator_name']=='Life expectancy']
 st.title('Life Expectancy')
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
@@ -93,7 +91,7 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 # Display the matrix using Streamlit
 st.write(matrix)
 
-### Prediction with given features
+### Prediction with imaginative and given features
 st.markdown("## Prediction")
 intro_text_2 = """
 To predict a value, you can select a country in order to get default values, then feel free to modify any value you want. \n 
