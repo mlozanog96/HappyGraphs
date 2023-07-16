@@ -25,10 +25,18 @@ selected_countries = st.multiselect("Select countries", available_countries, def
 if not selected_countries:
     selected_countries = ['World']
 
-df_countries= df['country'].isin(selected_countries)
+df_countries=  df[df['country'].isin(selected_countries)]
+
+min_year = int(df_countries['date'].min())
+max_year = int(df_countries['date'].max())
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
+selected_start_year, selected_end_year = selected_year_range
+
+df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_countries['date'] <= selected_end_year)]
+
 
 # Pivot the data to have indicators as columns and rows representing pairs of indicators
-pivoted_data = df_countries.pivot(index='indicator_name', columns='indicator_name', values='value')
+pivoted_data = df_years.pivot(index='indicator_name', columns='indicator_name', values='value')
 
 # Calculate the correlation matrix
 correlation_matrix = pivoted_data.corr()
@@ -50,10 +58,7 @@ selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(avai
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(available_indicators),index=3)
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
-selected_start_year, selected_end_year = selected_year_range
+
 
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
