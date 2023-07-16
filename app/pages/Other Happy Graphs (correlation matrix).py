@@ -34,9 +34,8 @@ selected_start_year, selected_end_year = selected_year_range
 
 df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_countries['date'] <= selected_end_year)]
 
-
 # Pivot the data to have indicators as columns and rows representing pairs of indicators
-pivoted_data = df.pivot(index='indicator_name', columns='indicator_name', values='value')
+pivoted_data = df_years.pivot(index='indicator_name', columns='indicator_name', values='value')
 
 # Calculate the correlation matrix
 correlation_matrix = pivoted_data.corr()
