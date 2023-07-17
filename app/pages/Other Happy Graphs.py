@@ -21,7 +21,6 @@ df= pd.read_csv('app/world_bank_data.csv')
 st.markdown('## Heat Map: Correlation between variables')
 
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-st.write(available_indicators)
 selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides','CO2 emissions','Agricultural methane emissions'])
 
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
@@ -160,6 +159,9 @@ col1, col2 = st.columns(2)
 default_indicators = ['Sanitation service', 'Vulnerable employment female', 'People using at least basic drinking water services', 'Forest area', 'Access to electricity']
 radar_indicators = st.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
+
+df_indicator_radar['indicator_name'] = df_indicator_radar['indicator_name'].replace(abbreviation_mapping)
+
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
 radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
