@@ -93,6 +93,9 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     height=400
 )
 
+# Display the scatter plot in Streamlit
+st.altair_chart(chart, use_container_width=True)
+
 # Calculate the correlation
 x1="'"+selected_indicator_1+"'"
 x2="'"+selected_indicator_2+"'"
@@ -102,9 +105,6 @@ correlation = df[x1].corr(df[x2])
 # Display the correlation value
 print("Correlation:", correlation)
 
-
-# Display the scatter plot in Streamlit
-st.altair_chart(chart, use_container_width=True)
 
 
 # Radar Graph
