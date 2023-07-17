@@ -99,6 +99,7 @@ st.altair_chart(chart, use_container_width=True)
 # Calculate the correlation
 x1="'"+selected_indicator_1+"'"
 x2="'"+selected_indicator_2+"'"
+st.write(x1)
 
 correlation = df[x1].corr(df[x2])
 
