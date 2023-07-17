@@ -101,7 +101,7 @@ x1="'"+selected_indicator_1+"'"
 x2="'"+selected_indicator_2+"'"
 st.write(x1)
 
-correlation = df[x1].corr(df[x2])
+correlation = matrix_filtered_data[x1].corr(matrix_filtered_data[x2])
 
 # Display the correlation value
 print("Correlation:", correlation)
