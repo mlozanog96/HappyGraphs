@@ -21,6 +21,7 @@ df= pd.read_csv('app/world_bank_data.csv')
 st.markdown('## Heat Map: Correlation between variables')
 
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+st.write(available_indicators)
 selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides','CO2 emissions','Agricultural methane emissions'])
 
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
@@ -97,9 +98,6 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
 st.altair_chart(chart, use_container_width=True)
 
 # Calculate the correlation
-x1="'"+selected_indicator_1+"'"
-x2="'"+selected_indicator_2+"'"
-
 correlation = matrix_filtered_data[selected_indicator_1].corr(matrix_filtered_data[selected_indicator_2])
 
 # Display the correlation value
