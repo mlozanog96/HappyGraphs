@@ -39,10 +39,10 @@ selected_start_year, selected_end_year = selected_year_range
 df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_countries['date'] <= selected_end_year)]
 
 # Pivot the data to create a correlation matrix
-correlation_matrix = df_years.pivot_table(index=['country', 'date'], columns='indicator_name', values='value')
+correlation_matrix_data = df_years.pivot_table(index=['country', 'date'], columns='indicator_name', values='value')
 
 # Calculate the correlation between indicators
-correlation_matrix = correlation_matrix.corr()
+correlation_matrix = correlation_matrix_data.corr()
 
 # Create the heatmap using seaborn
 fig, ax = plt.subplots(figsize=(8, 6))
@@ -97,7 +97,9 @@ correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_fil
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
+st.write(correlation_matrix_data)
 
+st.write(matrix_filtered_data)
 # Calculate correlation
 correlation = matrix_filtered_data.corr()
 st.write(f"Correlation: {correlation:.2f}")
