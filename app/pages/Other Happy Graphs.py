@@ -93,7 +93,12 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     height=400
 )
 
-st.write(matrix_filtered_data)
+# Calculate the correlation
+correlation = df[f'{selected_indicator_1}'].corr(df[f'{selected_indicator_2}'])
+
+# Display the correlation value
+print("Correlation:", correlation)
+
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
