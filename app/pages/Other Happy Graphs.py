@@ -93,6 +93,8 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     height=400
 )
 
+st.write(matrix_filtered_data)
+
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
 
