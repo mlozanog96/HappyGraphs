@@ -13,6 +13,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import ai_assistant
 
+
 st.markdown('# Other happy graphs! :)')
 
 df= pd.read_csv('app/world_bank_data.csv')
@@ -91,7 +92,7 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     width=600,
     height=400
 )
-correlation = matrix_filtered_data.corr()
+correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
 
 
 # Display the scatter plot in Streamlit
