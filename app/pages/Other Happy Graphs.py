@@ -97,9 +97,7 @@ correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_fil
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
-st.write(correlation_matrix_data.corr)
-
-st.write(matrix_filtered_data.corr)
+st.write(matrix_filtered_data.corr())
 # Calculate correlation
 correlation = matrix_filtered_data.corr()
 st.write(f"Correlation: {correlation:.2f}")
