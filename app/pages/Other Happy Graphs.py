@@ -91,7 +91,7 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     width=600,
     height=400
 )
-correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
+correlation = matrix_filtered_data.corr()
 
 
 # Display the scatter plot in Streamlit
