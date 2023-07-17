@@ -72,7 +72,7 @@ filtered_data = filtered_data.sort_values('date')
 
 def convert_table_to_matrix(table):
     # Pivot the table to create separate columns for each indicator
-    matrix = table.pivot(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
+    matrix = table.pivot_table(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
     return matrix
 
 matrix_filtered_data= convert_table_to_matrix(filtered_data)
