@@ -92,28 +92,12 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     width=600,
     height=400
 )
-#correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
 
-# Calculate correlation
-correlation = matrix_filtered_data.corr()
-# Create the heatmap using seaborn
-fig2, ax = plt.subplots(figsize=(8, 6))
-sns.heatmap(correlation, annot=True, cmap='coolwarm', fmt=".2f", ax=ax)
 
-# Adjust the axis labels and the title of the plot
-ax.set_xlabel('Indicators')
-ax.set_ylabel('Indicators')
-ax.set_title('Correlation Heatmap of Indicators')
-
-# Display the heatmap in Streamlit
-st.pyplot(fig2)
-
-
-st.write(f"Correlation: {correlation:.2f}")
-
+# Radar Graph
 st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
