@@ -96,7 +96,7 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
-st.write(matrix_filtered_data.corr())
+
 # Calculate correlation
 correlation = matrix_filtered_data.corr()
 # Create the heatmap using seaborn
