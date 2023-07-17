@@ -94,7 +94,7 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
 )
 
 # Calculate the correlation
-correlation = df[selected_indicator_1].corr(df[selected_indicator_2])
+correlation = df[f"{selected_indicator_1}:Q"].corr(df[f"{selected_indicator_2}:Q"]])
 
 # Display the correlation value
 print("Correlation:", correlation)
