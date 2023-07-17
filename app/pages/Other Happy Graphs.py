@@ -99,7 +99,7 @@ correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_fil
 st.altair_chart(chart, use_container_width=True)
 
 # Calculate correlation
-correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
+correlation = matrix_filtered_data.corr()
 st.write(f"Correlation: {correlation:.2f}")
 
 st.markdown('## Radar Graph')
