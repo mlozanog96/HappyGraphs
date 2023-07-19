@@ -13,6 +13,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import ai_assistant
 
+
 st.markdown('# Other happy graphs! :)')
 
 df= pd.read_csv('app/world_bank_data.csv')
@@ -37,11 +38,44 @@ selected_start_year, selected_end_year = selected_year_range
 
 df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_countries['date'] <= selected_end_year)]
 
+# Abbreviations
+abbreviation_mapping = {
+    'Life expectancy': 'LE',
+    'People using at least basic drinking water services': 'BWS',
+    'Suicides': 'Suicides',
+    'Open defecation': 'OD',
+    'Sanitation service': 'SS',
+    'Inflation': 'Inflation',
+    'Vulnerable employment female': 'VE Female',
+    'Vulnerable employment male': 'VE Male',
+    'Vulnerable employment, total': 'VE Total',
+    'GDP growth % mostly above 0 (but decreasing)': 'GDP Growth',
+    'Labor force female': 'LF Female',
+    'Labor force total': 'LF Total',
+    'Military expenditure': 'Mil. Expenditure',
+    'Proportion of seats held by women in national parliaments': 'Seats Held by Women',
+    'Scientific technical journal articles': 'Sci. Journal Articles',
+    'Mortality caused by road traffic': 'Road Traffic Mortality',
+    'Access to electricity': 'Access to Electricity',
+    'Access to clean fuels and technologies for cooking': 'Clean Cooking',
+    'Refugee population': 'Refugee Population',
+    'Forest area': 'Forest Area',
+    'Agricultural methane emissions': 'Agri. Methane Emissions',
+    'CO2 emissions': 'CO2 Emissions',
+    'Energy use': 'Energy Use',
+    'Renewable energy consumption % stagnates': 'Renew. Energy Consumption',
+    'Total greenhouse gas emissions': 'GHG Emissions',
+    'Population density': 'Pop. Density'
+}
+
+df_years['indicator_name'] = df_years['indicator_name'].replace(abbreviation_mapping)
+
+
 # Pivot the data to create a correlation matrix
-correlation_matrix = df_years.pivot_table(index=['country', 'date'], columns='indicator_name', values='value')
+correlation_matrix_data = df_years.pivot_table(index=['country', 'date'], columns='indicator_name', values='value')
 
 # Calculate the correlation between indicators
-correlation_matrix = correlation_matrix.corr()
+correlation_matrix = correlation_matrix_data.corr()
 
 # Create the heatmap using seaborn
 fig, ax = plt.subplots(figsize=(8, 6))
@@ -71,7 +105,7 @@ filtered_data = filtered_data.sort_values('date')
 
 def convert_table_to_matrix(table):
     # Pivot the table to create separate columns for each indicator
-    matrix = table.pivot(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
+    matrix = table.pivot_table(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
     return matrix
 
 matrix_filtered_data= convert_table_to_matrix(filtered_data)
@@ -91,16 +125,19 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     width=600,
     height=400
 )
-correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
-
 
 # Display the scatter plot in Streamlit
 st.altair_chart(chart, use_container_width=True)
 
-# Calculate correlation
-correlation = np.corrcoef(matrix_filtered_data[selected_indicator_1], matrix_filtered_data[selected_indicator_2])[0, 1]
-st.write(f"Correlation: {correlation:.2f}")
+# Calculate the correlation
+correlation = matrix_filtered_data[selected_indicator_1].corr(matrix_filtered_data[selected_indicator_2])
 
+# Display the correlation value
+st.write("Correlation:", correlation)
+
+
+
+# Radar Graph
 st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
@@ -122,6 +159,9 @@ col1, col2 = st.columns(2)
 default_indicators = ['Sanitation service', 'Vulnerable employment female', 'People using at least basic drinking water services', 'Forest area', 'Access to electricity']
 radar_indicators = st.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
+
+df_indicator_radar['indicator_name'] = df_indicator_radar['indicator_name'].replace(abbreviation_mapping)
+
 
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
 radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
