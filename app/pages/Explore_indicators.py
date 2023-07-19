@@ -36,6 +36,7 @@ with filter_col2:
 
 # Create & Perform Prompt Explanation Indicator
 #ACTION: remove comments
+# comment to make it work
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
 st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
 answer = ai_assistant(prompt_indicator)
