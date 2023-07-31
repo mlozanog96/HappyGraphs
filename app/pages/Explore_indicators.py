@@ -1,3 +1,4 @@
+# Import packages
 import streamlit as st
 import altair as alt
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
@@ -23,14 +24,15 @@ openai.api_key=openai_api_key
 # Create a row layout for filters
 filter_col1, filter_col2 = st.columns(2)
 
+# Load the World Bank data and retrieve available indicators and countries for filtering
 df= pd.read_csv('app/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 with filter_col1:
     selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
-
-
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+
+# Create interactive filters for selecting indicator and countries
 with filter_col2:
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
@@ -42,11 +44,13 @@ prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Wo
 # answer = ai_assistant(prompt_indicator)
 # st.write(answer)
 
+# Create interactive slider for year dependent on the available years per indicator
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
 SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
+# If user deselects default countries and doesn't select new countries, show World data
 if not selected_countries:
     selected_countries = ['World']
 
@@ -97,7 +101,6 @@ if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
     df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
     trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-
 trends = {}
 if trend is not None:
     trends = trend.to_dict()['Trend']
@@ -111,7 +114,6 @@ if trend is not None:
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
-
 # Display the matrix using Streamlit
 st.write("Data matrix")
 st.dataframe(matrix)
@@ -119,7 +121,7 @@ st.dataframe(matrix)
 
 st.markdown('### Why has this indicator changed in the countries?')
 st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# Show the reason why it has that trend
+# Show the reason why it has that trend using the prompt
 prompt_prep_trend = None
 for i, (country, trend_per_country) in enumerate(trends.items()):
     if i == 0:
@@ -136,20 +138,21 @@ prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_pre
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
+
+# Load mapping csv #ACTION
 charity_map = pd.read_csv('app/charity_map.csv')
 
-
+# Create interactive filters for selecting charity theme and countries
 filter_col1, filter_col2 = st.columns(2)
-
 all_charity_themes = ['']+ ['Gender Equality'] +list(charity_map['name']) #ACTION: Gender Equality should normaly be within the csv, why not?
 with filter_col1:
     selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
-
 with filter_col2:
     selected_countries_charity = filter_col2.multiselect("Select countries", available_countries) 
 
 st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities if you have selected regions. To see the world in general leave the country selection empty.')
 
+# Fetch charity data from the GlobalGiving API based on selected theme and countries
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
@@ -159,6 +162,7 @@ if response.status_code == 200:
 
     filtered_projects = []
 
+    # Filter the projects based on selected countries and theme
     for project in projects:
         pass_filters = True
 
@@ -172,6 +176,7 @@ if response.status_code == 200:
             filtered_projects.append(project)
 
     if filtered_projects:
+        # Display filtered charity projects and their details
         for project in filtered_projects:
             st.write("Project Title:", project['title'])
             st.write("Countries:", project['country'])
@@ -189,13 +194,15 @@ if response.status_code == 200:
             st.write("Project Link:", project['projectLink'])
             st.write()
     else:
+        # Inform the user that no matching charities were found for the specified filters
         st.write('No data found for the specified filters. Please choose other countries or another theme.')
 
 else:
+    # Inform the user if the request to the GlobalGiving API failed and why
     st.write('Request failed with status code:', response.status_code)
 
 
-
+# Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
 
 
