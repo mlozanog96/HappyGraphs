@@ -229,7 +229,7 @@ st.pyplot(create_radar(df_radar))
 st.markdown('# And lastly here is a funny poem why Happy Graphs is awesome!')
 st.write('Disclaimer: The following poem is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
 prompt_poem = 'Write me a poem on why Graphs, that show bad world bank indicators which decrease and good world bank indicators which increase, make us happy and inspire us to do good in under 200 tokens.'
-answer = ai_assistant(prompt_poem)
-st.write(answer)
-
+# answer = ai_assistant(prompt_poem)
+# st.write(answer)
+#ACITON remove comments
 st.markdown('### We hope we made your worldview more positive and inspired you to take action. Best, the Group KMJ Do-Gooders')

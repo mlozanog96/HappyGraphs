@@ -1,7 +1,6 @@
 # Import packages
 import streamlit as st
 import altair as alt
-#hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -15,9 +14,10 @@ st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-openai_api_key = st.secrets["openai_secret"]
+# Gather API Keys from Github and store in variable
+# openai_api_key = st.secrets["openai_secret"]
 charity_api_key = st.secrets["charity_secret"]
-openai.api_key=openai_api_key
+# openai.api_key=openai_api_key
 
 
 
@@ -38,11 +38,10 @@ with filter_col2:
 
 # Create & Perform Prompt Explanation Indicator
 #ACTION: remove comments
-# comment to make it work
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-# st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
+st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+answer = ai_assistant(prompt_indicator)
+st.write(answer)
 
 # Create interactive slider for year dependent on the available years per indicator
 min_year = int(df_indicator['date'].min())
@@ -131,8 +130,8 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 
 #ACTION: remove comments
 prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
-# answer = ai_assistant(prompt_reason_trend)
-# st.write(answer)
+answer = ai_assistant(prompt_reason_trend)
+st.write(answer)
 
 
 # Show matching charities
