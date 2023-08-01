@@ -251,7 +251,7 @@ def filter_projects(charity_country=None, charity_title=None, charity_region=Non
 
     else:
         print('Request failed with status code:', response.status_code)
-        return None
+        return None
 
 
 def get_country_data(country, data):
