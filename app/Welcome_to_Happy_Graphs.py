@@ -9,7 +9,7 @@ from pathlib import Path
 import requests
 import openai
 import seaborn as sns
-from utils import get_data, get_indicator_reason, filter_projects, get_country_data
+from utils import get_data, filter_projects, get_country_data #,get_indicator_reason
 
 st.title('Happy Graphs')
 
@@ -37,10 +37,8 @@ Sidenote: Please don't get fooled by the decline of life expectancy since 2019. 
 st.markdown(intro_text, unsafe_allow_html=True)
 
 ### Show life expectancy world wide compared to German & Mexican
-# User selection
-#ACTION: Search for an indicator by topic?
 
-# Get the list of available indicators and countries and user selection
+# Get the list of available countries for the user selection
 df_indicator= df[df['indicator_name']=='Life expectancy']
 st.title('Life Expectancy')
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
@@ -93,7 +91,7 @@ matrix = pd.pivot_table(filtered_data, values='value', index='country', columns=
 # Display the matrix using Streamlit
 st.write(matrix)
 
-### Prediction with given features
+### Prediction with imaginative and given features
 st.markdown("## Prediction")
 intro_text_2 = """
 To predict a value, you can select a country in order to get default values, then feel free to modify any value you want. \n 
@@ -123,7 +121,7 @@ armed_forces= col2.text_input('Armed Forces:', armed_forces_dv)
 child_immunization = col3.text_input('Child immunization', child_immunization_dv)
 foreign_investm= col4.text_input('Foreign Investment:', foreign_investm_dv)
 gdp_per_cap= col1.text_input('GDP per capita:', gdp_per_cap_dv)
-measels_immunitization= col2.text_input('Measels immunitization:', measels_immunitization_dv)
+measels_immunitization= col2.text_input('Measels immunization:', measels_immunitization_dv)
 net_primary_income= col3.text_input('Net primary income:', net_primary_income_dv)
 perc_overweigth= col4.text_input('Overweigth Percentage:', perc_overweigth_dv)
 primary_school_completion= col1.text_input('Primary school completion:', primary_school_completion_dv)

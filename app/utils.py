@@ -1,16 +1,21 @@
+# Import packages
 import pandas as pd
 import requests
-#import openai
+import openai
 import json
-#from statsmodels.tsa.stattools import adfuller
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge
 from statsmodels.tsa.stattools import adfuller
 
 
-def get_data(id_indicator, countries):
 
+def get_data(id_indicator, countries):
+    '''
+    Function to fetch data for a specific indicator for multiple countries from the World Bank API
+    Takes the 'id_indicator' as the indicator ID and 'countries' as a list of country names
+    Returns a pandas DataFrame containing the retrieved data
+    '''
     url = 'https://api.worldbank.org/v2/'
 
     #create empty Dataframe where the result is stored
@@ -39,7 +44,7 @@ def get_data(id_indicator, countries):
             dates.append(int(item['date']))
             countries.append(item['country']['value'])
 
-        # create a dataframe out of that
+        # Create a dataframe out of that
         data = {'Country': countries, 'Date': dates, 'Value': values}
         df = pd.DataFrame(data)
 
@@ -50,6 +55,10 @@ def get_data(id_indicator, countries):
 
 
 def ad_test(df):
+    '''
+    Function to perform the Augmented Dickey-Fuller test on a given time series 'df'
+    Prints the ADF statistic, p-value, number of lags used, number of observations, and critical values
+    '''
     dftest = adfuller(df, autolag='AIC')
     print('ADF: ', dftest[0])
     print('p-value: ', dftest[1])
@@ -119,9 +128,6 @@ def evaluate_model(df, model):
             
 
 
-
-
-
 def create_ridge_model(df, alpha):
     '''
     Function to create a Ridge model for every country
@@ -137,18 +143,18 @@ def create_ridge_model(df, alpha):
     models = {}
 
 
-    # loop over all countrys in the dataframe
+    # Loop over all countrys in the dataframe
     for country in df['Country'].unique():
         
         model = Ridge(alpha = alpha)
 
         country_data = df[df["Country"] == country]
 
-        # data splitting 
+        # Data splitting 
         target = country_data['life_exp']
         features = country_data[country_data.columns.difference(['life_exp', 'Date'])]
 
-        # split in train and test
+        # Split in train and test
         x_train, x_test, y_train, y_test = train_test_split(pd.get_dummies(features), target, test_size=0.3, random_state = 42)
 
 
@@ -158,10 +164,10 @@ def create_ridge_model(df, alpha):
         # Predicting on the testing data
         y_pred = model.predict(x_test)
 
-        #Evaluating the model over test data 
+        # Evaluating the model over test data 
         model_confidence = model.score(x_test, y_test)
 
-        # calculate the mse 
+        # Calculate the mse 
         mse = mean_squared_error(y_test, y_pred)
 
 
@@ -180,169 +186,15 @@ def create_ridge_model(df, alpha):
 
     
     return all_scores, all_mses, countries_low_score, countries_high_score, countries_high_mse, models
-            
-
-    
-def get_indicator_reason(reason_indicator, df_year_max, df_year_min, reason_countries='worldwide'):
-    keys ={}
-    
-    with open("../API_Keys", "r") as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                key, value = line.split(" = ")
-                keys[key] = value.strip("'")
-
-    openai_api_key = keys["openai_secret"]
-    openai.api_key = openai_api_key
-
-    prompt_reason = 'summarize why has ' + reason_indicator + ' changed over the last ' + str(df_year_max - df_year_min) + ' in ' + reason_countries + ' so much, in under 400 tokens. Put the emphasis on the positive change in all countries.'
-    response_reason = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason, max_tokens=400)
-    answer = response_reason.choices[0].text.strip()
-    return answer
-
-
-def filter_projects(charity_country=None, charity_title=None, charity_region=None, charity_theme_name=None):
-    keys ={}
-    
-    with open("../API_Keys", "r") as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                key, value = line.split(" = ")
-                keys[key] = value.strip("'")
-
-    charity_key = keys["charity_secret"]
-
-    url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-    response = requests.get(url + charity_key, headers={"Accept": "application/json"})
-
-    filters = {
-        'country': charity_country,
-        'title': charity_title,
-        'region': charity_region,
-        'name': charity_theme_name
-    }
-
-    if response.status_code == 200:
-        data = response.json()
-        projects = data['projects']['project']
-
-        filtered_projects = []
-
-        for project in projects:
-            pass_filters = True
-
-            for filter_column, filter_value in filters.items():
-                if filter_column == 'country' and filter_value and project['country'] not in filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'title' and filter_value and project['title'] != filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'region' and filter_value and project['region'] != filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'name' and filter_value:
-                    themes = project['themes']['theme']
-                    theme_names = [theme['name'] for theme in themes]
-                    if filter_value not in theme_names:
-                        pass_filters = False
-                        break
-
-            if pass_filters:
-                filtered_projects.append(project)
-
-        if filtered_projects:
-            return filtered_projects
-        else:
-            return None
-
-    else:
-        print('Request failed with status code:', response.status_code)
-        return None
-
-def get_indicator_reason(reason_indicator, df_year_max, df_year_min, reason_countries='worldwide'):
-    keys ={}
-    
-    with open("../API_Keys", "r") as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                key, value = line.split(" = ")
-                keys[key] = value.strip("'")
-
-    openai_api_key = keys["openai_secret"]
-    openai.api_key = openai_api_key
-
-    prompt_reason = 'summarize why has ' + reason_indicator + ' changed over the last ' + str(df_year_max - df_year_min) + ' in ' + reason_countries + ' so much, in under 400 tokens. Put the emphasis on the positive change in all countries.'
-    response_reason = openai.Completion.create(engine="text-davinci-001", prompt=prompt_reason, max_tokens=400)
-    answer = response_reason.choices[0].text.strip()
-    return answer
-
-
-def filter_projects(charity_country=None, charity_title=None, charity_region=None, charity_theme_name=None):
-    keys ={}
-    
-    with open("../API_Keys", "r") as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                key, value = line.split(" = ")
-                keys[key] = value.strip("'")
-
-    charity_key = keys["charity_secret"]
-
-    url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-    response = requests.get(url + charity_key, headers={"Accept": "application/json"})
-
-    filters = {
-        'country': charity_country,
-        'title': charity_title,
-        'region': charity_region,
-        'name': charity_theme_name
-    }
-
-    if response.status_code == 200:
-        data = response.json()
-        projects = data['projects']['project']
-
-        filtered_projects = []
-
-        for project in projects:
-            pass_filters = True
-
-            for filter_column, filter_value in filters.items():
-                if filter_column == 'country' and filter_value and project['country'] not in filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'title' and filter_value and project['title'] != filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'region' and filter_value and project['region'] != filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'name' and filter_value:
-                    themes = project['themes']['theme']
-                    theme_names = [theme['name'] for theme in themes]
-                    if filter_value not in theme_names:
-                        pass_filters = False
-                        break
-
-            if pass_filters:
-                filtered_projects.append(project)
-
-        if filtered_projects:
-            return filtered_projects
-        else:
-            return None
-
-    else:
-        print('Request failed with status code:', response.status_code)
-        return None
 
 
 def get_country_data(country, data):
+    '''
+    Function to extract specific data related to a given country from the DataFrame 'data'
+    Takes 'country' as the specific country's name and 'data' as a pandas DataFrame
+    Returns a tuple containing various indicators for the specified country
+    '''
+
     country_data = data[data['Country'] == country]
     access_to_electricity = country_data['access_to_electricity'].values[0]
     armed_forces = country_data['armed_forces'].values[0]
@@ -359,3 +211,29 @@ def get_country_data(country, data):
     return (access_to_electricity, armed_forces, child_immunization, foreign_investm,
             gdp_per_cap, measels_immunitization, net_primary_income, perc_overweigth,
             primary_school_completion, rural_population, trade_in_services)
+
+
+def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens = 500):
+    '''
+    Function to generate a response using the OpenAI GPT-3.5 model as an AI assistant
+    Takes 'prompt' as the starting text, 'model' as the GPT-3.5 model name, 'temperature' 
+    controlling diversity and creativity of the output (= controlling the probability 
+    distribution over the possible tokens at each step of the generation process), and 
+    'max_tokens' to limit the response length. Returns the generated response based on 
+    the provided prompt
+    '''
+
+    response = openai.ChatCompletion.create(
+        model = model,
+        messages = [{'role':'user','content': prompt}],
+        temperature = temperature,
+        max_tokens = max_tokens,
+    )
+
+    ''' 
+    Retrieve the generated content from the OpenAI API response, stored in the 'choices' 
+    list at index 0, and access the content from the 'message' object's 'content' field. 
+    '''
+    content = response['choices'][0]['message']['content']
+
+    return content
