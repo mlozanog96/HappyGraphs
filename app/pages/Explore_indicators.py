@@ -159,7 +159,6 @@ response = requests.get(url+charity_api_key, headers={"Accept": "application/jso
 if response.status_code == 200:
     data = response.json()
     projects = data['projects']['project']
-
     filtered_projects = []
 
     # Filter the projects based on selected countries and theme
