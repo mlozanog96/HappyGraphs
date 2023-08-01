@@ -5,7 +5,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 from github import Github
-import openai
+# import openai
 from streamlit import components
 import requests
 from utils import ai_assistant
@@ -14,10 +14,9 @@ st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-# Gather API Keys from Github and store in variable
-# openai_api_key = st.secrets["openai_secret"]
+# Collect GlobalGiving Key from Github and store in variable. Openai Key is collected in utils
 charity_api_key = st.secrets["charity_secret"]
-# openai.api_key=openai_api_key
+
 
 
 
@@ -40,8 +39,8 @@ with filter_col2:
 #ACTION: remove comments
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
 st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-answer = ai_assistant(prompt_indicator)
-st.write(answer)
+# answer = ai_assistant(prompt_indicator)
+# st.write(answer)
 
 # Create interactive slider for year dependent on the available years per indicator
 min_year = int(df_indicator['date'].min())
