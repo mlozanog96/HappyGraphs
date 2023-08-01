@@ -129,8 +129,8 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 
 #ACTION: remove comments
 prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
-answer = ai_assistant(prompt_reason_trend)
-st.write(answer)
+# answer = ai_assistant(prompt_reason_trend)
+# st.write(answer)
 
 
 # Show matching charities
