@@ -46,7 +46,7 @@ SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 # Create a session state to store the selected countries
 class SessionState:
     def __init__(self):
-        self.selected_countries = available_countries
+        self.selected_countries = selected_countries
 
 # Create an instance of the session state
 session_state = SessionState()
