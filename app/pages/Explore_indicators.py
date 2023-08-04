@@ -53,7 +53,7 @@ session_state = SessionState()
 
 # If user deselects default countries and doesn't select new countries, show World data
 if not session_state.selected_countries:
-    session_state.selected_countries = ['World']
+    session_state.selected_countries = selected_countries
 
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(session_state.selected_countries))]
