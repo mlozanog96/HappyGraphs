@@ -21,14 +21,14 @@ filter_col1, filter_col2 = st.columns(2)
 # Load the World Bank data and retrieve available indicators and countries for filtering
 df= pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-with filter_col1:
-    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
+
+selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
+
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 
 # Create interactive filters for selecting indicator and countries
-with filter_col2:
-    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
+selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
 # Create & Perform Prompt Explanation Indicator
 #ACTION: remove comments
@@ -43,20 +43,12 @@ max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
 SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
-# Create a session state to store the selected countries
-class SessionState:
-    def __init__(self):
-        self.selected_countries = selected_countries
-
-# Create an instance of the session state
-session_state = SessionState()
-
 # If user deselects default countries and doesn't select new countries, show World data
-if not session_state.selected_countries:
-    session_state.selected_countries = ['World']
+if not selected_countries:
+    selected_countries = ['World']
 
 # Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(session_state.selected_countries))]
+filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
