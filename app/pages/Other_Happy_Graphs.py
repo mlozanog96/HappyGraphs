@@ -21,7 +21,7 @@ available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=T
 selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides','CO2 emissions','Agricultural methane emissions'])
 # If we do not have any selected country, show some indicators 
 if not selected_indicators:
-    selected_countries = ['CO2 emissions','Agricultural methane emissions']
+    selected_indicators = ['CO2 emissions','Agricultural methane emissions']
 
 
 # Create list of available countries based on the dataset
