@@ -4,7 +4,6 @@ import altair as alt
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-from github import Github
 # import openai
 from streamlit import components
 import requests

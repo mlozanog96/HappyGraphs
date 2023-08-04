@@ -3,12 +3,6 @@ import altair as alt
 #hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import numpy as np
-import openai
-import os
-import requests
-import json
-import numpy
-from github import Github
 import seaborn as sns
 import matplotlib.pyplot as plt
 from utils import ai_assistant
