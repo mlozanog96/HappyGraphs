@@ -162,7 +162,7 @@ available_indicators_radar = df[df['indicator_name'].isin(['People using at leas
 
 col1, col2 = st.columns(2)
 default_indicators = ['Sanitation service', 'Vulnerable employment female', 'People using at least basic drinking water services', 'Forest area', 'Access to electricity']
-radar_indicators = st.multiselect("Select indicators", sorted(available_indicators, default=default_indicators)
+radar_indicators = st.multiselect("Select indicators", sorted(available_indicators), default=default_indicators)
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
 
 df_indicator_radar['indicator_name'] = df_indicator_radar['indicator_name'].replace(abbreviation_mapping)
