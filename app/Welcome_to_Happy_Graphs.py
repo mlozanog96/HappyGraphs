@@ -12,16 +12,18 @@ st.title('Happy Graphs')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-# Load data
+# Load data (default values / indicator values)
 df_life_ex = pd.read_csv(Path(__file__).parent/'prediction_model/data/default-data.csv')
 df= pd.read_csv('app/data/world_bank_data.csv')
 
 ### Life Expectancy
+# Function to load life expectancy prediction model
 def load_model():
     with open(Path(__file__).parent/'prediction_model/pred_lifeexp.pkl', 'rb') as file:
         loaded_model = pickle.load(file)
     return loaded_model
 
+# Assign loaded model to a variable using the function
 loaded_model =load_model()
 
 intro_text = """
@@ -36,19 +38,25 @@ st.markdown(intro_text, unsafe_allow_html=True)
 ### Show life expectancy world wide compared to German & Mexican
 
 # Get the list of available countries for the user selection
+# Filter indicator (only Life expectancy data)
 df_indicator= df[df['indicator_name']=='Life expectancy']
 st.title('Life Expectancy')
+# Create variable with unique countries with Life Expectancy dataset 
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 
-selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) #ACTION: make worldwide as a default
+# Show box to select multiple countries, default values: World, Germany and Mexico
+selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
-selected_start_year, selected_end_year = selected_year_range
-
+# If we do not have any selected country, show World
 if not selected_countries:
     selected_countries = ['World']
+
+# Define min and max year in the selected dataset
+min_year = int(df_indicator['date'].min())
+max_year = int(df_indicator['date'].max())
+# Show slider with available years, default value: 2000 to max
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
+selected_start_year, selected_end_year = selected_year_range
 
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
@@ -62,7 +70,7 @@ num_colors= 15
 color_palette = sns.color_palette("husl", num_colors)
 custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
-# Create an Altair line chart with tooltips
+# Create a line chart
 chart = alt.Chart(filtered_data).mark_line().encode(
     x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
@@ -79,13 +87,13 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         tooltip=['country', 'value']
         )
 
-# Show the chart using Streamlit
+# Show chart
 st.altair_chart(chart)
 
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
-# Display the matrix using Streamlit
+# Display the matrix
 st.write(matrix)
 
 ### Prediction with imaginative and given features
@@ -98,21 +106,27 @@ Rather low impact on the predictions has the child immunitization, armed forces 
 """
 
 st.markdown(intro_text_2, unsafe_allow_html=True)
-# User selection country
+## User selection country
+# Select uniques values in default value dataframe
 countries=df_life_ex['Country'].drop_duplicates().reset_index(drop=True)
+# Dropdown list with sorted countries and default value World (261)
 selected_country = st.selectbox("Select default country", sorted(countries), index=261) 
+# Filter default values to predict life expectancy value
 df_default= df_life_ex[df_life_ex['Country']==selected_country]
 
-# Get data for the selected country/year
+# Fuction to get data for the selected country/year
 def get_value(indicator_name):
     df_default_value=df_default.loc[df_default['indicator_name'] == indicator_name, 'value']
     value= df_default_value.item() if len(df_default_value) > 0 else ""
     return value
 
-#Get default values
+# Get default values for all indicators
 access_to_electricity_dv, armed_forces_dv, child_immunization_dv, foreign_investm_dv, gdp_per_cap_dv, measels_immunitization_dv, net_primary_income_dv, perc_overweigth_dv, primary_school_completion_dv, rural_population_dv, trade_in_services_dv = get_country_data(selected_country,df_life_ex)
 
+# Create columns to distribute text inputs with all the indicators needed to predict life expectancy
 col1, col2, col3, col4 = st.columns(4)
+
+# Show text inputs including default values 
 access_to_electricity = col1.text_input('Access to electricity:', access_to_electricity_dv)
 armed_forces= col2.text_input('Armed Forces:', armed_forces_dv)
 child_immunization = col3.text_input('Child immunization', child_immunization_dv)
@@ -125,6 +139,7 @@ primary_school_completion= col1.text_input('Primary school completion:', primary
 rural_population= col2.text_input('Rural population:', rural_population_dv)
 trade_in_services =col3.text_input('Trade in services:', trade_in_services_dv)
 
+# Create list with variables to predict life expectancy 
 data = {
     'access_to_electricity': access_to_electricity,
     'armed_forces' : armed_forces, 
@@ -138,8 +153,10 @@ data = {
     'rural_population' : rural_population, 
     'trade_in_services'	: trade_in_services,
 }
-# transform them into a Dataframe
+
+# Transform them into a Dataframe
 life_expect_df_test = pd.DataFrame(data, index=range(1))
+
 # Predict using the loaded model
 life_expect_df_pred = loaded_model.predict(life_expect_df_test)
 
