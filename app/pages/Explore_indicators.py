@@ -43,12 +43,20 @@ max_year = int(df_indicator['date'].max())
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
 SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
+# Create a session state to store the selected countries
+class SessionState:
+    def __init__(self):
+        self.selected_countries = ['World']
+
+# Create an instance of the session state
+session_state = SessionState()
+
 # If user deselects default countries and doesn't select new countries, show World data
-if not selected_countries:
-    selected_countries = ['World']
+if not session_state.selected_countries:
+    session_state.selected_countries = ['World']
 
 # Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(session_state.selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
