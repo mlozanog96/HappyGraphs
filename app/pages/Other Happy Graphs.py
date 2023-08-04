@@ -16,7 +16,7 @@ from utils import ai_assistant
 
 st.markdown('# Other happy graphs! :)')
 
-df= pd.read_csv('app/world_bank_data.csv')
+df= pd.read_csv('app/data/world_bank_data.csv')
 
 st.markdown('## Heat Map: Correlation between variables')
 

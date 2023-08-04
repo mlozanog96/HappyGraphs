@@ -292,14 +292,13 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
     response = openai.ChatCompletion.create(
         model = model,
         messages = [{'role':'user','content': prompt}],
-        temperature = temperature,
+        temperature = temperature, 
         max_tokens = max_tokens,
     )
 
-    ''' 
-    Retrieve the generated content from the OpenAI API response, stored in the 'choices' 
-    list at index 0, and access the content from the 'message' object's 'content' field. 
-    '''
+    # Retrieve the generated content from the OpenAI API response, stored in the 'choices' 
+    # list at index 0, and access the content from the 'message' object's 'content' field. 
     content = response['choices'][0]['message']['content']
 
     return content
+

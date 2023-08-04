@@ -17,11 +17,11 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 
 # Load data
 df_life_ex = pd.read_csv(Path(__file__).parent/'prediction_model/data/default-data.csv')
-df= pd.read_csv('app/world_bank_data.csv')
+df= pd.read_csv('app/data/world_bank_data.csv')
 
 ### Life Expectancy
 def load_model():
-    with open(Path(__file__).parent/'pred_lifeexp.pkl', 'rb') as file:
+    with open(Path(__file__).parent/'prediction_model/pred_lifeexp.pkl', 'rb') as file:
         loaded_model = pickle.load(file)
     return loaded_model
 

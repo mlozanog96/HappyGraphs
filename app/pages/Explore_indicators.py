@@ -24,7 +24,7 @@ charity_api_key = st.secrets["charity_secret"]
 filter_col1, filter_col2 = st.columns(2)
 
 # Load the World Bank data and retrieve available indicators and countries for filtering
-df= pd.read_csv('app/world_bank_data.csv')
+df= pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 with filter_col1:
     selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
@@ -138,7 +138,7 @@ st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
 
 # Load mapping csv #ACTION
-charity_map = pd.read_csv('app/charity_map.csv')
+charity_map = pd.read_csv('app/data/charity_map.csv')
 
 # Create interactive filters for selecting charity theme and countries
 filter_col1, filter_col2 = st.columns(2)
@@ -204,7 +204,7 @@ st.write ('These charities are derived from the GlobalGiving API. For more infor
 
 
 # st.markdown('## Not so funny playground:')
-# indicator_map = pd.read_csv('app/indicator_map.csv')
+# indicator_map = pd.read_csv('app/data/indicator_map.csv')
 # # Filter the data based on the selected indicator and find the corresponding category
 # st.write('Indicator Category')
 # indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
