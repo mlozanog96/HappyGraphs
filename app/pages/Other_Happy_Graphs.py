@@ -147,17 +147,17 @@ st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
 # Select some indicator
-#available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
-#                                                             'Open defecation',
-#                                                             'Sanitation service',
-#                                                             'Vulnerable employment female',
-#                                                             'Vulnerable employment male',
-#                                                             'Vulnerable employment, total',
-#                                                             'Proportion of seats held by women in national parliaments',
-#                                                             'Access to electricity',
-#                                                             'Forest area',
-#                                                             'Renewable energy consumption % stagnates'
-#                                                             ])]['indicator_name'].drop_duplicates().reset_index(drop=True)
+available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
+                                                             'Open defecation',
+                                                             'Sanitation service',
+                                                             'Vulnerable employment female',
+                                                             'Vulnerable employment male',
+                                                             'Vulnerable employment, total',
+                                                             'Proportion of seats held by women in national parliaments',
+                                                             'Access to electricity',
+                                                             'Forest area',
+                                                             'Renewable energy consumption % stagnates'
+                                                             ])]['indicator_name'].drop_duplicates().reset_index(drop=True)
 
 
 col1, col2 = st.columns(2)
