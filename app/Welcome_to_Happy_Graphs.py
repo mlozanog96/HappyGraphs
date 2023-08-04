@@ -35,6 +35,14 @@ Sidenote: Please don't get fooled by the decline of life expectancy since 2019. 
 """
 st.markdown(intro_text, unsafe_allow_html=True)
 
+# Create a session state to store the selected countries
+class SessionState:
+    def __init__(self):
+        self.selected_countries = ['World']
+
+# Create an instance of the session state
+session_state = SessionState()
+
 ### Show life expectancy world wide compared to German & Mexican
 
 # Get the list of available countries for the user selection
@@ -45,11 +53,11 @@ st.title('Life Expectancy')
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 
 # Show box to select multiple countries, default values: World, Germany and Mexico
-selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
+session_state.selected_countries = st.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
 # If we do not have any selected country, show World
-if not selected_countries:
-    selected_countries = ['World']
+if not session_state.selected_countries:
+    session_state.selected_countries = ['World']
 
 # Define min and max year in the selected dataset
 min_year = int(df_indicator['date'].min())
@@ -59,7 +67,7 @@ selected_year_range = st.slider("Select a year range", min_value=min_year, max_v
 selected_start_year, selected_end_year = selected_year_range
 
 # Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
+filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(session_state.selected_countries))]
 
 # Set the axis values
 x_scale = alt.Scale(domain=(selected_start_year, selected_end_year), nice=False)
