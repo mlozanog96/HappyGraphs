@@ -10,29 +10,42 @@ from utils import ai_assistant
 
 st.markdown('# Other happy graphs! :)')
 
+# Load dataset with all indicators
 df= pd.read_csv('app/data/world_bank_data.csv')
 
 st.markdown('## Heat Map: Correlation between variables')
-
+## Heat map
+# Create list of indicators based on the dataset
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
+# Show box to select one or more indicators, indicators, including some default values
 selected_indicators = st.multiselect("Select indicators to add in HeatMap", sorted(available_indicators), default=['Labor force female','GDP growth % mostly above 0 (but decreasing)','Inflation','Suicides','CO2 emissions','Agricultural methane emissions'])
+# If we do not have any selected country, show some indicators 
+if not selected_indicators:
+    selected_countries = ['CO2 emissions','Agricultural methane emissions']
 
+
+# Create list of available countries based on the dataset
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
+# Show box to select one or more countries, including some default values
 selected_countries = st.multiselect("Select countries", available_countries, default=['World']) #ACTION: make worldwide as a default
-
+# If we do not have any selected country, show World
 if not selected_countries:
     selected_countries = ['World']
 
+# Filter dataset based on countries and indicators
 df_countries=  df[(df['country'].isin(selected_countries)) &((df['indicator_name'].isin(selected_indicators)))]
 
+# Define min and max year in the selected dataset
 min_year = int(df_countries['date'].min())
 max_year = int(df_countries['date'].max())
+# Show slider with available years, default value: 2000 to max
 selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
 selected_start_year, selected_end_year = selected_year_range
 
+# Filter the data for selected time period
 df_years=  df_countries[(df_countries['date'] >= selected_start_year) & (df_countries['date'] <= selected_end_year)]
 
-# Abbreviations
+# Abbreviations of indicator names to show in the heatmap
 abbreviation_mapping = {
     'Life expectancy': 'LE',
     'People using at least basic drinking water services': 'BWS',
@@ -61,7 +74,7 @@ abbreviation_mapping = {
     'Total greenhouse gas emissions': 'GHG Emissions',
     'Population density': 'Pop. Density'
 }
-
+# Convert indicator name to a short version based on a list
 df_years['indicator_name'] = df_years['indicator_name'].replace(abbreviation_mapping)
 
 
@@ -80,15 +93,19 @@ ax.set_xlabel('Indicators')
 ax.set_ylabel('Indicators')
 ax.set_title('Correlation Heatmap of Indicators')
 
-# Display the heatmap in Streamlit
+# Display the heatmap
 st.pyplot(fig)
 
+## Correlation between two variables
 st.markdown('## Correlation between two variables')
 st.write('Indicators, Countries and Year range is determine for Heatmap filters')
+# Create 2 columns to distribute dropdown lists for indicators
 filter_col1, filter_col2 = st.columns(2)
+# Create list of indicator names and show values (default values: 1st and 2nd variables in the list)
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 selected_indicator_1 = filter_col1.selectbox("Select 1st indicator", sorted(selected_indicators),index=0)
 selected_indicator_2 = filter_col2.selectbox("Select 2nd indicator", sorted(selected_indicators),index=1)
+# Filter dataset for two selected indicators
 df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_name']==selected_indicator_2)]
 
 
@@ -96,13 +113,8 @@ df_indicator= df[(df['indicator_name']==selected_indicator_1) | (df['indicator_n
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
-
-def convert_table_to_matrix(table):
-    # Pivot the table to create separate columns for each indicator
-    matrix = table.pivot_table(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
-    return matrix
-
-matrix_filtered_data= convert_table_to_matrix(filtered_data)
+# Create matrix to create scatter plot
+matrix_filtered_data= filtered_data.pivot_table(index=['country', 'date'], columns='indicator_name', values='value').reset_index()
 
 # Set Color palette
 num_colors= 15
@@ -120,38 +132,37 @@ chart = alt.Chart(matrix_filtered_data).mark_circle(size=60).encode(
     height=400
 )
 
-# Display the scatter plot in Streamlit
+# Display scatter plot
 st.altair_chart(chart, use_container_width=True)
 
-# Calculate the correlation
+# Calculate correlation between two selected variables
 correlation = matrix_filtered_data[selected_indicator_1].corr(matrix_filtered_data[selected_indicator_2])
 
-# Display the correlation value
+# Display correlation value
 st.write("Correlation:", correlation)
 
 
-
-# Radar Graph
+## Radar Graph
 st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
-
-available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
-                                                             'Open defecation',
-                                                             'Sanitation service',
-                                                             'Vulnerable employment female',
-                                                             'Vulnerable employment male',
-                                                             'Vulnerable employment, total',
-                                                             'Proportion of seats held by women in national parliaments',
-                                                             'Access to electricity',
-                                                             'Forest area',
-                                                             'Renewable energy consumption % stagnates'
-                                                             ])]['indicator_name'].drop_duplicates().reset_index(drop=True)
+# Select some indicator
+#available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
+#                                                             'Open defecation',
+#                                                             'Sanitation service',
+#                                                             'Vulnerable employment female',
+#                                                             'Vulnerable employment male',
+#                                                             'Vulnerable employment, total',
+#                                                             'Proportion of seats held by women in national parliaments',
+#                                                             'Access to electricity',
+#                                                             'Forest area',
+#                                                             'Renewable energy consumption % stagnates'
+#                                                             ])]['indicator_name'].drop_duplicates().reset_index(drop=True)
 
 
 col1, col2 = st.columns(2)
 default_indicators = ['Sanitation service', 'Vulnerable employment female', 'People using at least basic drinking water services', 'Forest area', 'Access to electricity']
-radar_indicators = st.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
+radar_indicators = st.multiselect("Select indicators", sorted(available_indicators, default=default_indicators)
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
 
 df_indicator_radar['indicator_name'] = df_indicator_radar['indicator_name'].replace(abbreviation_mapping)
@@ -169,8 +180,7 @@ df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 df_radar=df_radar.drop('date',axis=1)
 
 
-#Creation of radar graph function
-
+# Creation of radar graph function
 def create_radar(df_indicator_radar):
     # Get unique categories
     categories = df_indicator_radar['indicator_name'].unique()

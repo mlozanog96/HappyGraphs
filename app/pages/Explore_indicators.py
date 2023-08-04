@@ -5,7 +5,6 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 # import openai
-from streamlit import components
 import requests
 from utils import ai_assistant
 
@@ -15,9 +14,6 @@ st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which mak
 
 # Collect GlobalGiving Key from Github and store in variable. Openai Key is collected in utils
 charity_api_key = st.secrets["charity_secret"]
-
-
-
 
 # Create a row layout for filters
 filter_col1, filter_col2 = st.columns(2)
@@ -64,7 +60,7 @@ num_colors= 15
 color_palette = sns.color_palette("husl", num_colors)
 custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
-# Create an Altair line chart with tooltips
+# Create an line chart with tooltip
 chart = alt.Chart(filtered_data).mark_line().encode(
     x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
@@ -81,7 +77,7 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         tooltip=['country', 'value']
         )
 
-# Show the chart using Streamlit
+# Show the chart 
 st.altair_chart(chart)
 
 # Get the first and last data points for each country
@@ -111,13 +107,14 @@ if trend is not None:
 # Pivot the data to create a matrix
 matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
-# Display the matrix using Streamlit
+# Display the matrix
 st.write("Data matrix")
 st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
 st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+
 # Show the reason why it has that trend using the prompt
 prompt_prep_trend = None
 for i, (country, trend_per_country) in enumerate(trends.items()):
@@ -130,7 +127,6 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
 # answer = ai_assistant(prompt_reason_trend)
 # st.write(answer)
-
 
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
