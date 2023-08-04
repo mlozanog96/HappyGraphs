@@ -15,7 +15,8 @@ RUN pip install -r requirements.txt
 COPY app/ /app
 
 # Make port 8501 available to the world outside this container
-EXPOSE 8501
+#EXPOSE 8501
 
 # Run app.py when the container launches
-ENTRYPOINT ["streamlit", "run", "Welcome_to_Happy_Graphs.py", "--server.port=8501", "--server.address=0.0.0.0"]
+#ENTRYPOINT ["streamlit", "run", "Welcome_to_Happy_Graphs.py", "--server.port=8501", "--server.address=0.0.0.0"]
+ENTRYPOINT ["streamlit", "run", "Welcome_to_Happy_Graphs.py", "--server.address=0.0.0.0"]
