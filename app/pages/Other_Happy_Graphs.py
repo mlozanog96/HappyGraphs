@@ -74,7 +74,7 @@ abbreviation_mapping = {
     'Total greenhouse gas emissions': 'GHG Emissions',
     'Population density': 'Pop. Density'
 }
-# Convert indicator name to a short version based on a list
+# Convert indicator name to abbreviation based on a list
 df_years['indicator_name'] = df_years['indicator_name'].replace(abbreviation_mapping)
 
 
@@ -146,36 +146,57 @@ st.write("Correlation:", correlation)
 st.markdown('## Radar Graph')
 st.write('The following Graph shows you a comparison of countries. As indicators you can choose all our indicators which are percentage scale. Happy exploring!')
 
-# Select some indicator
-available_indicators_radar = df[df['indicator_name'].isin(['People using at least basic drinking water services',
-                                                             'Open defecation',
-                                                             'Sanitation service',
-                                                             'Vulnerable employment female',
-                                                             'Vulnerable employment male',
-                                                             'Vulnerable employment, total',
-                                                             'Proportion of seats held by women in national parliaments',
-                                                             'Access to electricity',
-                                                             'Forest area',
-                                                             'Renewable energy consumption % stagnates'
-                                                             ])]['indicator_name'].drop_duplicates().reset_index(drop=True)
+# Select indicators that allow to have a clear comparisson (6 indicators removed)
+available_indicators_radar = df[df['indicator_name'].isin(['Life expectancy',
+                                                           'People using at least basic drinking water services',
+                                                           'Suicides',
+                                                           'Open defecation',
+                                                           'Sanitation service',
+                                                           'Inflation',
+                                                           'Vulnerable employment female',
+                                                           'Vulnerable employment male',
+                                                           'Vulnerable employment, total',
+                                                           'GDP growth % mostly above 0 (but decreasing)',
+                                                           'Labor force female',
+                                                           'Military expenditure',
+                                                           'Proportion of seats held by women in national parliaments',
+                                                           'Access to electricity',
+                                                           'Access to clean fuels and technologies for cooking',
+                                                           'Forest area',
+                                                           'CO2 emissions',
+                                                           'Energy use',
+                                                           'Total greenhouse gas emissions',
+                                                           'Population density'])]['indicator_name'].drop_duplicates().reset_index(drop=True)
 
-
+# Create 2 columns to distribute dropdown lists for countries and selected year
 col1, col2 = st.columns(2)
+# Create a variable with default values (list)
 default_indicators = ['Sanitation service', 'Vulnerable employment female', 'People using at least basic drinking water services', 'Forest area', 'Access to electricity']
-radar_indicators = st.multiselect("Select indicators", sorted(available_indicators), default=default_indicators)
+# Box to include indicators to show in the radarchart
+radar_indicators = st.multiselect("Select indicators", sorted(available_indicators_radar), default=default_indicators)
+# If we do not have any selected indicator, show default indicators 
+if not radar_indicators:
+    radar_indicators= default_indicators
+# Filter indicators in dataframe
 df_indicator_radar = df[df['indicator_name'].isin(radar_indicators)]
-
+# Convert indicator name to abbreviation based on a list
 df_indicator_radar['indicator_name'] = df_indicator_radar['indicator_name'].replace(abbreviation_mapping)
 
-
+# Create list of available countries for radar chart
 available_countries_radar=df_indicator_radar['country'].drop_duplicates().reset_index(drop=True)
+# Show box to select multiple countries, default values: World, Germany and Mexico
 radar_countries = col1.multiselect("Select countries", sorted(available_countries_radar), default=['World','Germany','Mexico'])
+# If we do not have any selected country, show World
 if not radar_countries:
     radar_countries = ['World']
+# Filter dataset using selected countries for radar chart
 df_indicator_radar= df_indicator_radar[df_indicator_radar['country'].isin(radar_countries)]
 
+# Create a list with available years in dataset pre-filtered
 available_years_radar=df_indicator_radar['date'].drop_duplicates().reset_index(drop=True)
+# Dropdown list to show available years
 year=col2.selectbox("Select year",sorted(available_years_radar, reverse=True), index=1)
+# Filter dataset based on selected year
 df_radar= df_indicator_radar[df_indicator_radar['date']==year]
 df_radar=df_radar.drop('date',axis=1)
 
