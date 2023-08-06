@@ -279,9 +279,6 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
     'max_tokens' to limit the response length. Returns the generated response based on 
     the provided prompt
     '''
-    # Collect and initiate OpenAI Key    
-    openai_api_key = st.secrets["openai_secret"]
-    openai.api_key = openai_api_key
 
     response = openai.ChatCompletion.create(
         model = model,

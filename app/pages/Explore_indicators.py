@@ -4,7 +4,7 @@ import altair as alt
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
-# import openai
+import openai
 import requests
 from utils import ai_assistant
 
@@ -12,8 +12,12 @@ st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-# Collect GlobalGiving Key from Github and store in variable. OpenAI Key is collected in utils.
+# Collect GlobalGiving Key from Github and store in variable
 charity_key = st.secrets["charity_secret"]
+
+# Collect and initiate OpenAI Key    
+openai_api_key = st.secrets["openai_secret"]
+openai.api_key = openai_api_key
 
 # Create a row layout for filters
 filter_col1, filter_col2 = st.columns(2)
