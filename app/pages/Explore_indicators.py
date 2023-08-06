@@ -129,8 +129,12 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 
 #ACTION: remove comments
 prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
-answer = ai_assistant(prompt_reason_trend)
-st.write(answer)
+# answer = ai_assistant(prompt_reason_trend)
+# st.write(answer)
+
+response_reason_trend8 = openai.Completion.create(engine="text-davinci-003", prompt=prompt_reason_trend, max_tokens=400)
+answer8 = response_reason_trend8.choices[0].text.strip()
+st.write('prompt8' + answer8)
 
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
