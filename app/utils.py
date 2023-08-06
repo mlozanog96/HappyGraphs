@@ -193,17 +193,8 @@ def filter_projects(charity_country=None, charity_title=None, charity_region=Non
     Accepts filters for country, title, region, and theme name to narrow down project search
     Returns a list of filtered projects based on the specified criteria
     '''
-
-    # Retr
-    keys ={}
-    with open("../API_Keys", "r") as file:
-        for line in file:
-            line = line.strip()
-            if line:
-                key, value = line.split(" = ")
-                keys[key] = value.strip("'")
-
-    charity_key = keys["charity_secret"]
+    # Collect GlobalGiving Key from Github and store in variable. 
+    # charity_key = st.secrets["charity_secret"]
 
     url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
     response = requests.get(url + charity_key, headers={"Accept": "application/json"})
@@ -288,6 +279,9 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
     'max_tokens' to limit the response length. Returns the generated response based on 
     the provided prompt
     '''
+    # Collect and initiate OpenAI Key    
+    openai_api_key = st.secrets["openai_secret"]
+    openai.api_key = openai_api_key
 
     response = openai.ChatCompletion.create(
         model = model,
