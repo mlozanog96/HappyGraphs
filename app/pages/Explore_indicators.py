@@ -151,7 +151,7 @@ st.write('Below you find all the charities that work within your chosen theme an
 
 # Fetch charity data from the GlobalGiving API based on selected theme and countries
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
+response = requests.get(url+charity_key, headers={"Accept": "application/json"})
 
 if response.status_code == 200:
     data = response.json()
