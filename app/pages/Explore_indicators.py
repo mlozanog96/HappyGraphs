@@ -25,39 +25,41 @@ filter_col1, filter_col2 = st.columns(2)
 # Load the World Bank data and retrieve available indicators and countries for filtering
 df= pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator = st.selectbox("Select indicator", available_indicators, index=available_indicators.tolist().index(st.session_state.selected_indicator))
-#selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
-df_indicator= df[df['indicator_name']==selected_indicator]
+
 
 
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 
-# Set default selections
-default_indicator = 'Life Expectancy'
-default_countries = ['World', 'Mexico', 'Germany']
-default_year_range = (2000, 2020)
+# Initialize variables to track changes and button press
+indicator_changed = False
+countries_changed = False
+year_range_changed = False
+button_pressed = False
 
-# Initialize session state variables
-if 'selected_indicator' not in st.session_state:
-    st.session_state.selected_indicator = default_indicator
+# Initialize default values to track changes
+default_indicator = 'Life expectancy'
+default_countries = ['World','Germany','Mexico']
+default_year_range = (2000,max_year)
 
-if 'selected_countries' not in st.session_state:
-    st.session_state.selected_countries = default_countries
-
-if 'selected_year_range' not in st.session_state:
-    st.session_state.selected_year_range = default_year_range
-
-# Display indicator, countries, and year range selectors
-selected_indicator = st.selectbox("Select indicator", available_indicators, index=available_indicators.index(st.session_state.selected_indicator))
-selected_countries = st.multiselect("Select countries", available_countries, default=st.session_state.selected_countries)
-selected_year_range = st.slider("Select a year range", min_value=2000, max_value=2020, value=st.session_state.selected_year_range)
+# Create interactive filters for selecting indicator and countries
+selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, default=default_indicator)
+df_indicator= df[df['indicator_name']==selected_indicator]
+selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries) 
+# Create interactive slider for year dependent on the available years per indicator
+min_year = int(df_indicator['date'].min())
+max_year = int(df_indicator['date'].max())
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
+SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
 # Create a submit button
-if st.button("Submit") or st.session_state.selected_indicator != selected_indicator or st.session_state.selected_countries != selected_countries or st.session_state.selected_year_range != selected_year_range:
-    # Update session state with new selections
-    st.session_state.selected_indicator = selected_indicator
-    st.session_state.selected_countries = selected_countries
-    st.session_state.selected_year_range = selected_year_range
+if st.button("Submit"):
+    button_pressed = True
+    indicator_changed = selected_indicator != default_indicator
+    countries_changed = selected_countries != default_countries
+    year_range_changed = selected_year_range != default_year_range
+
+# Check if any changes occurred and the button has been pressed
+if button_pressed or indicator_changed or countries_changed or year_range_changed:
 
     # Create & Perform Prompt Explanation Indicator
     prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
@@ -65,11 +67,14 @@ if st.button("Submit") or st.session_state.selected_indicator != selected_indica
     # answer = ai_assistant(prompt_indicator)
     # st.write(answer)
 
-    # Filter the data for selected countries and time period
-    filtered_data = df_indicator[(df_indicator['date'] >= selected_year_range[0]) & (df_indicator['date'] <= selected_year_range[1]) & (df_indicator['country'].isin(selected_countries))]
-    filtered_data = filtered_data.sort_values('date')
-    # Rest of your code that uses filtered_data
+    # If user deselects default countries and doesn't select new countries, show World data
+    if not selected_countries:
+        selected_countries = ['World']
 
+    # Filter the data for selected countries and time period
+    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+    filtered_data = filtered_data.sort_values('date')
+    
 ##ORIGINIAL code
 # # Create interactive filters for selecting indicator and countries
 # selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
