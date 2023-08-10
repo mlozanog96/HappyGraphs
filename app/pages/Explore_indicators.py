@@ -50,9 +50,7 @@ st.write('Disclaimer: The following indicator description is generated using the
 # answer = ai_assistant(prompt_indicator)
 # st.write(answer)
 
-# Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-filtered_data = filtered_data.sort_values('date')
+
 
 # Initialize variables to track changes and button press
 indicator_changed = False
@@ -69,7 +67,9 @@ if st.button("Submit"):
     # Filter the data for selected countries and time period
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
     filtered_data = filtered_data.sort_values('date')
-    
+else:
+    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+    filtered_data = filtered_data.sort_values('date') 
 
 # Set the axis values
 x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
