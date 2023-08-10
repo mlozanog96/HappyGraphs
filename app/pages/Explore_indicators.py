@@ -25,7 +25,8 @@ filter_col1, filter_col2 = st.columns(2)
 # Load the World Bank data and retrieve available indicators and countries for filtering
 df= pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
+selected_indicator = st.selectbox("Select indicator", available_indicators, index=available_indicators.tolist().index(st.session_state.selected_indicator))
+#selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 df_indicator= df[df['indicator_name']==selected_indicator]
 
 
