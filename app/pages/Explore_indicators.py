@@ -40,10 +40,10 @@ button_pressed = False
 default_countries = ['World','Germany','Mexico']
 selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
 
-default_indicator = 'Life Expectancy' 
-selected_indicator_index = available_indicators.tolist().index(default_indicator)
-selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, index=selected_indicator_index)
+default_indicator = 'Life Expectancy'
+selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, key="indicator_selector")
 df_indicator = df[df['indicator_name'] == selected_indicator]
+
 
 
 
