@@ -30,6 +30,9 @@ available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 # Create default values and interactive filters for selecting indicator and countries and year range
 default_countries = ['World','Germany','Mexico']
 selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
+# If user deselects default countries and doesn't select new countries, show World data
+if not selected_countries:
+    selected_countries = ['World']
 
 default_indicator = 'Life Expectancy'
 selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, key="indicator_selector")
@@ -47,10 +50,6 @@ st.write('Disclaimer: The following indicator description is generated using the
 # answer = ai_assistant(prompt_indicator)
 # st.write(answer)
 
-# If user deselects default countries and doesn't select new countries, show World data
-if not selected_countries:
-    selected_countries = ['World']
-
 # Filter the data for selected countries and time period
 filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
 filtered_data = filtered_data.sort_values('date')
@@ -61,40 +60,16 @@ countries_changed = False
 year_range_changed = False
 button_pressed = False
 
-# Create a submit button
-if st.button("Submit"):
-    button_pressed = True
-    indicator_changed = selected_indicator != default_indicator
-    countries_changed = selected_countries != default_countries
-    year_range_changed = selected_year_range != default_year_range
-    # Filter the data for selected countries and time period
-    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-    filtered_data = filtered_data.sort_values('date')
+# # Create a submit button
+# if st.button("Submit"):
+#     button_pressed = True
+#     indicator_changed = selected_indicator != default_indicator
+#     countries_changed = selected_countries != default_countries
+#     year_range_changed = selected_year_range != default_year_range
+#     # Filter the data for selected countries and time period
+#     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+#     filtered_data = filtered_data.sort_values('date')
     
-##ORIGINIAL code
-# # Create interactive filters for selecting indicator and countries
-# selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
-
-# # Create & Perform Prompt Explanation Indicator
-# #ACTION: remove comments
-# prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-# st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# # answer = ai_assistant(prompt_indicator)
-# # st.write(answer)
-
-# # Create interactive slider for year dependent on the available years per indicator
-# min_year = int(df_indicator['date'].min())
-# max_year = int(df_indicator['date'].max())
-# selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
-# SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
-
-# # If user deselects default countries and doesn't select new countries, show World data
-# if not selected_countries:
-#     selected_countries = ['World']
-
-# # Filter the data for selected countries and time period
-# filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-# filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
 x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
