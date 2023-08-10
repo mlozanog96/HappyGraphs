@@ -37,12 +37,13 @@ year_range_changed = False
 button_pressed = False
 
 # Create default values and interactive filters for selecting indicator and countries and year range
-default_indicator = 'Life expectancy'
+default_countries = ['World','Germany','Mexico']
+selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
+
+default_indicator = 'Life Expectancy'
 selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, default=default_indicator)
 df_indicator= df[df['indicator_name']==selected_indicator]
 
-default_countries = ['World','Germany','Mexico']
-selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
