@@ -31,29 +31,68 @@ df_indicator= df[df['indicator_name']==selected_indicator]
 
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 
-# Create interactive filters for selecting indicator and countries
-selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
+# Set default selections
+default_indicator = 'Life Expectancy'
+default_countries = ['World', 'Mexico', 'Germany']
+default_year_range = (2000, 2020)
 
-# Create & Perform Prompt Explanation Indicator
-#ACTION: remove comments
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
+# Initialize session state variables
+if 'selected_indicator' not in st.session_state:
+    st.session_state.selected_indicator = default_indicator
 
-# Create interactive slider for year dependent on the available years per indicator
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
-SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+if 'selected_countries' not in st.session_state:
+    st.session_state.selected_countries = default_countries
 
-# If user deselects default countries and doesn't select new countries, show World data
-if not selected_countries:
-    selected_countries = ['World']
+if 'selected_year_range' not in st.session_state:
+    st.session_state.selected_year_range = default_year_range
 
-# Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-filtered_data = filtered_data.sort_values('date')
+# Display indicator, countries, and year range selectors
+selected_indicator = st.selectbox("Select indicator", available_indicators, index=available_indicators.index(st.session_state.selected_indicator))
+selected_countries = st.multiselect("Select countries", available_countries, default=st.session_state.selected_countries)
+selected_year_range = st.slider("Select a year range", min_value=2000, max_value=2020, value=st.session_state.selected_year_range)
+
+# Create a submit button
+if st.button("Submit") or st.session_state.selected_indicator != selected_indicator or st.session_state.selected_countries != selected_countries or st.session_state.selected_year_range != selected_year_range:
+    # Update session state with new selections
+    st.session_state.selected_indicator = selected_indicator
+    st.session_state.selected_countries = selected_countries
+    st.session_state.selected_year_range = selected_year_range
+
+    # Create & Perform Prompt Explanation Indicator
+    prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+    st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+    # answer = ai_assistant(prompt_indicator)
+    # st.write(answer)
+
+    # Filter the data for selected countries and time period
+    filtered_data = df_indicator[(df_indicator['date'] >= selected_year_range[0]) & (df_indicator['date'] <= selected_year_range[1]) & (df_indicator['country'].isin(selected_countries))]
+    filtered_data = filtered_data.sort_values('date')
+    # Rest of your code that uses filtered_data
+
+##ORIGINIAL code
+# # Create interactive filters for selecting indicator and countries
+# selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
+
+# # Create & Perform Prompt Explanation Indicator
+# #ACTION: remove comments
+# prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+# st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+# # answer = ai_assistant(prompt_indicator)
+# # st.write(answer)
+
+# # Create interactive slider for year dependent on the available years per indicator
+# min_year = int(df_indicator['date'].min())
+# max_year = int(df_indicator['date'].max())
+# selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
+# SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+
+# # If user deselects default countries and doesn't select new countries, show World data
+# if not selected_countries:
+#     selected_countries = ['World']
+
+# # Filter the data for selected countries and time period
+# filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+# filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
 x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
@@ -126,6 +165,7 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
         prompt_prep_trend = f"{trend_per_country} in {country}"
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
+
 
 #ACTION: remove comments
 # prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
