@@ -60,15 +60,15 @@ countries_changed = False
 year_range_changed = False
 button_pressed = False
 
-# # Create a submit button
-# if st.button("Submit"):
-#     button_pressed = True
-#     indicator_changed = selected_indicator != default_indicator
-#     countries_changed = selected_countries != default_countries
-#     year_range_changed = selected_year_range != default_year_range
-#     # Filter the data for selected countries and time period
-#     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-#     filtered_data = filtered_data.sort_values('date')
+# Create a submit button
+if st.button("Submit"):
+    button_pressed = True
+    indicator_changed = selected_indicator != default_indicator
+    countries_changed = selected_countries != default_countries
+    year_range_changed = selected_year_range != default_year_range
+    # Filter the data for selected countries and time period
+    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+    filtered_data = filtered_data.sort_values('date')
     
 
 # Set the axis values
@@ -97,39 +97,40 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         tooltip=['country', 'value']
         )
 
-# Show the chart 
-st.altair_chart(chart)
+# Show the chart only if the "Submit" button was pressed or changes occurred
+if not (button_pressed or indicator_changed or countries_changed or year_range_changed):
+    st.altair_chart(chart)
 
-# Get the first and last data points for each country
-df_first = filtered_data.groupby('country')['value'].first().reset_index()
-df_last = filtered_data.groupby('country')['value'].last().reset_index()
+    # Get the first and last data points for each country
+    df_first = filtered_data.groupby('country')['value'].first().reset_index()
+    df_last = filtered_data.groupby('country')['value'].last().reset_index()
 
-# Define icons for increase and decrease trends
-increase_icon = "▲"
-decrease_icon = "▼"
+    # Define icons for increase and decrease trends
+    increase_icon = "▲"
+    decrease_icon = "▼"
 
-# Determine the trend for each country
-trend = None
-if len(df_first) > 0:
-    df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
-    trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-trends = {}
-if trend is not None:
-    trends = trend.to_dict()['Trend']
+    # Determine the trend for each country
+    trend = None
+    if len(df_first) > 0:
+        df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
+        df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
+        trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
+    trends = {}
+    if trend is not None:
+        trends = trend.to_dict()['Trend']
 
-# Display the trend information for each country
-if trend is not None:
-    st.write("Trend")
-    trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
-    st.dataframe(trend_matrix)
+    # Display the trend information for each country
+    if trend is not None:
+        st.write("Trend")
+        trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
+        st.dataframe(trend_matrix)
 
-# Pivot the data to create a matrix
-matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+    # Pivot the data to create a matrix
+    matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
-# Display the matrix
-st.write("Data matrix")
-st.dataframe(matrix)
+    # Display the matrix
+    st.write("Data matrix")
+    st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
