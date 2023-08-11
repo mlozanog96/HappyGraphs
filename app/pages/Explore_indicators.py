@@ -8,14 +8,6 @@ import openai
 import requests
 from utils import ai_assistant
 
-# Define the SessionState class
-class SessionState:
-    def __init__(self):
-        self.button_pressed = False
-
-# Initialize SessionState
-session_state = SessionState()
-
 st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
@@ -27,202 +19,114 @@ charity_key = st.secrets["charity_secret"]
 openai_api_key = st.secrets["openai_secret"]
 openai.api_key = openai_api_key
 
-# Create a row layout for filters
-filter_col1, filter_col2 = st.columns(2)
-
 # Load the World Bank data and retrieve available indicators and countries for filtering
-df= pd.read_csv('app/data/world_bank_data.csv')
+df = pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 
-# Create a submit button
-if st.button("Submit"):
-    session_state.button_pressed = True
+# Initialize session state variables
+if 'stage' not in st.session_state:
+    st.session_state.stage = 0
+    st.session_state.selected_countries = ['World', 'Germany', 'Mexico']
+    st.session_state.selected_indicator = 'Life Expectancy'
+    st.session_state.selected_year_range = (2000, int(df['date'].max()))
 
-# Initialize default values
-default_countries = ['World', 'Germany', 'Mexico']
-default_indicator = 'Life Expectancy'
+def set_state(i):
+    st.session_state.stage = i
 
-if session_state.button_pressed:
-    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
-    if not selected_countries:
-        selected_countries = ['World']
+# Stage 0: Select Indicator
+if st.session_state.stage == 0:
+    st.session_state.selected_indicator = st.selectbox("Select an indicator", available_indicators, key="indicator_selector")
+    st.button('Next', on_click=set_state, args=[1])
 
-    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, key="indicator_selector")
-    df_indicator = df[df['indicator_name'] == selected_indicator]
+# Stage 1: Select Countries
+if st.session_state.stage >= 1:
+    st.session_state.selected_countries = st.multiselect("Select countries", available_countries, default=st.session_state.selected_countries)
+    st.button('Next', on_click=set_state, args=[2])
 
-    min_year = int(df_indicator['date'].min())
-    max_year = int(df_indicator['date'].max())
-    default_year_range = (2000, max_year)
-    selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
-    SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+# Stage 2: Select Year Range
+if st.session_state.stage >= 2:
+    min_year = int(df['date'].min())
+    max_year = int(df['date'].max())
+    st.session_state.selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=st.session_state.selected_year_range)
+    SELECTED_START_YEAR, SELECTED_END_YEAR = st.session_state.selected_year_range
+    st.button('Next', on_click=set_state, args=[3])
 
-    # Filter the data for selected countries and time period
-    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+# Stage 3: Display Chart
+if st.session_state.stage >= 3:
+    df_indicator = df[df['indicator_name'] == st.session_state.selected_indicator]
+    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(st.session_state.selected_countries))]
     filtered_data = filtered_data.sort_values('date')
-else:
-    selected_countries = default_countries
-    selected_indicator = default_indicator
-    df_indicator = df[df['indicator_name'] == default_indicator]
 
-    min_year = int(df_indicator['date'].min())
-    max_year = int(df_indicator['date'].max())
-    default_year_range = (2000, max_year)
-    selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
-    SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+    # Create & Perform Prompt Explanation Indicator
+    prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+    st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+    # answer = ai_assistant(prompt_indicator)
+    # st.write(answer)
 
-    # Filter the data for selected countries and time period
-    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-    filtered_data = filtered_data.sort_values('date')
-# Create & Perform Prompt Explanation Indicator
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
+    # Set the axis values
+    x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
+    y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
-# Set the axis values
-x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
-y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
+    # Set Color palette
+    num_colors= 15
+    color_palette = sns.color_palette("husl", num_colors)
+    custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
-# Set Color palette
-num_colors= 15
-color_palette = sns.color_palette("husl", num_colors)
-custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
-
-# Create an line chart with tooltip
-chart = alt.Chart(filtered_data).mark_line().encode(
-    x=alt.X('date:Q', scale=x_scale),
-    y=alt.Y('value:Q', scale=y_scale),
-    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
-    tooltip=['country', 'value']
-).properties(
-    width=800,
-    height=400
-    )+ alt.Chart(filtered_data).mark_circle().encode(
+    # Create an line chart with tooltip
+    chart = alt.Chart(filtered_data).mark_line().encode(
         x=alt.X('date:Q', scale=x_scale),
         y=alt.Y('value:Q', scale=y_scale),
-        size=alt.value(20),
-        color='country',
+        color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
         tooltip=['country', 'value']
-        )
+    ).properties(
+        width=800,
+        height=400
+        )+ alt.Chart(filtered_data).mark_circle().encode(
+            x=alt.X('date:Q', scale=x_scale),
+            y=alt.Y('value:Q', scale=y_scale),
+            size=alt.value(20),
+            color='country',
+            tooltip=['country', 'value']
+            )
 
-st.altair_chart(chart)
+    # Show the chart
+    st.altair_chart(chart)
 
-# Get the first and last data points for each country
-df_first = filtered_data.groupby('country')['value'].first().reset_index()
-df_last = filtered_data.groupby('country')['value'].last().reset_index()
+    # Get the first and last data points for each country
+    df_first = filtered_data.groupby('country')['value'].first().reset_index()
+    df_last = filtered_data.groupby('country')['value'].last().reset_index()
 
-# Define icons for increase and decrease trends
-increase_icon = "▲"
-decrease_icon = "▼"
+    # Define icons for increase and decrease trends
+    increase_icon = "▲"
+    decrease_icon = "▼"
 
-# Determine the trend for each country
-trend = None
-if len(df_first) > 0:
-    df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
-    trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-trends = {}
-if trend is not None:
-    trends = trend.to_dict()['Trend']
+    # Determine the trend for each country
+    trend = None
+    if len(df_first) > 0:
+        df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
+        df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
+        trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
+    trends = {}
+    if trend is not None:
+        trends = trend.to_dict()['Trend']
 
-# Display the trend information for each country
-if trend is not None:
-    st.write("Trend")
-    trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
-    st.dataframe(trend_matrix)
+    # Display the trend information for each country
+    if trend is not None:
+        st.write("Trend")
+        trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
+        st.dataframe(trend_matrix)
 
-# Pivot the data to create a matrix
-matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+    # Pivot the data to create a matrix
+    matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
-# Display the matrix
-st.write("Data matrix")
-st.dataframe(matrix)
-elif button_pressed == True:
-# Create default values and interactive filters for selecting indicator and countries and year range
-selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
-# If user deselects default countries and doesn't select new countries, show World data
-if not selected_countries:
-    selected_countries = ['World']
-
-
-selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, key="indicator_selector")
-df_indicator = df[df['indicator_name'] == selected_indicator]
-
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-default_year_range = (2000,max_year)
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
-SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
-
-filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-filtered_data = filtered_data.sort_values('date')
-
-# Create & Perform Prompt Explanation Indicator
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
-
-# Set the axis values
-x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
-y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
-
-# Set Color palette
-num_colors= 15
-color_palette = sns.color_palette("husl", num_colors)
-custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
-
-# Create an line chart with tooltip
-chart = alt.Chart(filtered_data).mark_line().encode(
-    x=alt.X('date:Q', scale=x_scale),
-    y=alt.Y('value:Q', scale=y_scale),
-    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
-    tooltip=['country', 'value']
-).properties(
-    width=800,
-    height=400
-    )+ alt.Chart(filtered_data).mark_circle().encode(
-        x=alt.X('date:Q', scale=x_scale),
-        y=alt.Y('value:Q', scale=y_scale),
-        size=alt.value(20),
-        color='country',
-        tooltip=['country', 'value']
-        )
+    # Display the matrix
+    st.write("Data matrix")
+    st.dataframe(matrix)
 
 
-st.altair_chart(chart)
-
-# Get the first and last data points for each country
-df_first = filtered_data.groupby('country')['value'].first().reset_index()
-df_last = filtered_data.groupby('country')['value'].last().reset_index()
-
-# Define icons for increase and decrease trends
-increase_icon = "▲"
-decrease_icon = "▼"
-
-# Determine the trend for each country
-trend = None
-if len(df_first) > 0:
-    df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-    df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
-    trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-trends = {}
-if trend is not None:
-    trends = trend.to_dict()['Trend']
-
-# Display the trend information for each country
-if trend is not None:
-    st.write("Trend")
-    trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
-    st.dataframe(trend_matrix)
-
-# Pivot the data to create a matrix
-matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
-
-# Display the matrix
-st.write("Data matrix")
-st.dataframe(matrix)
+    # Reset stage to 0 after displaying the chart
+    set_state(0)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
