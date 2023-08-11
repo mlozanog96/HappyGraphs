@@ -46,16 +46,10 @@ if st.session_state.stage == 0:
 # Stage 1: Display Chart
 if st.session_state.stage >= 1:
     df_indicator = df[df['indicator_name'] == st.session_state.selected_indicator]
+    selected_year_range = st.session_state.selected_year_range
+    SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(st.session_state.selected_countries))]
     filtered_data = filtered_data.sort_values('date')
-
-    # ... (chart creation and display code)
-
-    # Show the chart
-    st.altair_chart(chart)
-
-    # Reset stage to 0 after displaying the chart
-    set_state(0)
 
 
     # Create & Perform Prompt Explanation Indicator
