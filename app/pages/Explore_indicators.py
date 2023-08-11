@@ -29,6 +29,7 @@ if 'stage' not in st.session_state:
     st.session_state.selected_countries = ['World', 'Germany', 'Mexico']
     st.session_state.selected_indicator = 'Life Expectancy'
     st.session_state.selected_year_range = (2000, int(df['date'].max()))
+    st.session_state.trends = {}  # Initialize trends dictionary
 
 def set_state(i):
     st.session_state.stage = i
@@ -40,7 +41,6 @@ if st.session_state.stage == 0:
     min_year = int(df['date'].min())
     max_year = int(df['date'].max())
     st.session_state.selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=st.session_state.selected_year_range)
-    SELECTED_START_YEAR, SELECTED_END_YEAR = st.session_state.selected_year_range
     st.button('Next to Chart', on_click=set_state, args=[1])
 
 # Stage 1: Display Chart
@@ -50,7 +50,6 @@ if st.session_state.stage >= 1:
     SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(st.session_state.selected_countries))]
     filtered_data = filtered_data.sort_values('date')
-
 
     # Create & Perform Prompt Explanation Indicator
     prompt_indicator = 'What is the indicator ' + st.session_state.selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
@@ -87,39 +86,25 @@ if st.session_state.stage >= 1:
     # Show the chart
     st.altair_chart(chart)
 
-    # Get the first and last data points for each country
+    # Determine the trend for each country
     df_first = filtered_data.groupby('country')['value'].first().reset_index()
     df_last = filtered_data.groupby('country')['value'].last().reset_index()
-
-    # Define icons for increase and decrease trends
     increase_icon = "▲"
     decrease_icon = "▼"
-
-    # Determine the trend for each country
-    trend = None
+    trends = {}  # Initialize trends dictionary
     if len(df_first) > 0:
         df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
         df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
         trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-    trends = {}
-    if trend is not None:
         trends = trend.to_dict()['Trend']
+    st.session_state.trends = trends  # Store trends in session state
 
-    # Display the trend information for each country
-    if trend is not None:
-        st.write("Trend")
-        trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
-        st.dataframe(trend_matrix)
-
-    # Pivot the data to create a matrix
-    matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
-
-    # Display the matrix
-    st.write("Data matrix")
-    st.dataframe(matrix)
+    # Show the chart
+    st.altair_chart(chart)
 
     # Reset stage to 0 after displaying the chart
     set_state(0)
+    
 
 
 st.markdown('### Why has this indicator changed in the countries?')
