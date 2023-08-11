@@ -41,13 +41,22 @@ if st.session_state.stage == 0:
     max_year = int(df['date'].max())
     st.session_state.selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=st.session_state.selected_year_range)
     SELECTED_START_YEAR, SELECTED_END_YEAR = st.session_state.selected_year_range
-    st.button('Next', on_click=set_state, args=[1])
+    st.button('Next to Chart', on_click=set_state, args=[1])
 
 # Stage 1: Display Chart
 if st.session_state.stage >= 1:
     df_indicator = df[df['indicator_name'] == st.session_state.selected_indicator]
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(st.session_state.selected_countries))]
     filtered_data = filtered_data.sort_values('date')
+
+    # ... (chart creation and display code)
+
+    # Show the chart
+    st.altair_chart(chart)
+
+    # Reset stage to 0 after displaying the chart
+    set_state(0)
+
 
     # Create & Perform Prompt Explanation Indicator
     prompt_indicator = 'What is the indicator ' + st.session_state.selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
