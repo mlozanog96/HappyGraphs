@@ -1,4 +1,3 @@
-# Import packages
 import streamlit as st
 import altair as alt
 import pandas as pd
@@ -34,32 +33,24 @@ if 'stage' not in st.session_state:
 def set_state(i):
     st.session_state.stage = i
 
-# Stage 0: Select Indicator
+# Stage 0: Select Indicator, Countries, and Year Range
 if st.session_state.stage == 0:
     st.session_state.selected_indicator = st.selectbox("Select an indicator", available_indicators, key="indicator_selector")
-    st.button('Next', on_click=set_state, args=[1])
-
-# Stage 1: Select Countries
-if st.session_state.stage >= 1:
     st.session_state.selected_countries = st.multiselect("Select countries", available_countries, default=st.session_state.selected_countries)
-    st.button('Next', on_click=set_state, args=[2])
-
-# Stage 2: Select Year Range
-if st.session_state.stage >= 2:
     min_year = int(df['date'].min())
     max_year = int(df['date'].max())
     st.session_state.selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=st.session_state.selected_year_range)
     SELECTED_START_YEAR, SELECTED_END_YEAR = st.session_state.selected_year_range
-    st.button('Next', on_click=set_state, args=[3])
+    st.button('Next', on_click=set_state, args=[1])
 
-# Stage 3: Display Chart
-if st.session_state.stage >= 3:
+# Stage 1: Display Chart
+if st.session_state.stage >= 1:
     df_indicator = df[df['indicator_name'] == st.session_state.selected_indicator]
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(st.session_state.selected_countries))]
     filtered_data = filtered_data.sort_values('date')
 
     # Create & Perform Prompt Explanation Indicator
-    prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+    prompt_indicator = 'What is the indicator ' + st.session_state.selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
     st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
     # answer = ai_assistant(prompt_indicator)
     # st.write(answer)
@@ -123,7 +114,6 @@ if st.session_state.stage >= 3:
     # Display the matrix
     st.write("Data matrix")
     st.dataframe(matrix)
-
 
     # Reset stage to 0 after displaying the chart
     set_state(0)
