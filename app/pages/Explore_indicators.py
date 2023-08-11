@@ -52,30 +52,30 @@ st.write('Disclaimer: The following indicator description is generated using the
 
 
 
+# ... (imports and other initial code) ...
+
 # Initialize variables to track changes and button press
-indicator_changed = False
-countries_changed = False
-year_range_changed = False
 button_pressed = False
 
 # Create a submit button
 if st.button("Submit"):
     button_pressed = True
-    indicator_changed = selected_indicator != default_indicator
-    countries_changed = selected_countries != default_countries
-    year_range_changed = selected_year_range != default_year_range
-    # Filter the data for selected countries and time period
+
+# Filter the data for selected countries and time period
+if button_pressed:
+    df_indicator = df[df['indicator_name'] == selected_indicator]
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
     filtered_data = filtered_data.sort_values('date')
+
 else:
-    # If button is not pressed the df should be filtered by the default values
+    # Use default values if the button is not pressed
     selected_countries = default_countries
     selected_indicator = default_indicator
     df_indicator = df[df['indicator_name'] == selected_indicator]
     selected_year_range = default_year_range
     SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-    filtered_data = filtered_data.sort_values('date') 
+    filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
 x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
@@ -86,91 +86,121 @@ num_colors= 15
 color_palette = sns.color_palette("husl", num_colors)
 custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
-# Create an line chart with tooltip
+# Create a line chart with tooltip
 chart = alt.Chart(filtered_data).mark_line().encode(
     x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
-    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
+    color=alt.Color('country', scale=alt.Scale(range=custom_palette)),
     tooltip=['country', 'value']
 ).properties(
     width=800,
     height=400
-    )+ alt.Chart(filtered_data).mark_circle().encode(
-        x=alt.X('date:Q', scale=x_scale),
-        y=alt.Y('value:Q', scale=y_scale),
-        size=alt.value(20),
-        color='country',
-        tooltip=['country', 'value']
-        )
+) + alt.Chart(filtered_data).mark_circle().encode(
+    x=alt.X('date:Q', scale=x_scale),
+    y=alt.Y('value:Q', scale=y_scale),
+    size=alt.value(20),
+    color='country',
+    tooltip=['country', 'value']
+)
 
-# Show the chart with default values if the "Submit" button was not pressed even if changes occurred
-if not (button_pressed) : #and (indicator_changed and countries_changed and year_range_changed)
-    st.altair_chart(chart)
+# Show the chart
+st.altair_chart(chart)
 
-    # Get the first and last data points for each country
-    df_first = filtered_data.groupby('country')['value'].first().reset_index()
-    df_last = filtered_data.groupby('country')['value'].last().reset_index()
 
-    # Define icons for increase and decrease trends
-    increase_icon = "▲"
-    decrease_icon = "▼"
+# # Set the axis values
+# x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
+# y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
 
-    # Determine the trend for each country
-    trend = None
-    if len(df_first) > 0:
-        df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-        df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
-        trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-    trends = {}
-    if trend is not None:
-        trends = trend.to_dict()['Trend']
+# # Set Color palette
+# num_colors= 15
+# color_palette = sns.color_palette("husl", num_colors)
+# custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
-    # Display the trend information for each country
-    if trend is not None:
-        st.write("Trend")
-        trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
-        st.dataframe(trend_matrix)
+# # Create an line chart with tooltip
+# chart = alt.Chart(filtered_data).mark_line().encode(
+#     x=alt.X('date:Q', scale=x_scale),
+#     y=alt.Y('value:Q', scale=y_scale),
+#     color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
+#     tooltip=['country', 'value']
+# ).properties(
+#     width=800,
+#     height=400
+#     )+ alt.Chart(filtered_data).mark_circle().encode(
+#         x=alt.X('date:Q', scale=x_scale),
+#         y=alt.Y('value:Q', scale=y_scale),
+#         size=alt.value(20),
+#         color='country',
+#         tooltip=['country', 'value']
+#         )
 
-    # Pivot the data to create a matrix
-    matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+# # Show the chart with default values if the "Submit" button was not pressed even if changes occurred
+# if not (button_pressed) : #and (indicator_changed and countries_changed and year_range_changed)
+#     st.altair_chart(chart)
 
-    # Display the matrix
-    st.write("Data matrix")
-    st.dataframe(matrix)
+#     # Get the first and last data points for each country
+#     df_first = filtered_data.groupby('country')['value'].first().reset_index()
+#     df_last = filtered_data.groupby('country')['value'].last().reset_index()
 
-if (button_pressed): #indicator_changed or countries_changed or year_range_changed and 
-    st.altair_chart(chart)
+#     # Define icons for increase and decrease trends
+#     increase_icon = "▲"
+#     decrease_icon = "▼"
 
-    # Get the first and last data points for each country
-    df_first = filtered_data.groupby('country')['value'].first().reset_index()
-    df_last = filtered_data.groupby('country')['value'].last().reset_index()
+#     # Determine the trend for each country
+#     trend = None
+#     if len(df_first) > 0:
+#         df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
+#         df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
+#         trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
+#     trends = {}
+#     if trend is not None:
+#         trends = trend.to_dict()['Trend']
 
-    # Define icons for increase and decrease trends
-    increase_icon = "▲"
-    decrease_icon = "▼"
+#     # Display the trend information for each country
+#     if trend is not None:
+#         st.write("Trend")
+#         trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
+#         st.dataframe(trend_matrix)
 
-    # Determine the trend for each country
-    trend = None
-    if len(df_first) > 0:
-        df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
-        df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
-        trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
-    trends = {}
-    if trend is not None:
-        trends = trend.to_dict()['Trend']
+#     # Pivot the data to create a matrix
+#     matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
-    # Display the trend information for each country
-    if trend is not None:
-        st.write("Trend")
-        trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
-        st.dataframe(trend_matrix)
+#     # Display the matrix
+#     st.write("Data matrix")
+#     st.dataframe(matrix)
 
-    # Pivot the data to create a matrix
-    matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+# if (button_pressed): #indicator_changed or countries_changed or year_range_changed and 
+#     st.altair_chart(chart)
 
-    # Display the matrix
-    st.write("Data matrix")
-    st.dataframe(matrix)
+#     # Get the first and last data points for each country
+#     df_first = filtered_data.groupby('country')['value'].first().reset_index()
+#     df_last = filtered_data.groupby('country')['value'].last().reset_index()
+
+#     # Define icons for increase and decrease trends
+#     increase_icon = "▲"
+#     decrease_icon = "▼"
+
+#     # Determine the trend for each country
+#     trend = None
+#     if len(df_first) > 0:
+#         df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
+#         df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
+#         trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
+#     trends = {}
+#     if trend is not None:
+#         trends = trend.to_dict()['Trend']
+
+#     # Display the trend information for each country
+#     if trend is not None:
+#         st.write("Trend")
+#         trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
+#         st.dataframe(trend_matrix)
+
+#     # Pivot the data to create a matrix
+#     matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+
+#     # Display the matrix
+#     st.write("Data matrix")
+#     st.dataframe(matrix)
 
 st.markdown('### Why has this indicator changed in the countries?')
 st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
