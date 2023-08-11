@@ -46,11 +46,6 @@ set_selected_indicator(selected_indicator)
 selected_countries = st.multiselect("Select countries", available_countries, default=st.session_state.selected_countries)
 set_selected_countries(selected_countries)
 
-# Select Year Range
-min_year = int(df['date'].min())
-max_year = int(df['date'].max())
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=st.session_state.selected_year_range)
-set_selected_year_range(selected_year_range)
 
 # Display Chart
 df_indicator = df[df['indicator_name'] == st.session_state.selected_indicator]
@@ -58,16 +53,38 @@ selected_start_year, selected_end_year = st.session_state.selected_year_range
 filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(st.session_state.selected_countries))]
 filtered_data = filtered_data.sort_values('date')
 
-# Create chart
+# Select Year Range    
+min_year = int(df_indicator['date'].min())
+max_year = int(df_indicator['date'].max())
+default_year_range = (2000, max_year)
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
+SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+
+# Set the axis values
+x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
+y_scale = alt.Scale(domain=(filtered_data['value'].min(), filtered_data['value'].max()), nice=False)
+
+# Set Color palette
+num_colors= 15
+color_palette = sns.color_palette("husl", num_colors)
+custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
+
+# Create an line chart with tooltip
 chart = alt.Chart(filtered_data).mark_line().encode(
-    x='date:T',
-    y='value:Q',
-    color='country:N',
-    tooltip=['country:N', 'value:Q']
+    x=alt.X('date:Q', scale=x_scale),
+    y=alt.Y('value:Q', scale=y_scale),
+    color=alt.Color('country',scale=alt.Scale(range=custom_palette)),
+    tooltip=['country', 'value']
 ).properties(
     width=800,
     height=400
-)
+    )+ alt.Chart(filtered_data).mark_circle().encode(
+        x=alt.X('date:Q', scale=x_scale),
+        y=alt.Y('value:Q', scale=y_scale),
+        size=alt.value(20),
+        color='country',
+        tooltip=['country', 'value']
+        )
 
 # Show chart
 st.altair_chart(chart)
@@ -85,13 +102,15 @@ df_first = filtered_data.groupby('country')['value'].first().reset_index()
 df_last = filtered_data.groupby('country')['value'].last().reset_index()
 increase_icon = "▲"
 decrease_icon = "▼"
-trends = {}  # Initialize trends dictionary
+trends = {}  
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
     df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
     trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
     trends = trend.to_dict()['Trend']
-st.write(trends)
+st.write(trends) 
+
+
 
 
 st.markdown('### Why has this indicator changed in the countries?')
