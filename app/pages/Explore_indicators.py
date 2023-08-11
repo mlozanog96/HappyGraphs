@@ -42,14 +42,6 @@ if st.button("Submit"):
 # Initialize default values
 default_countries = ['World', 'Germany', 'Mexico']
 default_indicator = 'Life Expectancy'
-selected_countries = default_countries
-selected_indicator = default_indicator
-df_indicator = df[df['indicator_name'] == selected_indicator]
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-default_year_range = (2000, max_year)
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
-SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
 if session_state.button_pressed:
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
@@ -61,13 +53,27 @@ if session_state.button_pressed:
 
     min_year = int(df_indicator['date'].min())
     max_year = int(df_indicator['date'].max())
+    default_year_range = (2000, max_year)
     selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
     SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
 
-# Filter the data for selected countries and time period
-filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
-filtered_data = filtered_data.sort_values('date')
+    # Filter the data for selected countries and time period
+    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+    filtered_data = filtered_data.sort_values('date')
+else:
+    selected_countries = default_countries
+    selected_indicator = default_indicator
+    df_indicator = df[df['indicator_name'] == default_indicator]
 
+    min_year = int(df_indicator['date'].min())
+    max_year = int(df_indicator['date'].max())
+    default_year_range = (2000, max_year)
+    selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
+    SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+
+    # Filter the data for selected countries and time period
+    filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+    filtered_data = filtered_data.sort_values('date')
 # Create & Perform Prompt Explanation Indicator
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
 st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
