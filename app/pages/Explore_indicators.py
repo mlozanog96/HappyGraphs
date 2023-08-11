@@ -98,7 +98,7 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         )
 
 # Show the chart only if the "Submit" button was pressed or changes occurred
-if not (button_pressed and indicator_changed and countries_changed and year_range_changed):
+if not (button_pressed and not indicator_changed and not countries_changed and not year_range_changed):
     st.altair_chart(chart)
 
     # Get the first and last data points for each country
