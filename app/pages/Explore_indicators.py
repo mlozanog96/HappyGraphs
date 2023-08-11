@@ -39,7 +39,7 @@ default_countries = ['World','Germany','Mexico']
 default_indicator = 'Life Expectancy'
     
 # Show the chart with default values if the "Submit" button was not pressed even if changes occurred
-if not (button_pressed) : #and (indicator_changed and countries_changed and year_range_changed)
+if button_pressed == False : #and (indicator_changed and countries_changed and year_range_changed)
     # Use default values if the button is not pressed
     selected_countries = default_countries
     selected_indicator = default_indicator
@@ -117,7 +117,7 @@ if not (button_pressed) : #and (indicator_changed and countries_changed and year
     # Display the matrix
     st.write("Data matrix")
     st.dataframe(matrix)
-else:
+elif button_pressed == True:
     # Create default values and interactive filters for selecting indicator and countries and year range
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
     # If user deselects default countries and doesn't select new countries, show World data
