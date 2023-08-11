@@ -27,38 +27,28 @@ df= pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 
-# Create default values and interactive filters for selecting indicator and countries and year range
-default_countries = ['World','Germany','Mexico']
-selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
-# If user deselects default countries and doesn't select new countries, show World data
-if not selected_countries:
-    selected_countries = ['World']
-
-default_indicator = 'Life Expectancy'
-selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, key="indicator_selector")
-df_indicator = df[df['indicator_name'] == selected_indicator]
-
-min_year = int(df_indicator['date'].min())
-max_year = int(df_indicator['date'].max())
-default_year_range = (2000,max_year)
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
-SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
-
-# Create & Perform Prompt Explanation Indicator
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
-
-
-
-# ... (imports and other initial code) ...
-
 # Initialize variables to track changes and button press
 button_pressed = False
 
 # Create a submit button
 if st.button("Submit"):
+    # Create default values and interactive filters for selecting indicator and countries and year range
+    default_countries = ['World','Germany','Mexico']
+    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=default_countries)
+    # If user deselects default countries and doesn't select new countries, show World data
+    if not selected_countries:
+        selected_countries = ['World']
+
+    default_indicator = 'Life Expectancy'
+    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators, key="indicator_selector")
+    df_indicator = df[df['indicator_name'] == selected_indicator]
+
+    min_year = int(df_indicator['date'].min())
+    max_year = int(df_indicator['date'].max())
+    default_year_range = (2000,max_year)
+    selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
+    SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+
     button_pressed = True
 
 # Filter the data for selected countries and time period
@@ -102,6 +92,13 @@ chart = alt.Chart(filtered_data).mark_line().encode(
     color='country',
     tooltip=['country', 'value']
 )
+
+
+# Create & Perform Prompt Explanation Indicator
+prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+# answer = ai_assistant(prompt_indicator)
+# st.write(answer)
 
 # Show the chart
 st.altair_chart(chart)
