@@ -68,6 +68,12 @@ if st.button("Submit"):
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
     filtered_data = filtered_data.sort_values('date')
 else:
+    # If button is not pressed the df should be filtered by the default values
+    selected_countries = default_countries
+    selected_indicator = default_indicator
+    df_indicator = df[df['indicator_name'] == selected_indicator]
+    selected_year_range = default_year_range
+    SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
     filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
     filtered_data = filtered_data.sort_values('date') 
 
@@ -97,8 +103,8 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         tooltip=['country', 'value']
         )
 
-# Show the chart only if the "Submit" button was pressed or changes occurred
-if not (button_pressed and not indicator_changed and not countries_changed and not year_range_changed):
+# Show the chart with default values if the "Submit" button was not pressed even if changes occurred
+if not (button_pressed) : #and (indicator_changed and countries_changed and year_range_changed)
     st.altair_chart(chart)
 
     # Get the first and last data points for each country
@@ -132,7 +138,7 @@ if not (button_pressed and not indicator_changed and not countries_changed and n
     st.write("Data matrix")
     st.dataframe(matrix)
 
-if (indicator_changed or countries_changed or year_range_changed and button_pressed):
+if (button_pressed): #indicator_changed or countries_changed or year_range_changed and 
     st.altair_chart(chart)
 
     # Get the first and last data points for each country
