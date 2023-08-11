@@ -98,7 +98,7 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         )
 
 # Show the chart only if the "Submit" button was pressed or changes occurred
-if not (button_pressed or indicator_changed or countries_changed or year_range_changed):
+if not (button_pressed and indicator_changed and countries_changed and year_range_changed):
     st.altair_chart(chart)
 
     # Get the first and last data points for each country
@@ -132,6 +132,39 @@ if not (button_pressed or indicator_changed or countries_changed or year_range_c
     st.write("Data matrix")
     st.dataframe(matrix)
 
+if (indicator_changed or countries_changed or year_range_changed and button_pressed):
+    st.altair_chart(chart)
+
+    # Get the first and last data points for each country
+    df_first = filtered_data.groupby('country')['value'].first().reset_index()
+    df_last = filtered_data.groupby('country')['value'].last().reset_index()
+
+    # Define icons for increase and decrease trends
+    increase_icon = "▲"
+    decrease_icon = "▼"
+
+    # Determine the trend for each country
+    trend = None
+    if len(df_first) > 0:
+        df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
+        df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
+        trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
+    trends = {}
+    if trend is not None:
+        trends = trend.to_dict()['Trend']
+
+    # Display the trend information for each country
+    if trend is not None:
+        st.write("Trend")
+        trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
+        st.dataframe(trend_matrix)
+
+    # Pivot the data to create a matrix
+    matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
+
+    # Display the matrix
+    st.write("Data matrix")
+    st.dataframe(matrix)
 
 st.markdown('### Why has this indicator changed in the countries?')
 st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
