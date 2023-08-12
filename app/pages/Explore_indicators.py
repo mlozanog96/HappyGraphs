@@ -142,20 +142,24 @@ if button_pressed == True:
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
+
+# Load matching data
 charity_map = pd.read_csv('app/data/charity_map.csv')
 
 
+# Create interactive filters for selecting charity theme and countries
 filter_col1, filter_col2 = st.columns(2)
-
-all_charity_themes = ['']+ list(charity_map['name']) #[''] is for all charities
+all_charity_themes = [''] + list(charity_map['name']) #[''] is for all charities
 with filter_col1:
     selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
-
+all_countries = pd.read_csv('app/data/countries.csv') # english country names from: https://stefangabos.github.io/world_countries/
+all_countries = [''] + list(all_countries['name']) #[''] is for all countries
 with filter_col2:
-    selected_countries_charity = filter_col2.multiselect("Select countries", available_countries) 
+    selected_countries_charity = filter_col2.multiselect("Select countries", all_countries) 
 
-st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
+st.write('Below you find all the charities that work within your chosen theme and countries.')
 
+# Fetch charity data from the GlobalGiving API based on selected theme and countries
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
 response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
@@ -165,6 +169,7 @@ if response.status_code == 200:
 
     filtered_projects = []
 
+    # Filter the projects based on selected countries and theme
     for project in projects:
         pass_filters = True
 
@@ -177,6 +182,7 @@ if response.status_code == 200:
         if pass_filters:
             filtered_projects.append(project)
 
+    # Display filtered charity projects and their details
     if filtered_projects:
         for project in filtered_projects:
             st.write("Project Title:", project['title'])
@@ -195,13 +201,15 @@ if response.status_code == 200:
             st.write("Project Link:", project['projectLink'])
             st.write()
     else:
+        # Inform the user that no matching charities were found for the specified filters
         st.write('No data found for the specified filters. Please choose other countries or another theme.')
 
 else:
+    # Inform the user if the request to the GlobalGiving API failed and why
     st.write('Request failed with status code:', response.status_code)
 
 
-
+# Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
 
 
