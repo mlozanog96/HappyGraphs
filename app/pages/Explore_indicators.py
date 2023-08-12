@@ -120,12 +120,12 @@ st.markdown('### Why has this indicator changed as it has?')
 
 # Create prompt to show the reason why the indicator has that trend using the prompt per country, as the dictionary of trend can't be made to a string in the prompt
 prompt_prep_trend = None
-for i, (country, trend_per_country) in enumerate(trends.items()):
+for i, (country, trend) in enumerate(trends.items()):
     if i == 0:
-        prompt_prep_trend = f"{trend_per_country} in {country}"
+        prompt_prep_trend = f"{trend} in {country}"
     else:
-        prompt_prep_trend += f" and {trend_per_country} in {country}"
-#test
+        prompt_prep_trend += f" and {trend} in {country}"
+
 
 # Submit prompt to OpenAI
 button_pressed = False
