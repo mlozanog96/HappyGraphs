@@ -180,7 +180,7 @@ for selected_indicator_charity in selected_indicators_charity:
 
 
 st.write('Below you find all the charities that work within your chosen theme and countries.')
-
+#test
 if selected_indicators_charity and not selected_charity_theme:
     st.write('if')
     if len(selected_countries_charity) > 0:
