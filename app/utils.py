@@ -237,12 +237,17 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
 
     return content
 
-def get_charity (selected_countries_charity, theme , charity_theme, selected_country):
+def get_charity(selected_countries_charity, theme, charity_theme, selected_country):
     charity_api_key = st.secrets["charity_secret"]
+    # Store the project info to return it
     content = ""
+    # Create a projects list to prevent duplicates
+    unique_projects = set()  
+
     # Fetch charity data from the GlobalGiving API based on selected theme and countries
     url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
     response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
+    
     if response.status_code == 200:
         data = response.json()
         projects = data['projects']['project']
@@ -265,28 +270,33 @@ def get_charity (selected_countries_charity, theme , charity_theme, selected_cou
         # Accumulate filtered charity projects and their details in content
         if filtered_projects:
             for project in filtered_projects:
-                content += f"**Project Title:** {project['title']}\n\n"
-                content += f"Countries: {project['country']}\n\n"
-                themes = project['themes']['theme']
-                for theme in themes:
-                    content += f"\tTheme Name: {theme['name']}\n\n"
-                content += f"Summary: {project['summary']}\n\n"
-                content += f"Funding: {project['funding']}\n\n"
-                content += f"Goal: {project['goal']}\n\n"
-                donation_options = project['donationOptions']['donationOption']
-                content += "Donation Options:\n"
-                for donation in donation_options:
-                    content += f"\tAmount: {donation['amount']} $\n"
-                    content += f"\tDescription: {donation['description']}\n\n"
-                content += f"Project Link: {project['projectLink']}\n\n"
+                project_title = project['title']
+                # Check for duplicates
+                if project_title not in unique_projects:
+                    unique_projects.add(project_title)
+                    content += f"**Project Title:** {project_title}\n\n"
+                    content += f"Countries: {project['country']}\n\n"
+                    themes = project['themes']['theme']
+                    for theme in themes:
+                        content += f"\tTheme Name: {theme['name']}\n\n"
+                    content += f"Summary: {project['summary']}\n\n"
+                    content += f"Funding: {project['funding']}\n\n"
+                    content += f"Goal: {project['goal']}\n\n"
+                    donation_options = project['donationOptions']['donationOption']
+                    content += "Donation Options:\n"
+                    for donation in donation_options:
+                        content += f"\tAmount: {donation['amount']} $\n"
+                        content += f"\tDescription: {donation['description']}\n\n"
+                    content += f"Project Link: {project['projectLink']}\n\n"
         else:
             # Inform the user that no matching charities were found for the specified filters
-            content = f"No data found for charity theme {charity_theme} in the selected countries. Please choose other countries or another theme."
+            content = f"No data found for charity theme {charity_theme} for {selected_country}. Please choose other countries or another theme."
     else:
         # Inform the user if the request to the GlobalGiving API failed and why
         content = f"Request failed with status code: {response.status_code}"
-    
+
     return content
+
 
 
 
