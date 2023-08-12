@@ -265,7 +265,7 @@ def get_charity (selected_countries_charity, theme , charity_theme, selected_cou
         # Accumulate filtered charity projects and their details in content
         if filtered_projects:
             for project in filtered_projects:
-                content += f"Project Title: {project['title']}\n\n"
+                content += f"**Project Title:** {project['title']}\n\n"
                 content += f"Countries: {project['country']}\n\n"
                 themes = project['themes']['theme']
                 for theme in themes:

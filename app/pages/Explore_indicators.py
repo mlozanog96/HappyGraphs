@@ -146,6 +146,7 @@ if button_pressed == True:
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
+st.write('Select an indicator, if you want to look at charity themes which fit a certain indicator. Select a charity theme, if you want to see charities concerning a specific topic. Do not select both, as the indicator is mapped to a charity theme.')
 
 # Load matching data
 charity_map = pd.read_csv('app/data/charity_map.csv')
@@ -154,18 +155,18 @@ indicator_map = pd.read_csv('app/data/indicator_map.csv')
 # Create indicator, charity theme and country filters
 filter_col1, filter_col2, filter_col3 = st.columns(3)
 # Indicator filter
-all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
+all_indicators = list(indicator_map['indicator'])
 with filter_col1:
-    selected_indicators_charity = filter_col1.multiselect("Either select an indicator", all_indicators, placeholder="Choose an indicator") 
+    selected_indicators_charity = filter_col1.multiselect("Select indicators", all_indicators, placeholder="Choose one or several") 
 # Charity theme filter
-all_charity_themes = [''] + list(charity_map['name']) #[''] is for all charities
+all_charity_themes = list(charity_map['name'])
 with filter_col2:
-    selected_charity_theme = filter_col2.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes, placeholder="Choose a charity theme")
+    selected_charity_theme = filter_col2.multiselect("Select charity themes", all_charity_themes, placeholder="Choose one or several")
 # Country filter
 all_countries = pd.read_csv('app/data/countries.csv') # english country names from: https://stefangabos.github.io/world_countries/
-all_countries = [''] + list(all_countries['name']) #[''] is for all countries
+all_countries = list(all_countries['name'])
 with filter_col3:
-    selected_countries_charity = filter_col3.multiselect("Select countries", all_countries, placeholder="Choose a country") 
+    selected_countries_charity = filter_col3.multiselect("Voluntary select countries", all_countries, placeholder="Choose one or several") 
 
 # Indicator mapping to charity 
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
@@ -180,32 +181,29 @@ for selected_indicator_charity in selected_indicators_charity:
 st.write('Below you find all the charities that work within your chosen theme and countries.')
 
 if selected_indicators_charity and not selected_charity_theme:
-    st.write('if')
+    st.write('Please be patient. Results are loading.')
     if len(selected_countries_charity) > 0:
-        st.write('more than 0 countries')
         for selected_country in selected_countries_charity:
             for charity_theme in charity_themes:
                 charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
                 st.write(charities)
     else:
-        st.write('less than 0 countries')
         for charity_theme in charity_themes:
             charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
             st.write(charities)
 elif selected_charity_theme and not selected_indicators_charity:
-    st.write('first elif')
+    st.write('Please be patient. Results are loading.')
     if len(selected_countries_charity) > 0:
         for selected_country in selected_countries_charity:
             for selected_theme in selected_charity_theme:
                 charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
                 st.write(charities)
     else:
-        st.write('less than 0 countries')
+        st.write('Please be patient. Results are loading.')
         for selected_theme in selected_charity_theme:
             charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
             st.write(charities)
 elif selected_indicators_charity and selected_charity_theme:
-    st.write('second elif')
     st.write('You chose both an indicator and a charity theme. Please deselect one.')
 else: 
     st.write('Waiting for your selection.')
