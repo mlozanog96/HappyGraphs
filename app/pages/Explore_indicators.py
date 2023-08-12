@@ -178,7 +178,7 @@ for selected_indicator_charity in selected_indicators_charity:
     charity_category = charity_map[charity_map['category'] == selected_category]
     charity_themes = charity_category['name'].tolist()
 
-    st.write(f"The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:\n")
+    st.write(f'The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:\n')
     for name in charity_themes:
         st.write(f"- {name}")
 
