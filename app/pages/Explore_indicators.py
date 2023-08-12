@@ -168,7 +168,7 @@ all_countries = list(all_countries['name'])
 with filter_col3:
     selected_countries_charity = filter_col3.multiselect("Voluntary select countries", all_countries, placeholder="Choose one or several") 
 
-charities = set()
+charities = pd.DataFrame(columns=['charity'])
 
 if selected_indicators_charity and not selected_charity_theme:
     # Loop through each selected indicator
@@ -193,12 +193,12 @@ if selected_indicators_charity and not selected_charity_theme:
         for selected_country in selected_countries_charity:
             for charity_theme in charity_themes:
                 charity = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
-                charities.add(charity)
+                charities = charities.append({'charity': charity}, ignore_index=True)
         st.markdown(charities)
     else:
         for charity_theme in charity_themes_all_cat:
             charity = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
-            charities.add(charity)
+            charities = charities.append({'charity': charity}, ignore_index=True)
         st.markdown(charities)
 elif selected_charity_theme and not selected_indicators_charity:
     st.write('**Please be patient. Results are loading.**')
@@ -206,12 +206,12 @@ elif selected_charity_theme and not selected_indicators_charity:
         for selected_country in selected_countries_charity:
             for selected_theme in selected_charity_theme:
                 charity = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
-                charities.add(charity)
+                charities = charities.append({'charity': charity}, ignore_index=True)
         st.markdown(charities)
     else:
         for selected_theme in selected_charity_theme:
             charity = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
-            charities.add(charity)
+            charities = charities.append({'charity': charity}, ignore_index=True)
         st.markdown(charities)
 elif selected_indicators_charity and selected_charity_theme:
     st.write('**You chose both an indicator and a charity theme. Please deselect one.**')

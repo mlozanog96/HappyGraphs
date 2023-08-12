@@ -238,6 +238,16 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
     return content
 
 def get_charity(selected_countries_charity, theme, charity_theme, selected_country):
+    '''
+    Function to retrieve charity project information from the GlobalGiving API based on selected criteria.
+    Takes 'selected_countries_charity' to filter projects by countries, 'theme' to select the overarching theme,
+    'charity_theme' to filter projects by specific charity themes, and 'selected_country' to narrow down by country.
+    Returns a formatted content string containing details about charity projects that match the given criteria.
+    The content includes project titles, countries, themes, summaries, funding, goals, donation options, and project links.
+    The function ensures that duplicate project titles are avoided in the final output.
+    If no matching projects are found, a message is displayed accordingly.
+    If the API request fails, an error message is generated.
+    '''
     charity_api_key = st.secrets["charity_secret"]
     # Store the project info to return it
     content = ""
@@ -290,7 +300,7 @@ def get_charity(selected_countries_charity, theme, charity_theme, selected_count
                     content += f"Project Link: {project['projectLink']}\n\n"
         else:
             # Inform the user that no matching charities were found for the specified filters
-            content = f"No data found for charity theme {charity_theme} for {selected_country}. Please choose other countries or another theme."
+            content = f"No data found for charity theme {charity_theme} for the selected countries. Please choose other countries or another theme."
     else:
         # Inform the user if the request to the GlobalGiving API failed and why
         content = f"Request failed with status code: {response.status_code}"
