@@ -153,19 +153,19 @@ indicator_map = pd.read_csv('app/data/indicator_map.csv')
 
 
 # Create indicator, charity theme and country filters
-filter_col1, filter_col2 = st.columns(2)
+filter_col1, filter_col2, filter_col3 = st.columns(3)
 # Indicator filter
 all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
-with filter_col2:
-    selected_indicators_charity = filter_col2.multiselect("Select an indicator", all_indicators) 
+with filter_col1:
+    selected_indicators_charity = filter_col2.multiselect("Either select an indicator", all_indicators) 
 # Charity theme filter
 all_charity_themes = [''] + list(charity_map['name']) #[''] is for all charities
-with filter_col1:
+with filter_col2:
     selected_charity_theme = filter_col1.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes)
 # Country filter
 all_countries = pd.read_csv('app/data/countries.csv') # english country names from: https://stefangabos.github.io/world_countries/
 all_countries = [''] + list(all_countries['name']) #[''] is for all countries
-with filter_col2:
+with filter_col3:
     selected_countries_charity = filter_col2.multiselect("Select countries", all_countries) 
 
 # Indicator mapping to charity 
@@ -175,7 +175,8 @@ selected_category = indicator_category['category'].iloc[0]
 # Filter the data based on the selected indicator & create list of charity themes
 charity_category = charity_map[charity_map['category'] == selected_category]
 charity_themes = charity_category['name'].tolist()
-st.write('The indicator ', selected_indicator, ' is part of the category ', charity_category, '. The charities in this category work in the following fields: ', charity_themes)
+for selected_indicator_charity in selected_indicators_charity:
+    st.write('The indicator ', selected_indicator_charity, ' is part of the category ', charity_category, '. The charities in this category work in the following fields: ', charity_themes)
 
 
 st.write('Below you find all the charities that work within your chosen theme and countries.')
