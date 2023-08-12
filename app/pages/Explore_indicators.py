@@ -169,7 +169,7 @@ with filter_col3:
     selected_countries_charity = filter_col3.multiselect("Voluntary select countries", all_countries, placeholder="Choose one or several") 
 
 # Indicator mapping to charity 
-indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
+indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator_charity]
 selected_category = indicator_category['category'].iloc[0]
 
 # Filter the data based on the selected indicator & create list of charity themes
