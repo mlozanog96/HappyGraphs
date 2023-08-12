@@ -1,9 +1,12 @@
+# Import packages
 import streamlit as st
 import altair as alt
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from github import Github
 import openai
+from streamlit import components
 import requests
 from utils import ai_assistant
 
@@ -11,55 +14,44 @@ st.title('Explore Indicators')
 
 st.write("Group KMJ Do-Gooders proudly presents: Happy Graphs - Graphs which make us optimistic.")
 
-# Collect GlobalGiving Key from Github and store in variable
-charity_key = st.secrets["charity_secret"]
-
-# Collect and initiate OpenAI Key    
 openai_api_key = st.secrets["openai_secret"]
-openai.api_key = openai_api_key
+charity_api_key = st.secrets["charity_secret"]
+openai.api_key=openai_api_key
 
-# Load the World Bank data and retrieve available indicators and countries for filtering
-df = pd.read_csv('app/data/world_bank_data.csv')
+
+
+# Create a row layout for filters
+filter_col1, filter_col2 = st.columns(2)
+
+df= pd.read_csv('app/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
-available_countries = df['country'].drop_duplicates().reset_index(drop=True)
+with filter_col1:
+    selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
 
-# Initialize session state variables
-if 'selected_indicator' not in st.session_state:
-    st.session_state.selected_indicator = available_indicators[0]
-    st.session_state.selected_countries = ['World', 'Germany', 'Mexico']
-    st.session_state.selected_year_range = (2000, int(df['date'].max()))
+df_indicator= df[df['indicator_name']==selected_indicator]
+available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
+with filter_col2:
+    selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
-def set_selected_indicator(selected_indicator):
-    st.session_state.selected_indicator = selected_indicator
+# Create & Perform Prompt Explanation Indicator
+#ACTION: remove comments
+prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+# answer = ai_assistant(prompt_indicator)
+# st.write(answer)
 
-def set_selected_countries(selected_countries):
-    st.session_state.selected_countries = selected_countries
-
-def set_selected_year_range(selected_year_range):
-    st.session_state.selected_year_range = selected_year_range
-
-# Select Indicator
-selected_indicator = st.selectbox("Select an indicator", available_indicators, key="indicator_selector")
-set_selected_indicator(selected_indicator)
-
-# Select Countries
-selected_countries = st.multiselect("Select countries", available_countries, default=st.session_state.selected_countries)
-set_selected_countries(selected_countries)
-
-
-# Display Chart
-df_indicator = df[df['indicator_name'] == st.session_state.selected_indicator]
-selected_start_year, selected_end_year = st.session_state.selected_year_range
-filtered_data = df_indicator[(df_indicator['date'] >= selected_start_year) & (df_indicator['date'] <= selected_end_year) & (df_indicator['country'].isin(st.session_state.selected_countries))]
-filtered_data = filtered_data.sort_values('date')
-
-# Select Year Range    
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
-default_year_range = (2000, max_year)
-selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=default_year_range)
+selected_year_range = st.slider("Select a year range", min_value=min_year, max_value=max_year, value=(2000,max_year))
 SELECTED_START_YEAR, SELECTED_END_YEAR = selected_year_range
+
+if not selected_countries:
+    selected_countries = ['World']
+
+# Filter the data for selected countries and time period
+filtered_data = df_indicator[(df_indicator['date'] >= SELECTED_START_YEAR) & (df_indicator['date'] <= SELECTED_END_YEAR) & (df_indicator['country'].isin(selected_countries))]
+filtered_data = filtered_data.sort_values('date')
 
 # Set the axis values
 x_scale = alt.Scale(domain=(SELECTED_START_YEAR, SELECTED_END_YEAR), nice=False)
@@ -70,7 +62,7 @@ num_colors= 15
 color_palette = sns.color_palette("husl", num_colors)
 custom_palette = [sns.color_palette("hls", num_colors).as_hex()[i] for i in range(num_colors)]
 
-# Create an line chart with tooltip
+# Create an Altair line chart with tooltips
 chart = alt.Chart(filtered_data).mark_line().encode(
     x=alt.X('date:Q', scale=x_scale),
     y=alt.Y('value:Q', scale=y_scale),
@@ -87,35 +79,46 @@ chart = alt.Chart(filtered_data).mark_line().encode(
         tooltip=['country', 'value']
         )
 
-# Show chart
+# Show the chart using Streamlit
 st.altair_chart(chart)
 
-# Create & Perform Prompt Explanation Indicator
-prompt_indicator = 'What is the indicator ' + st.session_state.selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
-
-# Determine the trend for each country
+# Get the first and last data points for each country
 df_first = filtered_data.groupby('country')['value'].first().reset_index()
 df_last = filtered_data.groupby('country')['value'].last().reset_index()
+
+# Define icons for increase and decrease trends
 increase_icon = "▲"
 decrease_icon = "▼"
-trends = {}  
+
+# Determine the trend for each country
+trend = None
 if len(df_first) > 0:
     df_merged = pd.merge(df_first, df_last, on='country', suffixes=('_first', '_last'))
     df_merged['Trend'] = df_merged['value_last'].sub(df_merged['value_first']).apply(lambda x: increase_icon if x > 0 else decrease_icon if x < 0 else '')
     trend = df_merged.pivot_table(index='country', values='Trend', aggfunc='first', fill_value='')
+
+trends = {}
+if trend is not None:
     trends = trend.to_dict()['Trend']
-st.write(trends) 
+
+# Display the trend information for each country
+if trend is not None:
+    st.write("Trend")
+    trend_matrix = pd.DataFrame.from_dict(trends, orient='index', columns=['Trend'])
+    st.dataframe(trend_matrix)
+
+# Pivot the data to create a matrix
+matrix = pd.pivot_table(filtered_data, values='value', index='country', columns='date')
 
 
+# Display the matrix using Streamlit
+st.write("Data matrix")
+st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
 st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-
-# Show the reason why it has that trend using the prompt per country, as the dictionary of trend can't be made to a string in the prompt
+# Show the reason why it has that trend
 prompt_prep_trend = None
 for i, (country, trend_per_country) in enumerate(trends.items()):
     if i == 0:
@@ -123,39 +126,38 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
 
-
 #ACTION: remove comments
 # prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
 # answer = ai_assistant(prompt_reason_trend)
 # st.write(answer)
 
+
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
+charity_map = pd.read_csv('app/charity_map.csv')
 
-# Load mapping csv #ACTION
-charity_map = pd.read_csv('app/data/charity_map.csv')
 
-# Create interactive filters for selecting charity theme and countries
 filter_col1, filter_col2 = st.columns(2)
+
 all_charity_themes = ['']+ ['Gender Equality'] +list(charity_map['name']) #ACTION: Gender Equality should normaly be within the csv, why not?
 with filter_col1:
     selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
+
 with filter_col2:
     selected_countries_charity = filter_col2.multiselect("Select countries", available_countries) 
 
-st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities if you have selected regions. To see the world in general leave the country selection empty.')
+st.write('Below you find all the charities that work within your chosen theme and countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
 
-# Fetch charity data from the GlobalGiving API based on selected theme and countries
 url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-response = requests.get(url+charity_key, headers={"Accept": "application/json"})
+response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
 
 if response.status_code == 200:
     data = response.json()
     projects = data['projects']['project']
+
     filtered_projects = []
 
-    # Filter the projects based on selected countries and theme
     for project in projects:
         pass_filters = True
 
@@ -169,7 +171,6 @@ if response.status_code == 200:
             filtered_projects.append(project)
 
     if filtered_projects:
-        # Display filtered charity projects and their details
         for project in filtered_projects:
             st.write("Project Title:", project['title'])
             st.write("Countries:", project['country'])
@@ -187,20 +188,18 @@ if response.status_code == 200:
             st.write("Project Link:", project['projectLink'])
             st.write()
     else:
-        # Inform the user that no matching charities were found for the specified filters
         st.write('No data found for the specified filters. Please choose other countries or another theme.')
 
 else:
-    # Inform the user if the request to the GlobalGiving API failed and why
     st.write('Request failed with status code:', response.status_code)
 
 
-# Inform the user about the source of the charity data and its limitations
+
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
 
 
 # st.markdown('## Not so funny playground:')
-# indicator_map = pd.read_csv('app/data/indicator_map.csv')
+# indicator_map = pd.read_csv('app/indicator_map.csv')
 # # Filter the data based on the selected indicator and find the corresponding category
 # st.write('Indicator Category')
 # indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
