@@ -157,16 +157,16 @@ filter_col1, filter_col2, filter_col3 = st.columns(3)
 # Indicator filter
 all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
 with filter_col1:
-    selected_indicators_charity = filter_col2.multiselect("Either select an indicator", all_indicators) 
+    selected_indicators_charity = filter_col1.multiselect("Either select an indicator", all_indicators) 
 # Charity theme filter
 all_charity_themes = [''] + list(charity_map['name']) #[''] is for all charities
 with filter_col2:
-    selected_charity_theme = filter_col1.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes)
+    selected_charity_theme = filter_col2.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes)
 # Country filter
 all_countries = pd.read_csv('app/data/countries.csv') # english country names from: https://stefangabos.github.io/world_countries/
 all_countries = [''] + list(all_countries['name']) #[''] is for all countries
 with filter_col3:
-    selected_countries_charity = filter_col2.multiselect("Select countries", all_countries) 
+    selected_countries_charity = filter_col3.multiselect("Select countries", all_countries) 
 
 # Indicator mapping to charity 
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
