@@ -23,6 +23,7 @@ df = pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 available_countries = df['country'].drop_duplicates().reset_index(drop=True)
 
+
 # Initialize session state variables
 if 'selected_indicator' not in st.session_state:
     st.session_state.selected_indicator = available_indicators[0]
@@ -94,8 +95,6 @@ prompt_indicator = 'What is the indicator ' + st.session_state.selected_indicato
 st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
 # answer = ai_assistant(prompt_indicator)
 # st.write(answer)
-
-
 
 # Determine the trend for each country
 df_first = filtered_data.groupby('country')['value'].first().reset_index()
