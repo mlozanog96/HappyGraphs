@@ -149,7 +149,7 @@ st.write('There are a lot of initiatives already out there working on positive c
 
 # Load matching data
 charity_map = pd.read_csv('app/data/charity_map.csv')
-indicator_map = pd.read_csv('app/indicator_map.csv')
+indicator_map = pd.read_csv('app/data/indicator_map.csv')
 
 
 # Create indicator, charity theme and country filters
