@@ -226,7 +226,7 @@ for selected_country in selected_countries_charity:
                         st.write()
                 else:
                     # Inform the user that no matching charities were found for the specified filters
-                    st.write('No data found for ' + selected_theme + ' ' + selected_indicator_charity' in ' + selected_country + '. Please choose other countries or another theme.')
+                    st.write('No data found for ' + selected_theme + ' ' + charity_theme + ' in ' + selected_country + '. Please choose other countries or another theme.')
 
             else:
                 # Inform the user if the request to the GlobalGiving API failed and why
