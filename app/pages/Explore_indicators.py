@@ -8,7 +8,7 @@ from github import Github
 import openai
 from streamlit import components
 import requests
-from utils import ai_assistant
+from utils import ai_assistant, get_charity
 
 st.title('Explore Indicators')
 
@@ -157,16 +157,16 @@ filter_col1, filter_col2, filter_col3 = st.columns(3)
 # Indicator filter
 all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
 with filter_col1:
-    selected_indicators_charity = filter_col1.multiselect("Either select an indicator", all_indicators) 
+    selected_indicators_charity = filter_col1.multiselect("Either select an indicator", all_indicators, placeholder="Choose an indicator") 
 # Charity theme filter
 all_charity_themes = [''] + list(charity_map['name']) #[''] is for all charities
 with filter_col2:
-    selected_charity_theme = filter_col2.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes)
+    selected_charity_theme = filter_col2.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes, placeholder="Choose a charity theme")
 # Country filter
 all_countries = pd.read_csv('app/data/countries.csv') # english country names from: https://stefangabos.github.io/world_countries/
 all_countries = [''] + list(all_countries['name']) #[''] is for all countries
 with filter_col3:
-    selected_countries_charity = filter_col3.multiselect("Select countries", all_countries) 
+    selected_countries_charity = filter_col3.multiselect("Select countries", all_countries, placeholder="Choose a country") 
 
 # Indicator mapping to charity 
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
@@ -181,58 +181,18 @@ for selected_indicator_charity in selected_indicators_charity:
 
 st.write('Below you find all the charities that work within your chosen theme and countries.')
 
-# Fetch charity data from the GlobalGiving API based on selected theme and countries
-url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
-
-for selected_country in selected_countries_charity:
-    for selected_theme in selected_charity_theme:
+if selected_indicators_charity and not selected_charity_theme:
+    for selected_country in selected_countries_charity:
         for charity_theme in charity_themes:
-            if response.status_code == 200:
-                data = response.json()
-                projects = data['projects']['project']
-
-                filtered_projects = []
-
-                # Filter the projects based on selected countries and theme
-                for project in projects:
-                    pass_filters = True
-
-                    if selected_countries_charity and project['country'] not in selected_countries_charity:
-                        pass_filters = False
-
-                    if selected_charity_theme and selected_charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
-                        pass_filters = False
-
-                    if pass_filters:
-                        filtered_projects.append(project)
-
-                # Display filtered charity projects and their details
-                if filtered_projects:
-                    for project in filtered_projects:
-                        st.write("Project Title:", project['title'])
-                        st.write("Countries:", project['country'])
-                        themes = project['themes']['theme']
-                        for theme in themes:
-                            st.write("\tTheme Name:", theme['name'])
-                        st.write("Summary:", project['summary'])
-                        st.write("Funding:", project['funding'])
-                        st.write("Goal:", project['goal'])
-                        donation_options = project['donationOptions']['donationOption']
-                        st.write("Donation Options:")
-                        for donation in donation_options:
-                            st.write("\tAmount:", donation['amount'], "$")
-                            st.write("\tDescription:", donation['description'])
-                        st.write("Project Link:", project['projectLink'])
-                        st.write()
-                else:
-                    # Inform the user that no matching charities were found for the specified filters
-                    st.write('No data found for ' + selected_theme + ' ' + charity_theme + ' in ' + selected_country + '. Please choose other countries or another theme.')
-
-            else:
-                # Inform the user if the request to the GlobalGiving API failed and why
-                st.write('Request failed with status code:', response.status_code)
-
+            get_charity(selected_countries_charity, selected_charity_theme, selected_theme, charity_theme, selected_country)
+elif selected_charity_theme and not selected_indicators_charity:
+    for selected_country in selected_countries_charity:
+        for selected_theme in selected_charity_theme:
+            get_charity(selected_countries_charity, selected_charity_theme, selected_theme, charity_theme, selected_country)
+elif selected_indicators_charity and selected_charity_theme:
+    st.write('You chose both an indicator and a charity theme. Please deselect one.')
+else: 
+    st.write('Something went wrong')
 
 # Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')

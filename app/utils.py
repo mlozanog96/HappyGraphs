@@ -7,6 +7,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_squared_error
 from sklearn.linear_model import Ridge
 from statsmodels.tsa.stattools import adfuller
+import streamlit as st
 
 
 
@@ -187,63 +188,6 @@ def create_ridge_model(df, alpha):
     
     return all_scores, all_mses, countries_low_score, countries_high_score, countries_high_mse, models
 
-def filter_projects(charity_country=None, charity_title=None, charity_region=None, charity_theme_name=None):
-    '''
-    Function to filter charity projects using the GlobalGiving API
-    Accepts filters for country, title, region, and theme name to narrow down project search
-    Returns a list of filtered projects based on the specified criteria
-    '''
-    # Collect GlobalGiving Key from Github and store in variable. 
-    # charity_key = st.secrets["charity_secret"]
-
-    url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-    response = requests.get(url + charity_key, headers={"Accept": "application/json"})
-
-    filters = {
-        'country': charity_country,
-        'title': charity_title,
-        'region': charity_region,
-        'name': charity_theme_name
-    }
-
-    if response.status_code == 200:
-        data = response.json()
-        projects = data['projects']['project']
-
-        filtered_projects = []
-
-        for project in projects:
-            pass_filters = True
-
-            for filter_column, filter_value in filters.items():
-                if filter_column == 'country' and filter_value and project['country'] not in filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'title' and filter_value and project['title'] != filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'region' and filter_value and project['region'] != filter_value:
-                    pass_filters = False
-                    break
-                if filter_column == 'name' and filter_value:
-                    themes = project['themes']['theme']
-                    theme_names = [theme['name'] for theme in themes]
-                    if filter_value not in theme_names:
-                        pass_filters = False
-                        break
-
-            if pass_filters:
-                filtered_projects.append(project)
-
-        if filtered_projects:
-            return filtered_projects
-        else:
-            return None
-
-    else:
-        print('Request failed with status code:', response.status_code)
-        return None
-
 
 def get_country_data(country, data):
     '''
@@ -293,3 +237,51 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
 
     return content
 
+def get_charity (selected_countries_charity, selected_charity_theme, selected_theme, charity_theme, selected_country):
+    # Fetch charity data from the GlobalGiving API based on selected theme and countries
+    url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
+    response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
+    if response.status_code == 200:
+        data = response.json()
+        projects = data['projects']['project']
+
+        filtered_projects = []
+
+        # Filter the projects based on selected countries and theme
+        for project in projects:
+            pass_filters = True
+
+            if selected_countries_charity and project['country'] not in selected_countries_charity:
+                pass_filters = False
+
+            if selected_charity_theme and selected_charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
+                pass_filters = False
+
+            if pass_filters:
+                filtered_projects.append(project)
+
+        # Display filtered charity projects and their details
+        if filtered_projects:
+            for project in filtered_projects:
+                st.write("Project Title:", project['title'])
+                st.write("Countries:", project['country'])
+                themes = project['themes']['theme']
+                for theme in themes:
+                    st.write("\tTheme Name:", theme['name'])
+                st.write("Summary:", project['summary'])
+                st.write("Funding:", project['funding'])
+                st.write("Goal:", project['goal'])
+                donation_options = project['donationOptions']['donationOption']
+                st.write("Donation Options:")
+                for donation in donation_options:
+                    st.write("\tAmount:", donation['amount'], "$")
+                    st.write("\tDescription:", donation['description'])
+                st.write("Project Link:", project['projectLink'])
+                st.write()
+        else:
+            # Inform the user that no matching charities were found for the specified filters
+            st.write('No data found for charity theme ' + selected_theme + ' in category ' + charity_theme + ' for ' + selected_country + '. Please choose other countries or another theme.')
+
+    else:
+        # Inform the user if the request to the GlobalGiving API failed and why
+        st.write('Request failed with status code:', response.status_code)
