@@ -176,7 +176,7 @@ selected_category = indicator_category['category'].iloc[0]
 charity_category = charity_map[charity_map['category'] == selected_category]
 charity_themes = charity_category['name'].tolist()
 for selected_indicator_charity in selected_indicators_charity:
-    st.write('The indicator ', selected_indicator_charity, ' is part of the category ', charity_category, '. The charities in this category work in the following fields: ', charity_themes)
+    st.write('The indicator ', selected_indicator_charity, ' is part of the category ', charity_category['category'].iloc(0), '. The charities in this category work in the following fields: ', charity_themes)
 
 
 st.write('Below you find all the charities that work within your chosen theme and countries.')
@@ -185,17 +185,19 @@ if selected_indicators_charity and not selected_charity_theme:
     st.write('if')
     for selected_country in selected_countries_charity:
         for charity_theme in charity_themes:
-            get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
+            charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
+            st.write(charities)
 elif selected_charity_theme and not selected_indicators_charity:
-    st.wirte('first elif')
+    st.write('first elif')
     for selected_country in selected_countries_charity:
         for selected_theme in selected_charity_theme:
-            get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
+            charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
+            st.write(charities)
 elif selected_indicators_charity and selected_charity_theme:
     st.write('second elif')
     st.write('You chose both an indicator and a charity theme. Please deselect one.')
 else: 
-    st.write('Something went wrong')
+    st.write('Waiting for your selection.')
 
 # Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
