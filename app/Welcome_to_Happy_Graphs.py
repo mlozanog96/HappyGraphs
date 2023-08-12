@@ -1,12 +1,12 @@
+# Import packages
 import streamlit as st
-#hints for debugging: https://awesome-streamlit.readthedocs.io/en/latest/vscode.html
 import pandas as pd
 import matplotlib.pyplot as plt
 import pickle
 import altair as alt
 from pathlib import Path
 import seaborn as sns
-from utils import get_data, filter_projects, get_country_data #,get_indicator_reason
+from utils import get_data, filter_projects, get_country_data
 
 st.title('Happy Graphs')
 
