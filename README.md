@@ -10,7 +10,6 @@ This is why we envisioned line graphs with trend analysis as the core elements o
 
 # Folder Structure
 In our main folder, you can find:
-* API_Keys: including the keys used for the APIs (OpenAI and Global Giving), we already configured these secret keys in Streamlit cloud
 * Dockerfile: with the specifications for the container to deploy our website
 * README.md: showing the structure of this GitHub
 * app (folder): development of the complete application, explained with more detail in the following lines.
@@ -22,7 +21,7 @@ Documents:
 * requirements.txt: list of needed python libraries to deploy the application
 
 Folders:
-* archive: old python files with generated code in order to test functionalities that were included in the app
+* archive: old python files not meant for grading, but for documention, which were used in order to test functionalities that were included later in the app
 * data: csv files used in the app (data sources) and extra folder called preprocessing with python files needed to extract and preprocess the data (exploration, collection and cleaning)
 * pages: python files with the pages of the deployment, Explore indicators and Other Happy Graphs 
 * prediction_model: pkl file used in our application to predict life expectancy, python files including preprocessing of prediction model and another one with modeling approaches, and another folder with the data used for the life expectancy prediction (feed model and default values for Wrelcome to Happy Graphs page).

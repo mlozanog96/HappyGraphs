@@ -281,7 +281,7 @@ def get_charity (selected_countries_charity, theme , charity_theme, selected_cou
                 content += f"Project Link: {project['projectLink']}\n\n"
         else:
             # Inform the user that no matching charities were found for the specified filters
-            content = f"No data found for charity theme {charity_theme} for {selected_country}. Please choose other countries or another theme."
+            content = f"No data found for charity theme {charity_theme} in the selected countries. Please choose other countries or another theme."
     else:
         # Inform the user if the request to the GlobalGiving API failed and why
         content = f"Request failed with status code: {response.status_code}"

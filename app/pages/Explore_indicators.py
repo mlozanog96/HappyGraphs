@@ -175,16 +175,14 @@ selected_category = indicator_category['category'].iloc[0]
 # Filter the data based on the selected indicator & create list of charity themes
 charity_category = charity_map[charity_map['category'] == selected_category]
 charity_themes = charity_category['name'].tolist()
+
 for selected_indicator_charity in selected_indicators_charity:
     st.write(f"The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:\n")
     for name in charity_themes:
         st.write(f"{name}")
 
-
-st.write('Below you find all the charities that work within your chosen theme and countries.')
-
 if selected_indicators_charity and not selected_charity_theme:
-    st.write('Please be patient. Results are loading.')
+    st.write('**Please be patient. Results are loading.**')
     if len(selected_countries_charity) > 0:
         for selected_country in selected_countries_charity:
             for charity_theme in charity_themes:
@@ -195,21 +193,20 @@ if selected_indicators_charity and not selected_charity_theme:
             charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
             st.write(charities)
 elif selected_charity_theme and not selected_indicators_charity:
-    st.write('Please be patient. Results are loading.')
+    st.write('**Please be patient. Results are loading.**')
     if len(selected_countries_charity) > 0:
         for selected_country in selected_countries_charity:
             for selected_theme in selected_charity_theme:
                 charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
                 st.write(charities)
     else:
-        st.write('Please be patient. Results are loading.')
         for selected_theme in selected_charity_theme:
             charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
             st.write(charities)
 elif selected_indicators_charity and selected_charity_theme:
-    st.write('You chose both an indicator and a charity theme. Please deselect one.')
+    st.write('**You chose both an indicator and a charity theme. Please deselect one.**')
 else: 
-    st.write('Waiting for your selection.')
+    st.write('**Waiting for your selection.**')
 
 # Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
