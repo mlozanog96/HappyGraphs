@@ -168,92 +168,76 @@ all_countries = list(all_countries['name'])
 with filter_col3:
     selected_countries_charity = filter_col3.multiselect("Voluntary select countries", all_countries, placeholder="Choose one or several") 
 
-# Initiate a list for the response to later be able to check for duplicates and retrieve the formating
-charities = pd.DataFrame(columns=['charity'])
-
-
+# Check if indicators are selected and themes are not selected
 if selected_indicators_charity and not selected_charity_theme:
-    # If indicators are selected and no charity themes are selected
-    
-    # Create an empty list to store charity themes
-    charity_themes_all_cat = []
-    
     # Loop through each selected indicator
+    charity_themes_all_cat = []
     for selected_indicator_charity in selected_indicators_charity:
-        # Get the category corresponding to the selected indicator
+        # Retrieve the category associated with the indicator
         indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator_charity]
         selected_category = indicator_category['category'].iloc[0]
         
-        # Filter the data based on the selected indicator & create a list of charity themes
+        # Filter the data based on the selected indicator & create list of charity themes
         charity_category = charity_map[charity_map['category'] == selected_category]
         charity_themes = charity_category['name'].tolist()
 
-        # Print the selected indicator and its corresponding category
+        # Display the indicator and associated themes
         st.write(f'The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:')
         for name in charity_themes:
             st.write(f"- {name}")
-        
-        # Loop through charity themes and add them to the charity_themes_all_cat list
+
+        # Add unique themes to the list
         for name in charity_themes:
             if name not in charity_themes_all_cat:
                 charity_themes_all_cat.append(name)
-    
-    # Display loading message
-    st.write('**Please be patient. Charities are loading.**')
-    
-    # Check if countries are selected
+
+        # Display loading message
+        st.write('**Please be patient. Charities are loading.**')
+        
+    # Check if countries are selected and iterate over each country and theme
     if len(selected_countries_charity) > 0:
-        # Loop through selected countries and charity themes
         for selected_country in selected_countries_charity:
             for charity_theme in charity_themes:
-                # Call the get_charity function to retrieve charity information
-                charity = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
-                # Append the charity information to the charities set
-                charities.append(charity)
-        # Display the set of charities
-        for charity in charities:
-            st.markdown(charity)
+                # Retrieve and display charities
+                charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
+                st.write(charities)
+    # If no countries selected, iterate over each theme and fetch charities
     else:
-        # Loop through charity themes and retrieve charity information
         for charity_theme in charity_themes_all_cat:
-            charity = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
-            # Append the charity information to the charities set
-            charities.append(charity)
-        # Display the set of charities
-        for charity in charities:
-            st.markdown(charity)
+            # Retrieve and display charities
+            charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
+            st.write(charities)
+
+# Check if charity themes are selected and indicators are not selected
 elif selected_charity_theme and not selected_indicators_charity:
-    # If charity themes are selected and no indicators are selected
-    
     # Display loading message
     st.write('**Please be patient. Results are loading.**')
-    
-    # Check if countries are selected
+
+    # Check if countries are selected and iterate over each country and theme
     if len(selected_countries_charity) > 0:
-        # Loop through selected countries and charity themes
         for selected_country in selected_countries_charity:
             for selected_theme in selected_charity_theme:
-                # Call the get_charity function to retrieve charity information
-                charity = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
-                # Append the charity information to the charities set
-                charities.append(charity)
-        # Display the set of charities
-        for charity in charities:
-            st.markdown(charity)
+                # Retrieve and display charities
+                charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
+                st.write(charities)
+    # If no countries selected, iterate over each theme and fetch charities
     else:
-        # Loop through charity themes and retrieve charity information
         for selected_theme in selected_charity_theme:
-            charity = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
-            # Append the charity information to the charities set
-            charities.append(charity)
-        # Display the set of charities
-        for charity in charities:
-            st.markdown(charity)
+            # Retrieve and display charities
+            charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
+            st.write(charities)
+
+# Check if both indicators and charity themes are selected
+elif selected_indicators_charity and selected_charity_theme:
+    st.write('**You chose both an indicator and a charity theme. Please deselect one.**')
+
+# If no selections have been made
 else: 
-    # If neither indicators nor charity themes are selected
-    
-    # Display waiting message
     st.write('**Waiting for your selection.**')
+
+# Inform the user about the source of the charity data and its limitations
+st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/. Please be aware that the API only allows showing 10 entries per request. To find more charities, please select other themes and/or countries.')
+
 
 # Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
