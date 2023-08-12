@@ -168,29 +168,34 @@ all_countries = list(all_countries['name'])
 with filter_col3:
     selected_countries_charity = filter_col3.multiselect("Voluntary select countries", all_countries, placeholder="Choose one or several") 
 
-# Loop through each selected indicator
-for selected_indicator_charity in selected_indicators_charity:
-    # Indicator mapping to charity 
-    indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator_charity]
-    selected_category = indicator_category['category'].iloc[0]
-    
-    # Filter the data based on the selected indicator & create list of charity themes
-    charity_category = charity_map[charity_map['category'] == selected_category]
-    charity_themes = charity_category['name'].tolist()
-
-    st.write(f'The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:\n')
-    for name in charity_themes:
-        st.write(f"- {name}")
 
 if selected_indicators_charity and not selected_charity_theme:
-    st.write('**Please be patient. Results are loading.**')
+    # Loop through each selected indicator
+    charity_themes_all_cat = []
+    for selected_indicator_charity in selected_indicators_charity:
+        # Indicator mapping to charity 
+        indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator_charity]
+        selected_category = indicator_category['category'].iloc[0]
+        
+        # Filter the data based on the selected indicator & create list of charity themes
+        charity_category = charity_map[charity_map['category'] == selected_category]
+        charity_themes = charity_category['name'].tolist()
+
+        st.write(f'The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:\n')
+        for name in charity_themes:
+            st.write(f"- {name}")
+        for name in charity_themes:
+                    st.write(f"- {name}")
+                    if name not in charity_themes_all_cat:
+                        charity_themes_all_cat.append(name)
+        st.write('**Please be patient. Charities are loading.**')
     if len(selected_countries_charity) > 0:
         for selected_country in selected_countries_charity:
             for charity_theme in charity_themes:
                 charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
                 st.write(charities)
     else:
-        for charity_theme in charity_themes:
+        for charity_theme in charity_themes_all_cat:
             charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
             st.write(charities)
 elif selected_charity_theme and not selected_indicators_charity:
