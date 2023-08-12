@@ -20,7 +20,7 @@ openai.api_key=openai_api_key
 
 
 
-# Create a row layout for filters
+# Create indicator and country filters
 filter_col1, filter_col2 = st.columns(2)
 
 df= pd.read_csv('app/data/world_bank_data.csv')
@@ -28,17 +28,21 @@ available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=T
 with filter_col1:
     selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
 
-
 df_indicator= df[df['indicator_name']==selected_indicator]
 available_countries = df_indicator['country'].drop_duplicates().reset_index(drop=True)
 with filter_col2:
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
 # Create & Perform Prompt Explanation Indicator
-prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
-st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-answer = ai_assistant(prompt_indicator)
-st.write(answer)
+button_pressed_indicator = False
+if st.button("Press this button to get an explanation of this indicator"):
+    button_pressed_indicator = True
+
+if button_pressed_indicator == True:
+    prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
+    st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+    answer = ai_assistant(prompt_indicator)
+    st.write(answer)
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -145,17 +149,34 @@ st.write('There are a lot of initiatives already out there working on positive c
 
 # Load matching data
 charity_map = pd.read_csv('app/data/charity_map.csv')
+indicator_map = pd.read_csv('app/indicator_map.csv')
 
 
-# Create interactive filters for selecting charity theme and countries
+# Create indicator, charity theme and country filters
 filter_col1, filter_col2 = st.columns(2)
+# Indicator filter
+all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
+with filter_col2:
+    selected_indicators_charity = filter_col2.multiselect("Select an indicator", all_indicators) 
+# Charity theme filter
 all_charity_themes = [''] + list(charity_map['name']) #[''] is for all charities
 with filter_col1:
-    selected_charity_theme = filter_col1.multiselect("Select a charity theme", all_charity_themes)
+    selected_charity_theme = filter_col1.multiselect("Or select a charity theme - caution: Don't select both an indicator and a charity theme", all_charity_themes)
+# Country filter
 all_countries = pd.read_csv('app/data/countries.csv') # english country names from: https://stefangabos.github.io/world_countries/
 all_countries = [''] + list(all_countries['name']) #[''] is for all countries
 with filter_col2:
     selected_countries_charity = filter_col2.multiselect("Select countries", all_countries) 
+
+# Indicator mapping to charity 
+indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
+selected_category = indicator_category['category'].iloc[0]
+
+# Filter the data based on the selected indicator & create list of charity themes
+charity_category = charity_map[charity_map['category'] == selected_category]
+charity_themes = charity_category['name'].tolist()
+st.write('The indicator ', selected_indicator, ' is part of the category ', charity_category, '. The charities in this category work in the following fields: ', charity_themes)
+
 
 st.write('Below you find all the charities that work within your chosen theme and countries.')
 
@@ -165,72 +186,52 @@ response = requests.get(url+charity_api_key, headers={"Accept": "application/jso
 
 for selected_country in selected_countries_charity:
     for selected_theme in selected_charity_theme:
-        if response.status_code == 200:
-            data = response.json()
-            projects = data['projects']['project']
+        for charity_theme in charity_themes:
+            if response.status_code == 200:
+                data = response.json()
+                projects = data['projects']['project']
 
-            filtered_projects = []
+                filtered_projects = []
 
-            # Filter the projects based on selected countries and theme
-            for project in projects:
-                pass_filters = True
+                # Filter the projects based on selected countries and theme
+                for project in projects:
+                    pass_filters = True
 
-                if selected_countries_charity and project['country'] not in selected_countries_charity:
-                    pass_filters = False
+                    if selected_countries_charity and project['country'] not in selected_countries_charity:
+                        pass_filters = False
 
-                if selected_charity_theme and selected_charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
-                    pass_filters = False
+                    if selected_charity_theme and selected_charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
+                        pass_filters = False
 
-                if pass_filters:
-                    filtered_projects.append(project)
+                    if pass_filters:
+                        filtered_projects.append(project)
 
-            # Display filtered charity projects and their details
-            if filtered_projects:
-                for project in filtered_projects:
-                    st.write("Project Title:", project['title'])
-                    st.write("Countries:", project['country'])
-                    themes = project['themes']['theme']
-                    for theme in themes:
-                        st.write("\tTheme Name:", theme['name'])
-                    st.write("Summary:", project['summary'])
-                    st.write("Funding:", project['funding'])
-                    st.write("Goal:", project['goal'])
-                    donation_options = project['donationOptions']['donationOption']
-                    st.write("Donation Options:")
-                    for donation in donation_options:
-                        st.write("\tAmount:", donation['amount'], "$")
-                        st.write("\tDescription:", donation['description'])
-                    st.write("Project Link:", project['projectLink'])
-                    st.write()
+                # Display filtered charity projects and their details
+                if filtered_projects:
+                    for project in filtered_projects:
+                        st.write("Project Title:", project['title'])
+                        st.write("Countries:", project['country'])
+                        themes = project['themes']['theme']
+                        for theme in themes:
+                            st.write("\tTheme Name:", theme['name'])
+                        st.write("Summary:", project['summary'])
+                        st.write("Funding:", project['funding'])
+                        st.write("Goal:", project['goal'])
+                        donation_options = project['donationOptions']['donationOption']
+                        st.write("Donation Options:")
+                        for donation in donation_options:
+                            st.write("\tAmount:", donation['amount'], "$")
+                            st.write("\tDescription:", donation['description'])
+                        st.write("Project Link:", project['projectLink'])
+                        st.write()
+                else:
+                    # Inform the user that no matching charities were found for the specified filters
+                    st.write('No data found for ' + selected_theme + ' ' + selected_indicator_charity' in ' + selected_country + '. Please choose other countries or another theme.')
+
             else:
-                # Inform the user that no matching charities were found for the specified filters
-                st.write('No data found for the specified filters. Please choose other countries or another theme.')
-
-        else:
-            # Inform the user if the request to the GlobalGiving API failed and why
-            st.write('Request failed with status code:', response.status_code)
+                # Inform the user if the request to the GlobalGiving API failed and why
+                st.write('Request failed with status code:', response.status_code)
 
 
 # Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
-
-
-st.markdown('## Not so funny playground:')
-indicator_map = pd.read_csv('app/indicator_map.csv')
-# Filter the data based on the selected indicator and find the corresponding category
-st.write('Indicator Category')
-indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
-selected_category = indicator_category['category'].iloc[0]
-st.write (indicator_category)
-
-# Filter the data based on the selected indicator & create list of charity themes
-charity_category = charity_map[charity_map['category'] == selected_category]
-charity_theme = charity_category['name'].tolist()
-st.write (charity_category)
-
-
-st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. The charities in this category work in the following fields: ', charity_theme)
-
-all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
-with filter_col2:
-    selected_indicator_charity = filter_col2.multiselect("Select indicator", all_indicators) 
