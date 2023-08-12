@@ -214,7 +214,7 @@ st.write ('These charities are derived from the GlobalGiving API. For more infor
 
 
 st.markdown('## Not so funny playground:')
-indicator_map = pd.read_csv('app/indicator_map.csv')
+indicator_map = pd.read_csv('app/data/indicator_map.csv')
 # Filter the data based on the selected indicator and find the corresponding category
 st.write('Indicator Category')
 indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
@@ -235,15 +235,6 @@ with filter_col2:
     selected_indicator_charity = filter_col2.multiselect("Select indicator", all_indicators) 
 
 
-# #ACTION put into utils
-# def formatting(data):
-#     if len(data) == 1:
-#         return f"'{data[0]}'"
-#     else:
-#         return [f"'{item}'" for item in data]
-    
-# country_formatted = formatting(selected_countries)
-# theme_formatted = formatting(charity_theme) #perhaps not needed?
 
 
 #ACTION this only works for one country at the time
