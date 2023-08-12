@@ -35,11 +35,10 @@ with filter_col2:
     selected_countries = filter_col2.multiselect("Select countries", available_countries, default=['World','Germany','Mexico']) 
 
 # Create & Perform Prompt Explanation Indicator
-#ACTION: remove comments
 prompt_indicator = 'What is the indicator ' + selected_indicator + ' from the Worldbank Indicators database measuring? Name the unit of the indicator.'
 st.write('Disclaimer: The following indicator description is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# answer = ai_assistant(prompt_indicator)
-# st.write(answer)
+answer = ai_assistant(prompt_indicator)
+st.write(answer)
 
 min_year = int(df_indicator['date'].min())
 max_year = int(df_indicator['date'].max())
@@ -148,7 +147,7 @@ charity_map = pd.read_csv('app/data/charity_map.csv')
 
 filter_col1, filter_col2 = st.columns(2)
 
-all_charity_themes = ['']+ ['Gender Equality'] +list(charity_map['name']) #ACTION: Gender Equality should normaly be within the csv, why not?
+all_charity_themes = ['']+ list(charity_map['name']) #[''] is for all charities
 with filter_col1:
     selected_charity_theme = filter_col1.selectbox("Select a charity theme", all_charity_themes)
 
