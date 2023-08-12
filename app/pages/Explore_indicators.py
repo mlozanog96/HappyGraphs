@@ -177,7 +177,7 @@ charity_category = charity_map[charity_map['category'] == selected_category]
 charity_themes = charity_category['name'].tolist()
 for selected_indicator_charity in selected_indicators_charity:
     st.write(f"The indicator {selected_indicator_charity} is part of the category {selected_category}. The charities in this category work in the following fields:\n")
-    st.write(charity_theme_names)
+    st.write(charity_themes)
 
 
 st.write('Below you find all the charities that work within your chosen theme and countries.')
