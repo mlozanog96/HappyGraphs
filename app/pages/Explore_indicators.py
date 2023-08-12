@@ -117,8 +117,9 @@ st.dataframe(matrix)
 
 
 st.markdown('### Why has this indicator changed in the countries?')
-st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
-# Show the reason why it has that trend
+st.write('Please press this button to get an explanation, why ' + selected_indicator + ' has changed so much' +  ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' in ' + selected_countries + '.')
+
+# Create prompt to show the reason why the indicator has that trend using the prompt per country, as the dictionary of trend can't be made to a string in the prompt
 prompt_prep_trend = None
 for i, (country, trend_per_country) in enumerate(trends.items()):
     if i == 0:
@@ -126,16 +127,24 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
 
-#ACTION: remove comments
-# prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
-# answer = ai_assistant(prompt_reason_trend)
-# st.write(answer)
+
+# Submit prompt to OpenAI
+button_pressed = False
+if st.button("I want to know why"):
+    button_pressed = True
+
+if button_pressed == True:
+    st.write('Disclaimer: The following explanation is generated using the model gpt 3.5 turbo by openai. For more information click here: https://platform.openai.com/docs/models/gpt-3-5')
+    prompt_reason_trend = 'Explain why ' + selected_indicator + ' has ' + prompt_prep_trend + ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' so much. Use under 400 tokens per country, if specific ones are indicated.'
+    answer = ai_assistant(prompt_reason_trend)
+    st.write(answer)
+
 
 
 # Show matching charities
 st.markdown('### What can you do to fuel a positive change?')
 st.write('There are a lot of initiatives already out there working on positive change. See for yourself and let yourself be inspired to take action and support your favorite charity. We make a difference!')
-charity_map = pd.read_csv('app/charity_map.csv')
+charity_map = pd.read_csv('app/data/charity_map.csv')
 
 
 filter_col1, filter_col2 = st.columns(2)
