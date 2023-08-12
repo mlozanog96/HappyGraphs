@@ -23,7 +23,7 @@ openai.api_key=openai_api_key
 # Create a row layout for filters
 filter_col1, filter_col2 = st.columns(2)
 
-df= pd.read_csv('app/world_bank_data.csv')
+df= pd.read_csv('app/data/world_bank_data.csv')
 available_indicators = df['indicator_name'].drop_duplicates().reset_index(drop=True)
 with filter_col1:
     selected_indicator = filter_col1.selectbox("Select an indicator", available_indicators)
