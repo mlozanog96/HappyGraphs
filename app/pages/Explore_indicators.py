@@ -213,19 +213,26 @@ else:
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
 
 
-# st.markdown('## Not so funny playground:')
-# indicator_map = pd.read_csv('app/indicator_map.csv')
-# # Filter the data based on the selected indicator and find the corresponding category
-# st.write('Indicator Category')
-# indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
-# selected_category = indicator_category['category'].iloc[0]
+st.markdown('## Not so funny playground:')
+indicator_map = pd.read_csv('app/indicator_map.csv')
+# Filter the data based on the selected indicator and find the corresponding category
+st.write('Indicator Category')
+indicator_category = indicator_map[indicator_map['indicator'] == selected_indicator]
+selected_category = indicator_category['category'].iloc[0]
+st.write (indicator_category)
 
-# # Filter the data based on the selected indicator & create list of charity themes
-# charity_category = charity_map[charity_map['category'] == selected_category]
-# charity_theme = charity_category['name'].tolist()
+# Filter the data based on the selected indicator & create list of charity themes
+charity_category = charity_map[charity_map['category'] == selected_category]
+charity_theme = charity_category['name'].tolist()
+st.write (charity_category)
 
-# st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. The charities in this category work in the following fields: ', charity_theme)
+
+st.write('The indicator ', selected_indicator, ' is part of the category ', selected_category, '. The charities in this category work in the following fields: ', charity_theme)
 # st.write('Below you find all the charities that work within these fields for your selected countries. Please note that there will be no matching charities if you have selected regions or the world in general.')
+
+all_indicators = [''] + list(indicator_map['indicator']) #[''] is for all indicators
+with filter_col2:
+    selected_indicator_charity = filter_col2.multiselect("Select indicator", all_indicators) 
 
 
 # #ACTION put into utils
