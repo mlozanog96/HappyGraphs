@@ -271,7 +271,7 @@ def get_charity(selected_countries_charity, theme, charity_theme, selected_count
         if filtered_projects:
             for project in filtered_projects:
                 project_title = project['title']
-                # Check for duplicates
+                # Check for duplicate projects and prevent
                 if project_title not in unique_projects:
                     unique_projects.add(project_title)
                     content += f"**Project Title:** {project_title}\n\n"

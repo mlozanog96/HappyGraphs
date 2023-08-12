@@ -168,6 +168,7 @@ all_countries = list(all_countries['name'])
 with filter_col3:
     selected_countries_charity = filter_col3.multiselect("Voluntary select countries", all_countries, placeholder="Choose one or several") 
 
+charities = set()
 
 if selected_indicators_charity and not selected_charity_theme:
     # Loop through each selected indicator
@@ -188,27 +189,35 @@ if selected_indicators_charity and not selected_charity_theme:
                     st.write(f"- {name}")
                     if name not in charity_themes_all_cat:
                         charity_themes_all_cat.append(name)
-        st.write('**Please be patient. Charities are loading.**')
+    st.write('**Please be patient. Charities are loading.**')
     if len(selected_countries_charity) > 0:
         for selected_country in selected_countries_charity:
             for charity_theme in charity_themes:
-                charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
-                st.write(charities)
+                charity = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
+                if charity not in charities:
+                    charities.add(charity)
+        st.write(charities)
     else:
         for charity_theme in charity_themes_all_cat:
-            charities = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
-            st.write(charities)
+            charity = get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country = '')
+            if charity not in charities:
+                charities.add(charity)
+        st.write(charities)
 elif selected_charity_theme and not selected_indicators_charity:
     st.write('**Please be patient. Results are loading.**')
     if len(selected_countries_charity) > 0:
         for selected_country in selected_countries_charity:
             for selected_theme in selected_charity_theme:
-                charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
-                st.write(charities)
+                charity = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
+                if charity not in charities:
+                    charities.add(charity)
+        st.write(charities)
     else:
         for selected_theme in selected_charity_theme:
-            charities = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
-            st.write(charities)
+            charity = get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country = '')
+            if charity not in charities:
+                charities.add(charity)
+        st.write(charities)
 elif selected_indicators_charity and selected_charity_theme:
     st.write('**You chose both an indicator and a charity theme. Please deselect one.**')
 else: 
