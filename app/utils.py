@@ -237,10 +237,12 @@ def ai_assistant(prompt, model = 'gpt-3.5-turbo', temperature = 0.5, max_tokens 
 
     return content
 
-def get_charity (selected_countries_charity, selected_charity_theme, selected_theme, charity_theme, selected_country):
+def get_charity (selected_countries_charity, theme , charity_theme, selected_country):
+    charity_api_key = st.secrets["charity_secret"]
+    content = ""
     # Fetch charity data from the GlobalGiving API based on selected theme and countries
     url = "https://api.globalgiving.org/api/public/projectservice/all/projects/active?api_key="
-    response = requests.get(url+charity_api_key, headers={"Accept": "application/json"})
+    response = requests.get(url + charity_api_key, headers={"Accept": "application/json"})
     if response.status_code == 200:
         data = response.json()
         projects = data['projects']['project']
@@ -254,34 +256,38 @@ def get_charity (selected_countries_charity, selected_charity_theme, selected_th
             if selected_countries_charity and project['country'] not in selected_countries_charity:
                 pass_filters = False
 
-            if selected_charity_theme and selected_charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
+            if charity_theme and charity_theme not in [theme['name'] for theme in project['themes']['theme']]:
                 pass_filters = False
 
             if pass_filters:
                 filtered_projects.append(project)
 
-        # Display filtered charity projects and their details
+        # Accumulate filtered charity projects and their details in content
         if filtered_projects:
             for project in filtered_projects:
-                st.write("Project Title:", project['title'])
-                st.write("Countries:", project['country'])
+                content += f"Project Title: {project['title']}\n\n"
+                content += f"Countries: {project['country']}\n\n"
                 themes = project['themes']['theme']
                 for theme in themes:
-                    st.write("\tTheme Name:", theme['name'])
-                st.write("Summary:", project['summary'])
-                st.write("Funding:", project['funding'])
-                st.write("Goal:", project['goal'])
+                    content += f"\tTheme Name: {theme['name']}\n\n"
+                content += f"Summary: {project['summary']}\n\n"
+                content += f"Funding: {project['funding']}\n\n"
+                content += f"Goal: {project['goal']}\n\n"
                 donation_options = project['donationOptions']['donationOption']
-                st.write("Donation Options:")
+                content += "Donation Options:\n"
                 for donation in donation_options:
-                    st.write("\tAmount:", donation['amount'], "$")
-                    st.write("\tDescription:", donation['description'])
-                st.write("Project Link:", project['projectLink'])
-                st.write()
+                    content += f"\tAmount: {donation['amount']} $\n"
+                    content += f"\tDescription: {donation['description']}\n\n"
+                content += f"Project Link: {project['projectLink']}\n\n"
         else:
             # Inform the user that no matching charities were found for the specified filters
-            st.write('No data found for charity theme ' + selected_theme + ' in category ' + charity_theme + ' for ' + selected_country + '. Please choose other countries or another theme.')
-
+            content = f"No data found for charity theme {charity_theme} for {selected_country}. Please choose other countries or another theme."
     else:
         # Inform the user if the request to the GlobalGiving API failed and why
-        st.write('Request failed with status code:', response.status_code)
+        content = f"Request failed with status code: {response.status_code}"
+    
+    return content
+
+
+
+

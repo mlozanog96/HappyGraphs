@@ -182,14 +182,17 @@ for selected_indicator_charity in selected_indicators_charity:
 st.write('Below you find all the charities that work within your chosen theme and countries.')
 
 if selected_indicators_charity and not selected_charity_theme:
+    st.write('if')
     for selected_country in selected_countries_charity:
         for charity_theme in charity_themes:
-            get_charity(selected_countries_charity, selected_charity_theme, selected_theme, charity_theme, selected_country)
+            get_charity(selected_countries_charity, selected_charity_theme, charity_theme, selected_country)
 elif selected_charity_theme and not selected_indicators_charity:
+    st.wirte('first elif')
     for selected_country in selected_countries_charity:
         for selected_theme in selected_charity_theme:
-            get_charity(selected_countries_charity, selected_charity_theme, selected_theme, charity_theme, selected_country)
+            get_charity(selected_countries_charity, selected_charity_theme, selected_theme, selected_country)
 elif selected_indicators_charity and selected_charity_theme:
+    st.write('second elif')
     st.write('You chose both an indicator and a charity theme. Please deselect one.')
 else: 
     st.write('Something went wrong')
