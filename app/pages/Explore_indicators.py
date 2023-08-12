@@ -116,8 +116,7 @@ st.write("Data matrix")
 st.dataframe(matrix)
 
 
-st.markdown('### Why has this indicator changed in the countries?')
-st.write('Please press this button to get an explanation, why ' + selected_indicator + ' has changed so much' +  ' from ' + str(SELECTED_START_YEAR) + ' to ' + str(SELECTED_END_YEAR) + ' in ' + selected_countries + '.')
+st.markdown('### Why has this indicator changed as it has?')
 
 # Create prompt to show the reason why the indicator has that trend using the prompt per country, as the dictionary of trend can't be made to a string in the prompt
 prompt_prep_trend = None
@@ -130,7 +129,7 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
 
 # Submit prompt to OpenAI
 button_pressed = False
-if st.button("I want to know why"):
+if st.button("Press this button to know why this indicator has changed as it has?"):
     button_pressed = True
 
 if button_pressed == True:
