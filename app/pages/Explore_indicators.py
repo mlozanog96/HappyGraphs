@@ -125,7 +125,7 @@ for i, (country, trend_per_country) in enumerate(trends.items()):
         prompt_prep_trend = f"{trend_per_country} in {country}"
     else:
         prompt_prep_trend += f" and {trend_per_country} in {country}"
-
+#test
 
 # Submit prompt to OpenAI
 button_pressed = False
