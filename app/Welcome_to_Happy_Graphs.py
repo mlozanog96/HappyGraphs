@@ -6,7 +6,7 @@ import pickle
 import altair as alt
 from pathlib import Path
 import seaborn as sns
-from utils import get_data, filter_projects, get_country_data
+from utils import get_data, get_country_data
 
 st.title('Happy Graphs')
 
