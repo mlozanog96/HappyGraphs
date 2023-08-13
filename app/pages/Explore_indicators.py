@@ -237,7 +237,3 @@ else:
 
 # Inform the user about the source of the charity data and its limitations
 st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/. Please be aware that the API only allows showing 10 entries per request. To find more charities, please select other themes and/or countries.')
-
-
-# Inform the user about the source of the charity data and its limitations
-st.write ('These charities are derived from the GlobalGiving API. For more information see: https://www.globalgiving.org/api/ . Please be aware that the API only allows to show 10 entries per request. To find more charities, please select other themes and/or countries.')
